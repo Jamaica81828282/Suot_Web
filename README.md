@@ -90,14 +90,7 @@ npx serve src
 
 Then open `http://localhost:3000/auth/login.html`
 
----
-## 🌐 Live Demo
-Visit: https://jamaica81828282.github.io/Suot_Web
-
-> Create these accounts in your Supabase Auth dashboard under **Authentication → Users**.
-
----
-
+ 
 ## ✨ Key Features
 
 - **Swap System** — Send item-for-item, item + points, or points-only offers
