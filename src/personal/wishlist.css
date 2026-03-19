@@ -1,5 +1,4 @@
- 
-        /* ── sidebar scroll fix ── */
+      /* ── sidebar scroll fix ── */
         .side-nav {
             display: flex !important;
             flex-direction: column !important;
