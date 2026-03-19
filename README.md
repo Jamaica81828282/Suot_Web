@@ -153,15 +153,6 @@ Right-click `src/auth/login.html` → **Open with Live Server**
 
 Video calls use **native browser WebRTC** with **Supabase Realtime Broadcast** as the signaling channel — no third-party video service, no meeting codes, no accounts needed.
 
-```
-Caller                   Supabase Broadcast              Callee
-  │── incoming_call (SDP offer) ──────────────────────────▶ │
-  │                                                          │ (rings)
-  │◀─────────────────── call_accepted (SDP answer) ─────── │
-  │── ICE candidates ───────────────────────────────────────▶ │
-  │◀──────────────────────────────── ICE candidates ──────── │
-  │◀══════════════ Direct P2P video/audio stream ═══════════▶│
-```
 
 TURN relay servers (OpenRelay) are included as fallback for networks where direct P2P is blocked by NAT.
 
