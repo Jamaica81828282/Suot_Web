@@ -54,10 +54,16 @@ if (document.readyState === 'loading') {
 async function logout() {
     if (!confirm('Are you sure you want to log out?')) return
     try {
-        await signOut('../index.html')
+        const { supabase } = await import('../db/supabase.js')
+        await supabase.auth.signOut()
+        localStorage.removeItem('suotUserId')
+        localStorage.removeItem('suotUser')
+        localStorage.removeItem('suotEmail')
+        window.location.href = '../index.html'
     } catch (e) {
-        // Fallback: clear local UI state and redirect to index
-        try { localStorage.removeItem('suotUserId'); localStorage.removeItem('suotUser'); localStorage.removeItem('suotEmail') } catch(_){}
+        localStorage.removeItem('suotUserId')
+        localStorage.removeItem('suotUser')
+        localStorage.removeItem('suotEmail')
         window.location.href = '../index.html'
     }
 }
