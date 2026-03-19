@@ -1,0 +1,703 @@
+/* ─────────────────────────────────────────
+   Profile Header
+───────────────────────────────────────── */
+.profile-header {
+    display: flex;
+    gap: 80px;
+    margin-bottom: 50px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid #eee;
+}
+
+/* Avatar — clickable with edit overlay */
+.profile-pic-section {
+    position: relative;
+    width: 158px;
+    height: 158px;
+    cursor: pointer;
+    flex-shrink: 0;
+    border-radius: 50%;
+    padding: 3px;
+    background: transparent;
+    transition: background 0.4s ease;
+}
+
+/* Subtle scale on hover to hint it's clickable */
+.profile-pic-section:hover { transform: scale(1.03); transition: transform 0.2s; }
+
+/* Active story ring — Instagram gradient */
+.profile-pic-section.ring-active {
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    animation: ringPulse 2s ease-in-out infinite;
+}
+
+/* Viewed ring — gray */
+.profile-pic-section.ring-viewed {
+    background: #c0c0c0;
+    animation: none;
+}
+
+@keyframes ringPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(220, 39, 67, 0); }
+    50%       { box-shadow: 0 0 0 6px rgba(220, 39, 67, 0.18); }
+}
+
+/* White gap between ring and photo */
+.profile-pic-section::before {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border-radius: 50%;
+    background: white;
+    z-index: 0;
+}
+
+.profile-pic-section img {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 148px;
+    height: 148px;
+    border-radius: 50%;
+    object-fit: cover;
+    /* remove old blush border — ring handles it now */
+    border: none;
+    padding: 0;
+    margin: 4px;
+}
+
+.avatar-overlay {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.4rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+    /* allow clicks through the overlay except on the edit icon */
+    pointer-events: none;
+}
+.profile-pic-section:hover .avatar-overlay { opacity: 1; }
+/* small icon inside the overlay becomes clickable */
+.avatar-edit-icon {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.profile-info-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.username-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.username-row h2 {
+    margin: 0;
+    font-weight: 300;
+    font-size: 1.8rem;
+}
+
+.btn-edit-profile {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid #dbdbdb;
+    background: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.btn-edit-profile:hover { background: #f5f5f5; }
+
+.stats-row {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 20px;
+    font-size: 1rem;
+}
+.stats-row strong { font-weight: 700; }
+.stats-row span { cursor: pointer; }
+.stats-row span:hover { text-decoration: underline; }
+
+.follow-row { display:flex; align-items:center; gap:10px; cursor:pointer; }
+.follow-row img { width:40px; height:40px; border-radius:50%; object-fit:cover; }
+
+.full-name { margin: 0 0 4px; font-weight: 700; }
+.bio-text  { margin: 0; color: #666; line-height: 1.5; }
+
+/* ─────────────────────────────────────────
+   Stories Row
+───────────────────────────────────────── */
+.stories-container {
+    display: flex;
+    gap: 25px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.story-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: #444;
+}
+
+.story-circle {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    padding: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: transform 0.2s;
+    /* default: gradient ring */
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+}
+
+/* Override: active = gradient (same as default, explicit for JS-toggled class) */
+.story-circle.ring-active {
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+}
+
+/* Override: viewed = gray ring */
+.story-circle.ring-viewed {
+    background: #c0c0c0;
+}
+
+.story-circle:hover { transform: scale(1.06); }
+
+.story-circle img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid white;
+}
+
+.add-circle {
+    background: white !important;
+    border: 2px dashed #ccc !important;
+    font-size: 26px;
+    color: #ccc;
+}
+
+/* ─────────────────────────────────────────
+   Content Area
+───────────────────────────────────────── */
+.profile-content-area {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    border-top: 1px solid #efefef;
+    padding-top: 10px;
+    width: 100%;
+    min-width: 0;
+}
+
+/* ─────────────────────────────────────────
+   Side Tabs
+───────────────────────────────────────── */
+.profile-side-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 140px;
+    flex-shrink: 0;
+    padding-top: 10px;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    color: #8e8e8e;
+    cursor: pointer;
+    text-align: left;
+    border-radius: 8px;
+    position: relative;
+    transition: color 0.2s, background 0.2s;
+}
+
+.tab-btn:hover {
+    color: var(--deep-forest);
+    background: #f5f0f2;
+}
+
+.tab-btn.active {
+    color: var(--deep-forest);
+    background: #f0e8ec;
+    font-weight: 700;
+}
+
+.tab-btn.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 20%;
+    height: 60%;
+    width: 3px;
+    border-radius: 2px;
+    background: var(--primary-rose);
+}
+
+/* ─────────────────────────────────────────
+   Profile Grid
+───────────────────────────────────────── */
+/* ─────────────────────────────────────────
+   Profile Grid — all scoped under #profileGrid
+   to beat any dashboard.css overrides
+───────────────────────────────────────── */
+#profileGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    align-content: start;
+}
+
+#profileGrid .item-card {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    background: #fff;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+#profileGrid .item-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.13);
+}
+
+#profileGrid .item-card .image-wrapper {
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+}
+
+#profileGrid .item-card .image-wrapper img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+#profileGrid .item-card:hover .image-wrapper img {
+    transform: scale(1.05);
+}
+
+/* ─────────────────────────────────────────
+   Shared Modal Base
+───────────────────────────────────────── */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+.modal-box {
+    background: #fff;
+    border-radius: 20px;
+    padding: 28px;
+    width: 100%;
+    max-width: 460px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    animation: modalIn 0.25s ease;
+    position: relative;
+}
+
+@keyframes modalIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.close-x {
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    line-height: 1;
+    color: #888;
+    cursor: pointer;
+    padding: 0 4px;
+}
+.close-x:hover { color: #333; }
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.btn-cancel {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    background: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.btn-cancel:hover { background: #f5f5f5; }
+
+.btn-save {
+    padding: 10px 24px;
+    border-radius: 10px;
+    border: none;
+    background: var(--primary-rose, #C994A7);
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+}
+.btn-save:hover  { opacity: 0.88; transform: translateY(-1px); }
+.btn-save:active { transform: translateY(0); }
+
+/* ─────────────────────────────────────────
+   Edit Profile Modal
+───────────────────────────────────────── */
+.edit-avatar-wrap {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 8px;
+    cursor: pointer;
+}
+
+.edit-avatar-wrap img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--soft-blush, #EBE0E3);
+}
+
+.edit-avatar-wrap .avatar-overlay {
+    font-size: 1.1rem;
+}
+.edit-avatar-wrap:hover .avatar-overlay { opacity: 1; }
+
+.edit-avatar-hint {
+    text-align: center;
+    font-size: 0.78rem;
+    color: #999;
+    margin: 0 0 20px;
+}
+
+.edit-form { display: flex; flex-direction: column; gap: 14px; }
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-group label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+
+.form-group input,
+.form-group textarea {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    font-size: 0.95rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: none;
+}
+.form-group input:focus,
+.form-group textarea:focus { border-color: var(--primary-rose, #C994A7); }
+
+/* ─────────────────────────────────────────
+   Add Story Modal
+───────────────────────────────────────── */
+.story-upload-area {
+    border: 2px dashed #ddd;
+    border-radius: 16px;
+    height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    transition: border-color 0.2s;
+}
+.story-upload-area:hover { border-color: var(--primary-rose, #C994A7); }
+
+.story-upload-area #storyPreviewWrap {
+    position: absolute;
+    inset: 0;
+}
+
+.story-upload-area #storyPreviewImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+#storyUploadPrompt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    color: #bbb;
+    pointer-events: none;
+}
+
+.upload-icon { font-size: 2.5rem; }
+#storyUploadPrompt p   { margin: 0; font-weight: 600; color: #888; }
+#storyUploadPrompt span { font-size: 0.78rem; }
+
+/* ─────────────────────────────────────────
+   Instagram-style Story Viewer
+───────────────────────────────────────── */
+
+/* Full-screen dark backdrop */
+.story-viewer {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.88);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Centered story column — Instagram mobile proportions */
+.story-viewer-inner {
+    position: relative;
+    width: min(420px, 100vw);
+    height: min(820px, 100vh);
+    border-radius: 14px;
+    overflow: hidden;
+    background: #111;
+    flex-shrink: 0;
+}
+
+/* Progress bars sit inside the inner column */
+.story-progress-bars {
+    position: absolute;
+    top: 14px;
+    left: 10px;
+    right: 10px;
+    display: flex;
+    gap: 4px;
+    z-index: 10;
+}
+
+.sp-bar {
+    flex: 1;
+    height: 3px;
+    background: rgba(255,255,255,0.35);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.sp-fill {
+    height: 100%;
+    width: 0%;
+    background: white;
+    border-radius: 2px;
+    transition: width 0.05s linear;
+}
+
+/* Header inside the column */
+.story-viewer-header {
+    position: absolute;
+    top: 28px;
+    left: 0;
+    right: 0;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 10;
+}
+
+.story-viewer-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.story-viewer-user img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 2px solid white;
+    object-fit: cover;
+}
+
+.story-viewer-user strong {
+    display: block;
+    color: white;
+    font-size: 0.9rem;
+    line-height: 1.2;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+.story-viewer-user span {
+    color: rgba(255,255,255,0.75);
+    font-size: 0.75rem;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+.story-close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    line-height: 1;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+/* Story image fills the column */
+.story-viewer-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Tap zones relative to inner column */
+.story-tap-left,
+.story-tap-right {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 35%;
+    z-index: 5;
+    cursor: pointer;
+}
+.story-tap-left  { left: 0; }
+.story-tap-right { right: 0; }
+
+/* Footer gradient + reply bar */
+.story-viewer-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 60px 16px 20px;
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+    z-index: 10;
+}
+
+.story-reply-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.story-reply-bar input {
+    flex: 1;
+    background: rgba(255,255,255,0.15);
+    border: 1.5px solid rgba(255,255,255,0.5);
+    border-radius: 50px;
+    padding: 10px 18px;
+    color: white;
+    font-size: 0.9rem;
+    outline: none;
+    font-family: inherit;
+}
+.story-reply-bar input::placeholder { color: rgba(255,255,255,0.7); }
+
+.story-reply-bar button {
+    background: none;
+    border: 1.5px solid rgba(255,255,255,0.5);
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+.story-reply-bar button:hover { background: rgba(255,255,255,0.15); }
+
+/* ─────────────────────────────────────────
+   Toast Notification
+───────────────────────────────────────── */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #333;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 9999;
+    white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+}
+
+.toast-success { background: #2d7a4f; }
+.toast-error   { background: #c0392b; }
+
+.toast-show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}

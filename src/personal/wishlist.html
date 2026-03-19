@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suot | My Wishlist</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../dashboard/dashboard.css">
+    <style>
+        /* ── sidebar scroll fix ── */
+        .side-nav {
+            display: flex !important;
+            flex-direction: column !important;
+            height: 100vh !important;
+            overflow: hidden !important;
+        }
+        .category-list {
+            flex: 1 1 0 !important;
+            min-height: 0 !important;
+            overflow-y: auto !important;
+        }
+        .category-list::-webkit-scrollbar { width: 3px; }
+        .category-list::-webkit-scrollbar-thumb { background: #eee; border-radius: 3px; }
+
+        .cat-link { display: flex; align-items: center; gap: 9px; }
+        .cat-link svg { width: 15px; height: 15px; flex-shrink: 0; opacity: 0.7; }
+        .cat-link.active svg, .cat-link:hover svg { opacity: 1; }
+        .page-loading { display: flex; align-items: center; justify-content: center; min-height: 300px; gap: 12px; color: #bbb; font-size: 14px; }
+        .spin { width: 20px; height: 20px; border: 2.5px solid #f0dfe5; border-top-color: #C994A7; border-radius: 50%; animation: spin 0.7s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .wishlist-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; gap: 20px; flex-wrap: wrap; }
+        .wishlist-eyebrow { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.4px; color: #C994A7; margin: 0 0 6px; }
+        .wishlist-title { font-family: 'Playfair Display', Georgia, serif; font-size: 2.2rem; font-weight: 700; color: #1a1a1a; margin: 0 0 6px; line-height: 1.1; }
+        .wishlist-sub { font-size: 0.9rem; color: #999; margin: 0; }
+        .wishlist-stats { display: flex; align-items: center; background: white; border-radius: 16px; padding: 16px 28px; margin-bottom: 28px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border: 1px solid #f0eded; }
+        .stat-pill { display: flex; flex-direction: column; align-items: center; gap: 2px; flex: 1; }
+        .stat-num { font-family: 'Playfair Display', Georgia, serif; font-size: 1.8rem; font-weight: 700; color: #1a1a1a; line-height: 1; }
+        .stat-label { font-size: 0.73rem; text-transform: uppercase; letter-spacing: 0.8px; color: #aaa; font-weight: 600; }
+        .stat-divider { width: 1px; height: 36px; background: #eee; margin: 0 8px; }
+        .filter-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+        .filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+        .filter-tab { padding: 7px 16px; border-radius: 50px; border: 1.5px solid #eee; background: white; font-size: 0.82rem; font-weight: 600; color: #999; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; }
+        .filter-tab:hover { border-color: #C994A7; color: #C994A7; }
+        .filter-tab.active { background: #C994A7; border-color: #C994A7; color: white; }
+        .sort-wrap select { padding: 8px 14px; border-radius: 10px; border: 1.5px solid #eee; font-size: 0.83rem; font-family: 'Inter', sans-serif; color: #666; font-weight: 600; background: white; cursor: pointer; outline: none; }
+        .wishlist-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+        .wish-card { background: white; border-radius: 18px; overflow: hidden; box-shadow: 0 2px 14px rgba(0,0,0,0.07); border: 1px solid #f5f0f2; transition: transform 0.25s ease, box-shadow 0.25s ease; animation: cardIn 0.35s ease both; position: relative; }
+        @keyframes cardIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        .wish-card:hover { transform: translateY(-5px); box-shadow: 0 10px 28px rgba(0,0,0,0.12); }
+        .wish-img-wrap { position: relative; aspect-ratio: 3/4; overflow: hidden; background: #f9f6f7; }
+        .wish-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.35s ease; }
+        .wish-card:hover .wish-img-wrap img { transform: scale(1.06); }
+        .wish-overlay { position: absolute; inset: 0; background: rgba(74,99,93,0.55); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; opacity: 0; transition: opacity 0.25s; }
+        .wish-card:hover .wish-overlay { opacity: 1; }
+        .btn-wish-swap { padding: 10px 22px; background: white; border: none; border-radius: 50px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; color: #4A635D; cursor: pointer; transition: all 0.15s; }
+        .btn-wish-swap:hover { background: #f0dfe5; color: #C994A7; }
+        .btn-wish-remove-overlay { padding: 7px 18px; background: rgba(255,255,255,0.2); border: 1.5px solid rgba(255,255,255,0.6); border-radius: 50px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; color: white; cursor: pointer; }
+        .wish-heart-btn { position: absolute; top: 10px; right: 10px; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.9); border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.2s; z-index: 2; }
+        .wish-heart-btn:hover { transform: scale(1.15); }
+        .wish-heart-btn svg { width: 14px; height: 14px; color: #C994A7; fill: #C994A7; }
+        .wish-cat-badge { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.88); backdrop-filter: blur(6px); font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #4A635D; padding: 3px 9px; border-radius: 20px; pointer-events: none; }
+        .wish-card-body { padding: 13px 15px 15px; }
+        .wish-item-cat { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #bbb; margin: 0 0 3px; }
+        .wish-item-name { font-size: 0.95rem; font-weight: 700; color: #1a1a1a; margin: 0 0 5px; line-height: 1.3; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+        .wish-item-footer { display: flex; align-items: center; justify-content: space-between; }
+        .wish-item-price { font-size: 0.92rem; font-weight: 800; color: #4A635D; }
+        .wish-item-swapper { font-size: 0.75rem; color: #C994A7; font-weight: 600; }
+        .wish-saved-date { font-size: 0.72rem; color: #bbb; margin-top: 4px; }
+        .empty-state { display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 80px 20px; gap: 14px; }
+        .empty-icon { font-size: 3.8rem; }
+        .empty-state h3 { font-family: 'Playfair Display', Georgia, serif; font-size: 1.5rem; font-weight: 700; color: #333; margin: 0; }
+        .empty-state p { color: #aaa; font-size: 0.9rem; margin: 0; max-width: 320px; line-height: 1.6; }
+        .btn-browse { padding: 12px 28px; background: #4A635D; color: white; border: none; border-radius: 50px; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.9rem; cursor: pointer; margin-top: 4px; }
+        .btn-clear-all { padding: 9px 18px; background: none; border: 1.5px solid #f5c6c6; border-radius: 50px; font-family: 'Inter', sans-serif; font-size: 0.82rem; font-weight: 600; color: #c0392b; cursor: pointer; white-space: nowrap; }
+        .btn-clear-all:hover { background: #fdf0ee; }
+        .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px); background: #4A635D; color: white; padding: 12px 24px; border-radius: 50px; font-size: 13px; font-weight: 600; opacity: 0; transition: opacity 0.3s, transform 0.3s; z-index: 9999; white-space: nowrap; pointer-events: none; }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        @media (max-width: 1100px) { .wishlist-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 760px)  { .wishlist-grid { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body class="dash-body">
+
+<aside class="side-nav">
+    <div class="nav-brand">
+        <img src="../auth/Logo/logo.jpg" alt="Suot" class="dash-logo">
+        <p class="logo-tagline">Style passed on.</p>
+    </div>
+    <div class="user-profile-card" onclick="location.href='../profile/profile.html'" style="cursor:pointer;">
+        <div class="avatar-wrapper"><img src="https://ui-avatars.com/api/?name=User&background=EBE0E3&color=C994A7" id="userAvatar" alt="Profile"></div>
+        <div class="user-meta"><h4 id="profileName">Loading…</h4><p>Pro Swapper</p></div>
+    </div>
+    <div class="category-list">
+        <p class="category-label">Browse Catalog</p>
+        <button class="cat-link" onclick="location.href='../dashboard/dashboard.html'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>All Pieces
+        </button>
+        <button class="cat-link" onclick="location.href='../dashboard/dashboard.html'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.57a1 1 0 00.99.84H7v10c0 .55.45 1 1 1h8c.55 0 1-.45 1-1V10h4.15a1 1 0 00.99-.84l.58-3.57a2 2 0 00-1.34-2.23z"/></svg>Tops
+        </button>
+        <button class="cat-link" onclick="location.href='../dashboard/dashboard.html'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 7H4L6 2z"/><path d="M4 9l2 13h5l1-8 1 8h5l2-13"/></svg>Bottoms
+        </button>
+        <button class="cat-link" onclick="location.href='../dashboard/dashboard.html'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>Accessories
+        </button>
+        <p class="category-label" style="margin-top:25px">My Closet</p>
+        <button class="cat-link" onclick="location.href='../personal/post-item.html'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Post an Item
+        </button>
+        <button class="cat-link active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Wishlist
+            <span id="wishlistNavCount" style="display:none;margin-left:auto;background:#C994A7;color:#fff;font-size:10px;font-weight:700;min-width:18px;height:18px;border-radius:50px;align-items:center;justify-content:center;padding:0 5px;line-height:1;">0</span>
+        </button>
+        <p class="category-label" style="margin-top:25px">Community</p>
+        <button class="cat-link" onclick="location.href='../personal/home.html'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home
+        </button>
+        <button class="cat-link" onclick="location.href='../dashboard/wallet.html'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Wallet
+        </button>
+        <button class="cat-link" onclick="location.href='message.html'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Messages
+            <span id="messageNavBadge" style="display:none;margin-left:auto;background:#C994A7;color:#fff;font-size:10px;font-weight:700;min-width:18px;height:18px;border-radius:50px;align-items:center;justify-content:center;padding:0 5px;line-height:1;">0</span>
+        </button>
+        <button class="cat-link" onclick="location.href='../dashboard/topup.html'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Top Up Points
+        </button>
+        <button class="cat-link" onclick="location.href='../personal/friends.html'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Friends
+        </button>
+    </div>
+    <button class="btn-logout" onclick="logout()">Logout</button>
+</aside>
+
+<main class="main-content">
+    <div class="wishlist-header">
+        <div>
+            <p class="wishlist-eyebrow">★ Saved Items</p>
+            <h1 class="wishlist-title">My Wishlist</h1>
+            <p class="wishlist-sub">Items you've saved — ready to swap when you are.</p>
+        </div>
+        <button class="btn-clear-all" id="btnClearAll" onclick="clearAll()" style="display:none;">🗑 Clear All</button>
+    </div>
+
+    <div class="wishlist-stats">
+        <div class="stat-pill"><span class="stat-num" id="statTotal">—</span><span class="stat-label">Saved Items</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat-pill"><span class="stat-num" id="statTops">—</span><span class="stat-label">Tops</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat-pill"><span class="stat-num" id="statBottoms">—</span><span class="stat-label">Bottoms</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat-pill"><span class="stat-num" id="statOther">—</span><span class="stat-label">Other</span></div>
+    </div>
+
+    <div class="filter-bar">
+        <div class="filter-tabs">
+            <button class="filter-tab active" onclick="setFilter(this,'all')">All</button>
+            <button class="filter-tab" onclick="setFilter(this,'tops')">Tops</button>
+            <button class="filter-tab" onclick="setFilter(this,'bottoms')">Bottoms</button>
+            <button class="filter-tab" onclick="setFilter(this,'accessories')">Accessories</button>
+        </div>
+        <div class="sort-wrap">
+            <select id="sortSelect" onchange="render()">
+                <option value="newest">Newest Saved</option>
+                <option value="oldest">Oldest Saved</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="name">Name A–Z</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="page-loading" id="pageLoading"><div class="spin"></div> Loading your wishlist…</div>
+    <div class="wishlist-grid" id="wishlistGrid" style="display:none;"></div>
+    <div class="empty-state" id="emptyState">
+        <div class="empty-icon">🌟</div>
+        <h3>Your wishlist is empty</h3>
+        <p>Browse the catalog and tap "Save to Wishlist" on any item you love.</p>
+        <button class="btn-browse" onclick="location.href='../dashboard/dashboard.html'">Browse the Catalog →</button>
+    </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { supabase } from '../db/supabase.js'
+
+let currentUser  = null
+let wishlist     = []
+let activeFilter = 'all'
+
+// ── BOOT ──
+async function boot() {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) { window.location.href = '../auth/login.html'; return }
+    currentUser = session.user
+
+    const { data: profile } = await supabase
+        .from('profiles').select('username,display_name,avatar_url').eq('id', currentUser.id).single()
+    if (profile) {
+        document.getElementById('profileName').textContent = profile.display_name || profile.username || 'Swapper'
+        if (profile.avatar_url) document.getElementById('userAvatar').src = profile.avatar_url
+    }
+
+    await loadWishlist()
+}
+
+// ── LOAD FROM SUPABASE ──
+async function loadWishlist() {
+    document.getElementById('pageLoading').style.display = 'flex'
+    document.getElementById('wishlistGrid').style.display = 'none'
+    document.getElementById('emptyState').style.display  = 'none'
+
+    const { data, error } = await supabase
+        .from('wishlist')
+        .select(`id, saved_at, items ( id, name, category, brand, pts, condition, size, images, profiles ( username, display_name ) )`)
+        .eq('user_id', currentUser.id)
+        .order('saved_at', { ascending: false })
+
+    document.getElementById('pageLoading').style.display = 'none'
+    document.getElementById('wishlistGrid').style.display = 'grid'
+
+    if (error) { console.error('Wishlist error:', error); showToast('Could not load wishlist.'); return }
+
+    wishlist = (data || []).filter(r => r.items).map(r => ({
+        wishlist_id: r.id,
+        saved_at:    r.saved_at,
+        item_id:     r.items.id,
+        name:        r.items.name,
+        category:    r.items.category,
+        brand:       r.items.brand,
+        pts:         r.items.pts,
+        condition:   r.items.condition,
+        size:        r.items.size,
+        image:       (r.items.images || [])[0] || null,
+        swapper:     r.items.profiles?.display_name || r.items.profiles?.username || ''
+    }))
+
+    syncLocalStorage()
+    updateNavBadge()
+    render()
+}
+
+// ── RENDER ──
+window.render = function() {
+    const sort = document.getElementById('sortSelect').value
+    let items  = [...wishlist]
+    if (activeFilter !== 'all') items = items.filter(i => (i.category||'').toLowerCase() === activeFilter)
+    switch(sort) {
+        case 'newest':     items.sort((a,b)=>new Date(b.saved_at)-new Date(a.saved_at)); break
+        case 'oldest':     items.sort((a,b)=>new Date(a.saved_at)-new Date(b.saved_at)); break
+        case 'price-low':  items.sort((a,b)=>(a.pts||0)-(b.pts||0)); break
+        case 'price-high': items.sort((a,b)=>(b.pts||0)-(a.pts||0)); break
+        case 'name':       items.sort((a,b)=>(a.name||'').localeCompare(b.name||'')); break
+    }
+
+    document.getElementById('statTotal').textContent   = wishlist.length
+    document.getElementById('statTops').textContent    = wishlist.filter(i=>(i.category||'').toLowerCase()==='tops').length
+    document.getElementById('statBottoms').textContent = wishlist.filter(i=>(i.category||'').toLowerCase()==='bottoms').length
+    document.getElementById('statOther').textContent   = wishlist.filter(i=>!['tops','bottoms'].includes((i.category||'').toLowerCase())).length
+    document.getElementById('btnClearAll').style.display = wishlist.length ? 'block' : 'none'
+
+    const grid  = document.getElementById('wishlistGrid')
+    const empty = document.getElementById('emptyState')
+    if (items.length === 0) { grid.innerHTML=''; empty.style.display='flex'; return }
+    empty.style.display = 'none'
+
+    const fb = 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600'
+    grid.innerHTML = items.map((item,idx) => `
+        <div class="wish-card" style="animation-delay:${idx*0.05}s">
+            <div class="wish-img-wrap">
+                <img src="${item.image||fb}" alt="${item.name}" loading="lazy"/>
+                <span class="wish-cat-badge">${item.category||'—'}</span>
+                <button class="wish-heart-btn" onclick="removeItem('${item.wishlist_id}')">
+                    <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                </button>
+                <div class="wish-overlay">
+                    <button class="btn-wish-swap" onclick="goToItem('${item.item_id}')">Swap Now</button>
+                    <button class="btn-wish-remove-overlay" onclick="removeItem('${item.wishlist_id}')">Remove</button>
+                </div>
+            </div>
+            <div class="wish-card-body">
+                <p class="wish-item-cat">${item.category||'—'}</p>
+                <h4 class="wish-item-name">${item.name}</h4>
+                <div class="wish-item-footer">
+                    <span class="wish-item-price">${(item.pts||0).toLocaleString()} pts</span>
+                    <span class="wish-item-swapper">${item.swapper?'@'+item.swapper:''}</span>
+                </div>
+                <p class="wish-saved-date">Saved ${timeAgo(item.saved_at)}</p>
+            </div>
+        </div>`).join('')
+}
+
+// ── REMOVE ONE ──
+window.removeItem = async function(wishlistId) {
+    const { error } = await supabase.from('wishlist').delete().eq('id', wishlistId).eq('user_id', currentUser.id)
+    if (error) { console.error(error); showToast('Could not remove item.'); return }
+    wishlist = wishlist.filter(w => w.wishlist_id !== wishlistId)
+    syncLocalStorage(); updateNavBadge(); render()
+    showToast('Removed from wishlist.')
+}
+
+// ── CLEAR ALL ──
+window.clearAll = async function() {
+    if (!confirm('Remove all items from your wishlist?')) return
+    const { error } = await supabase.from('wishlist').delete().eq('user_id', currentUser.id)
+    if (error) { console.error(error); showToast('Could not clear wishlist.'); return }
+    wishlist = []; syncLocalStorage(); updateNavBadge(); render()
+    showToast('Wishlist cleared.')
+}
+
+window.setFilter = function(btn, filter) {
+    document.querySelectorAll('.filter-tab').forEach(b=>b.classList.remove('active'))
+    btn.classList.add('active'); activeFilter=filter; render()
+}
+window.goToItem = function(id) { location.href=`../personal/item-detail.html?id=${id}` }
+
+function syncLocalStorage() {
+    localStorage.setItem('suot_wishlist', JSON.stringify(
+        wishlist.map(w=>({id:w.item_id,name:w.name,category:w.category,pts:w.pts,image:w.image,condition:w.condition,size:w.size,brand:w.brand,savedAt:w.saved_at}))
+    ))
+}
+
+function updateNavBadge() {
+    const b = document.getElementById('wishlistNavCount')
+    if (!b) return
+    if (wishlist.length > 0) { b.textContent=wishlist.length; b.style.display='flex' }
+    else b.style.display='none'
+}
+
+function timeAgo(iso) {
+    if (!iso) return 'recently'
+    const d=Date.now()-new Date(iso).getTime(), m=Math.floor(d/60000), h=Math.floor(d/3600000), dy=Math.floor(d/86400000)
+    if(m<1)return'just now'; if(m<60)return`${m}m ago`; if(h<24)return`${h}h ago`; if(dy<7)return`${dy}d ago`
+    return new Date(iso).toLocaleDateString('en-PH',{month:'short',day:'numeric'})
+}
+
+function showToast(msg) {
+    const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show')
+    setTimeout(()=>t.classList.remove('show'),3000)
+}
+
+window.logout = async function() { await supabase.auth.signOut(); location.href='../auth/login.html' }
+
+boot()
+
+// Message badge notification
+async function updateMsgBadge() {
+    const {data:{session}} = await supabase.auth.getSession()
+    if (!session) return
+    const {data:msgs} = await supabase.from('messages')
+        .select('from_user_id,to_user_id,read')
+        .eq('to_user_id',session.user.id)
+        .eq('read',false)
+    const msgBadge = document.getElementById('messageNavBadge')
+    if (msgBadge && msgs) {
+        const uniqueUsers = new Set(msgs.map(m=>m.from_user_id))
+        if (uniqueUsers.size > 0) { msgBadge.textContent=uniqueUsers.size; msgBadge.style.display='flex' }
+        else { msgBadge.style.display='none' }
+    }
+}
+updateMsgBadge()
+setInterval(updateMsgBadge, 5000)
+</script>
+</body>
+</html>

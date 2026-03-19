@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suot | Join the Revolution</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="landing-page">
+        <div class="bg-photo photo-1"></div>
+        <div class="bg-photo photo-2"></div>
+        <div class="bg-photo photo-3"></div>
+        <div class="bg-photo photo-4"></div>
+        <div class="bg-photo photo-5"></div>
+        <div class="bg-photo photo-6"></div>
+
+        <div class="split-container">
+            <div class="message-section">
+                <h1 class="hero-title">Your Style,<br><em>Passed On.</em></h1>
+                <p class="hero-subtext">
+                    Join the circular fashion revolution. Swap unique pieces, reduce textile waste,
+                    and build a sustainable wardrobe through our smart bartering economy.
+                </p>
+                <div class="sdg-tag">SDG 12: Responsible Consumption</div>
+            </div>
+
+            <div class="auth-section">
+                <div class="glass-card" id="authCard">
+                    <img src="Logo/logo.jpg" alt="Suot Logo" class="card-logo">
+
+                    <!-- SIGN IN -->
+                    <div id="loginSection">
+                        <header>
+                            <h2>Sign In</h2>
+                            <p>Welcome back to Suot</p>
+                        </header>
+                        <form class="auth-form" id="loginForm">
+                            <div class="input-group">
+                                <label>Email address</label>
+                                <input type="email" placeholder="Enter your email" required>
+                            </div>
+                            <div class="input-group">
+                                <label>Password</label>
+                                <input type="password" placeholder="••••••••" required>
+                            </div>
+                            <button type="submit" class="btn-primary">Sign In</button>
+                        </form>
+
+                        <div class="divider"><span>or</span></div>
+
+                        <button class="btn-google">
+                            <img src="https://cdn2.hubspot.net/hubfs/53/image8-2.jpg" alt="G"> Sign in with Google
+                        </button>
+
+                        <p class="toggle-text"><a href="../index.html" style="color:#888;font-weight:400;">← Back to Gallery</a></p>
+                        <p class="toggle-text">New to the community? <a href="#" onclick="toggleAuth()">Create account</a></p>
+                    </div>
+
+                    <!-- SIGN UP -->
+                    <div id="signupSection" style="display:none;">
+                        <header>
+                            <h2>Join Suot</h2>
+                            <p>Start your sustainable journey</p>
+                        </header>
+                        <form class="auth-form" id="signupForm">
+                            <div class="input-group">
+                                <label>Full Name</label>
+                                <input type="text" id="signupName" placeholder="Your name" required>
+                            </div>
+                            <div class="input-group">
+                                <label>Email</label>
+                                <input type="email" placeholder="Email address" required>
+                            </div>
+                            <div class="input-group">
+                                <label>Password</label>
+                                <input type="password" placeholder="Create password (min 6 chars)" required>
+                            </div>
+                            <button type="submit" class="btn-primary">Create Account</button>
+                        </form>
+                        <p class="toggle-text">Already a member? <a href="#" onclick="toggleAuth()">Sign In</a></p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- type="module" is required for the import statement in script.js -->
+    <script type="module" src="script.js"></script>
+</body>
+</html>
