@@ -6,7 +6,139 @@
   <title>Suot | Messages</title>
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="../dashboard/dashboard.css"/>
-   <link rel="stylesheet" href="message.css"/>
+  <link rel="stylesheet" href="message.css"/>
+  <style>
+    /* ── VIDEO CALL OVERLAYS ── */
+    .vc-overlay {
+      position: fixed; inset: 0; z-index: 99999;
+      display: none; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .vc-overlay.open { display: flex; }
+    .vc-bg {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(74,99,93,.95), rgba(55,80,74,.98));
+      backdrop-filter: blur(20px);
+    }
+    .vc-card {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 12px; text-align: center; max-width: 340px; width: 100%;
+    }
+    .vc-avatar-wrap {
+      position: relative; width: 110px; height: 110px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .vc-avatar-wrap img {
+      width: 110px; height: 110px; border-radius: 50%;
+      object-fit: cover; border: 3px solid rgba(255,255,255,.3);
+      position: relative; z-index: 1;
+    }
+    .vc-pulse {
+      position: absolute; inset: -8px; border-radius: 50%;
+      background: rgba(255,255,255,.15);
+      animation: vcPulse 1.6s ease-in-out infinite;
+    }
+    .vc-pulse:nth-child(2) { inset: -18px; animation-delay: .5s; background: rgba(255,255,255,.08); }
+    .vc-pulse:nth-child(3) { inset: -30px; animation-delay: 1s; background: rgba(255,255,255,.04); }
+    @keyframes vcPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.08);opacity:.6} }
+    .vc-name { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 6px; }
+    .vc-status { font-size: 13px; color: rgba(255,255,255,.6); font-weight: 500; display: flex; align-items: center; gap: 6px; }
+    .vc-dots span { display:inline-block; width:4px; height:4px; border-radius:50%; background:rgba(255,255,255,.6); animation:vcDot 1.2s infinite; }
+    .vc-dots span:nth-child(2) { animation-delay:.2s; }
+    .vc-dots span:nth-child(3) { animation-delay:.4s; }
+    @keyframes vcDot { 0%,60%,100%{transform:scale(1);opacity:.4}30%{transform:scale(1.4);opacity:1} }
+    .vc-btns { display:flex; gap:24px; margin-top:16px; }
+    .vc-btn { width:64px; height:64px; border-radius:50%; border:none; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; transition:all .2s; gap:4px; }
+    .vc-btn svg { width:24px; height:24px; }
+    .vc-btn span { font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,.8); margin-top:4px; position:absolute; bottom:-22px; white-space:nowrap; }
+    .vc-btn-wrap { position:relative; display:flex; flex-direction:column; align-items:center; }
+    .vc-btn.decline { background:#ef4444; color:#fff; box-shadow:0 4px 20px rgba(239,68,68,.4); }
+    .vc-btn.decline:hover { background:#dc2626; transform:scale(1.08); }
+    .vc-btn.accept  { background:#22c55e; color:#fff; box-shadow:0 4px 20px rgba(34,197,94,.4); }
+    .vc-btn.accept:hover { background:#16a34a; transform:scale(1.08); }
+    .vc-btn.cancel  { background:rgba(255,255,255,.2); color:#fff; }
+    .vc-btn.cancel:hover { background:rgba(255,255,255,.3); transform:scale(1.08); }
+    .vc-brand { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+    .vc-brand svg { width:16px; height:16px; color:rgba(255,255,255,.5); }
+    .vc-brand span { font-size:12px; color:rgba(255,255,255,.5); font-weight:600; letter-spacing:.5px; }
+
+    /* ── ACTIVE CALL BOX (WebRTC) ── */
+    .vc-active-box {
+      position: relative; z-index: 1;
+      background: rgba(0,0,0,.3); border-radius: 24px;
+      overflow: hidden; width: 100%; max-width: 820px;
+    }
+    .vc-active-hdr {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:14px 18px; background:rgba(0,0,0,.25);
+    }
+    .vc-active-hdr-left { display:flex; align-items:center; gap:10px; }
+    .vc-active-hdr-left img { width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,.3); }
+    .vc-active-name { font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:#fff; }
+    .vc-active-timer { font-size:11px; color:rgba(255,255,255,.6); }
+    .vc-end-btn { display:flex; align-items:center; gap:6px; background:#ef4444; color:#fff; border:none; padding:9px 18px; border-radius:50px; font-family:'DM Sans',sans-serif; font-weight:700; font-size:13px; cursor:pointer; transition:.2s; }
+    .vc-end-btn:hover { background:#dc2626; }
+    .vc-end-btn svg { width:13px; height:13px; }
+
+    /* WebRTC video area */
+    .vc-video-area {
+      position: relative; width: 100%; height: 65vh;
+      background: #111; overflow: hidden;
+    }
+    .vc-remote-vid {
+      width: 100%; height: 100%; object-fit: cover;
+      display: block; background: #111;
+    }
+    .vc-local-vid {
+      position: absolute; bottom: 16px; right: 16px;
+      width: 160px; height: 120px; object-fit: cover;
+      border-radius: 12px; border: 2px solid rgba(255,255,255,.3);
+      z-index: 2; background: #222;
+    }
+    .vc-connecting {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 14px; background: #111; z-index: 3;
+    }
+    .vc-connecting-av {
+      width: 80px; height: 80px; border-radius: 50%;
+      object-fit: cover; border: 3px solid rgba(255,255,255,.2);
+      animation: vcPulse 1.6s ease-in-out infinite;
+    }
+    .vc-connecting-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem; font-weight: 700; color: #fff;
+    }
+    .vc-connecting-status {
+      font-size: 13px; color: rgba(255,255,255,.55);
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    /* Call controls row */
+    .vc-controls {
+      display: flex; justify-content: center; gap: 12px;
+      padding: 12px 18px; background: rgba(0,0,0,.3);
+    }
+    .vc-ctrl-btn {
+      width: 46px; height: 46px; border-radius: 50%;
+      background: rgba(255,255,255,.14); border: none;
+      color: #fff; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s; flex-shrink: 0;
+    }
+    .vc-ctrl-btn:hover { background: rgba(255,255,255,.25); }
+    .vc-ctrl-btn.muted { background: rgba(239,68,68,.7); }
+    .vc-ctrl-btn svg { width: 20px; height: 20px; }
+
+    .vc-footer { padding: 8px 18px 12px; text-align:center; }
+    .vc-footer span { font-size:11px; color:rgba(255,255,255,.35); display:flex; align-items:center; justify-content:center; gap:5px; }
+    .vc-footer svg { width:11px; height:11px; }
+
+    /* Declined/ended notice */
+    .vc-notice { font-size:14px; color:rgba(255,255,255,.8); font-weight:600; background:rgba(255,255,255,.1); padding:10px 20px; border-radius:50px; margin-top:8px; }
+  </style>
 </head>
 <body class="dash-body">
 
@@ -89,7 +221,9 @@
 
     <div class="ch" id="chatPanel">
       <div class="ch-empty" id="chEmpty">
-        <div class="ch-empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="width:1.35em;height:1.35em;display:inline-block;vertical-align:middle;"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg></div>
+        <div class="ch-empty-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="width:1.35em;height:1.35em;"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg>
+        </div>
         <h3>Your Messages</h3>
         <p>Select a conversation or start one from any item's page.</p>
       </div>
@@ -100,10 +234,7 @@
         <div class="ch-msgs" id="chMsgs"></div>
         <div class="typing-row" id="typingRow" style="display:none;"><div class="td"><span></span><span></span><span></span></div><span id="typingName"></span> is typing…</div>
         <div class="ch-foot">
-          <div class="swap-panel" id="swapPanel">
-            <div class="sp-title">Swap Request</div>
-            <div id="spContent"></div>
-          </div>
+          <div class="swap-panel" id="swapPanel"><div class="sp-title">Swap Request</div><div id="spContent"></div></div>
           <div class="img-strip" id="imgStrip"></div>
           <div class="eq-bar" id="eqBar"></div>
           <div class="ch-irow">
@@ -130,16 +261,130 @@
 
 <div class="lb" id="lb" onclick="closeLb()"><button class="lb-x" onclick="closeLb()">×</button><img id="lbImg" src="" alt=""/></div>
 
+<!-- CALLER OVERLAY -->
+<div class="vc-overlay" id="callerOverlay">
+  <div class="vc-bg"></div>
+  <div class="vc-card">
+    <div class="vc-brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+      <span>Suot Video Call</span>
+    </div>
+    <div class="vc-avatar-wrap">
+      <div class="vc-pulse"></div><div class="vc-pulse"></div><div class="vc-pulse"></div>
+      <img id="callerTargetAv" src="" alt=""/>
+    </div>
+    <div class="vc-name" id="callerTargetName">—</div>
+    <div class="vc-status">Calling<div class="vc-dots"><span></span><span></span><span></span></div></div>
+    <div class="vc-btns">
+      <div class="vc-btn-wrap">
+        <button class="vc-btn cancel" onclick="cancelCall()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.68 13.31a16 16 0 003.41 2.6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7 2 2 0 012 2v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.42 19.42 0 013.43 9.19 19.79 19.79 0 01.36 0.56 2 2 0 012 .36h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.18 8.13"/><line x1="23" y1="1" x2="1" y2="23"/></svg>
+        </button>
+        <span>Cancel</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INCOMING CALL OVERLAY -->
+<div class="vc-overlay" id="incomingOverlay">
+  <div class="vc-bg"></div>
+  <div class="vc-card">
+    <div class="vc-brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+      <span>Suot Video Call</span>
+    </div>
+    <div class="vc-avatar-wrap">
+      <div class="vc-pulse"></div><div class="vc-pulse"></div><div class="vc-pulse"></div>
+      <img id="incomingCallerAv" src="" alt=""/>
+    </div>
+    <div class="vc-name" id="incomingCallerName">—</div>
+    <div class="vc-status">Incoming Video Call</div>
+    <div class="vc-btns">
+      <div class="vc-btn-wrap">
+        <button class="vc-btn decline" onclick="declineCall()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.68 13.31a16 16 0 003.41 2.6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7 2 2 0 012 2v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.42 19.42 0 013.43 9.19 19.79 19.79 0 01.36 0.56 2 2 0 012 .36h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.18 8.13"/><line x1="23" y1="1" x2="1" y2="23"/></svg>
+        </button>
+        <span>Decline</span>
+      </div>
+      <div class="vc-btn-wrap">
+        <button class="vc-btn accept" onclick="acceptCall()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 01.22 2.18 2 2 0 012.18 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.18 8.13a16 16 0 006.18 6.18l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+        </button>
+        <span>Accept</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ACTIVE CALL OVERLAY (WebRTC — no iframe) -->
+<div class="vc-overlay" id="activeCallOverlay">
+  <div class="vc-bg"></div>
+  <div class="vc-active-box">
+    <div class="vc-active-hdr">
+      <div class="vc-active-hdr-left">
+        <img id="activeCallAv" src="" alt=""/>
+        <div>
+          <div class="vc-active-name" id="activeCallName">—</div>
+          <div class="vc-active-timer" id="callTimer">00:00</div>
+        </div>
+      </div>
+      <button class="vc-end-btn" onclick="endCall()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.68 13.31a16 16 0 003.41 2.6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7 2 2 0 012 2v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.42 19.42 0 013.43 9.19 19.79 19.79 0 01.36 0.56 2 2 0 012 .36h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.18 8.13"/><line x1="23" y1="1" x2="1" y2="23"/></svg>
+        End Call
+      </button>
+    </div>
+
+    <!-- WebRTC video — remote full size, local PiP -->
+    <div class="vc-video-area">
+      <video id="remoteVideo" autoplay playsinline class="vc-remote-vid"></video>
+      <video id="localVideo"  autoplay playsinline muted class="vc-local-vid"></video>
+      <!-- Shown while WebRTC negotiates -->
+      <div class="vc-connecting" id="vcConnecting">
+        <img id="vcConnectingAv" class="vc-connecting-av" src="" alt=""/>
+        <div class="vc-connecting-name" id="vcConnectingName">—</div>
+        <div class="vc-connecting-status">
+          Connecting
+          <div class="vc-dots"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mic / camera toggle buttons -->
+    <div class="vc-controls">
+      <button class="vc-ctrl-btn" id="muteMicBtn" onclick="toggleMic()" title="Mute microphone">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      </button>
+      <button class="vc-ctrl-btn" id="muteVidBtn" onclick="toggleCam()" title="Toggle camera">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+      </button>
+    </div>
+
+    <div class="vc-footer">
+      <span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>
+        Peer-to-peer · End-to-end encrypted
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- OTP MODAL -->
 <div class="otp-overlay" id="otpOverlay">
   <div class="otp-box">
     <div id="otpMain">
-      <div class="otp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="width:1.35em;height:1.35em;display:inline-block;vertical-align:middle;"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+      <div class="otp-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="width:1.35em;height:1.35em;display:inline-block;vertical-align:middle;"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+      </div>
       <div class="otp-title">Confirm Your Swap</div>
       <div class="otp-sub">Share your code with the other swapper, and enter theirs below to confirm the exchange.</div>
       <div class="otp-your-code">
         <div class="otp-your-label">Your confirmation code</div>
         <div class="otp-your-val" id="otpMyCode">——</div>
-        <button class="otp-copy-btn" onclick="copyOtp()">📋 Copy Code</button>
+        <button class="otp-copy-btn" onclick="copyOtp()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:4px;"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copy Code
+        </button>
       </div>
       <div class="otp-enter-label">Enter their code</div>
       <div class="otp-inputs" id="otpInputs">
@@ -148,694 +393,33 @@
         <input type="text" maxlength="1" inputmode="numeric" oninput="otpInput(this,2)" onkeydown="otpKey(this,event,2)"/>
         <input type="text" maxlength="1" inputmode="numeric" oninput="otpInput(this,3)" onkeydown="otpKey(this,event,3)"/>
       </div>
-      <button class="otp-verify-btn" id="otpVerifyBtn" onclick="verifyOtp()" disabled>Verify & Complete Swap</button>
+      <button class="otp-verify-btn" id="otpVerifyBtn" onclick="verifyOtp()" disabled>Verify &amp; Complete Swap</button>
       <br/>
       <button class="otp-cancel-btn" onclick="closeOtp()">Cancel</button>
     </div>
     <div class="otp-success" id="otpSuccess">
-      <div class="otp-success-icon">🎉</div>
+      <div class="otp-success-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:2.5rem;height:2.5rem;"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
       <h3>Swap Complete!</h3>
-      <p>The item has been marked as swapped. It's no longer listed in the catalog but remains on both of your profiles.</p>
+      <p>The item has been marked as swapped.</p>
       <button class="otp-verify-btn" style="margin-top:16px;" onclick="closeOtp()">Done ✦</button>
     </div>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
-
-<script type="module">
-// ── PATCH 1: import refundSwapPts and transferSwapPts ──
-import { supabase, refundSwapPts, transferSwapPts, earnPtsFromSwap } from '../db/supabase.js'
-const EMOJIS   = ['😊','😂','❤️','😍','🙏','👍','🔥','💅','✨','😭','🥰','😅','💯','🎉','👏','😤','👀','🫶']
-const FALLBACK = 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400'
-
-async function ensureSwapItems(s) {
-  if (!s) return s
-  const toFetch = []
-  if (!s.oi && s.offered_item_id)   toFetch.push(s.offered_item_id)
-  if (!s.ri && s.requested_item_id) toFetch.push(s.requested_item_id)
-  if (!toFetch.length) return s
-  const { data: items } = await supabase.from('items')
-    .select('id,name,images,pts,category').in('id', toFetch)
-  items?.forEach(i => {
-    if (!s.oi && i.id === s.offered_item_id)   s.oi = i
-    if (!s.ri && i.id === s.requested_item_id) s.ri = i
-  })
-  return s
-}
-
-let me=null, myP=null, convs=[], allSwaps=[], pid=null, itmId=null, swId=null, sw=null, rts=null, pendImgs=[]
-let activeTab = 'msgs'
-let currentItemData = null
-let myOtpCode = null
-let currentSwapId = null
-
-window.toggleSwapPanel = function(){
-  const panel = document.getElementById('swapPanel')
-  panel.classList.toggle('show')
-  if(panel.classList.contains('show')) renderSwapPanel()
-}
-
-function renderSwapPanel(){
-  const el = document.getElementById('spContent')
-  if(!sw){ el.innerHTML = `<div class="sp-no-swap">No active swap request in this conversation.</div>`; return }
-  const checkIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:1.05em;height:1.05em;display:inline-block;vertical-align:-0.15em;margin-right:.35em;"><polyline points="20 6 9 17 4 12"/></svg>`
-  const lockIcon  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="width:1.05em;height:1.05em;display:inline-block;vertical-align:-0.15em;margin-right:.35em;"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>`
-  const doneIcon  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:1.05em;height:1.05em;display:inline-block;vertical-align:-0.15em;margin-right:.35em;"><path d="M7.5 13.5c1.5 1.5 3.2 2.3 4.5 2.3 1.4 0 3.2-.8 4.5-2.3"/><path d="M7 12c-1.2-1.2-2-2.3-2-3.6 0-1.4 1.1-2.4 2.4-2.4 1 0 1.8.6 2.6 1.4"/><path d="M17 12c1.2-1.2 2-2.3 2-3.6 0-1.4-1.1-2.4-2.4-2.4-1 0-1.8.6-2.6 1.4"/></svg>`
-  const lbl = {pending:'⏳ Pending',accepted:`${checkIcon}Accepted`,otp_pending:`${lockIcon}OTP Required`,declined:'❌ Declined',cancelled:'🚫 Cancelled',swapped:`${doneIcon}Swapped`}
-  const isOwner = sw.owner_id === me.id
-  const isRequester = sw.requester_id === me.id
-  const ptsLine = sw.offered_pts > 0 ? `<div style="font-size:12px;color:#16a34a;font-weight:700;margin-bottom:8px;">💰 +${sw.offered_pts.toLocaleString()} pts included in offer</div>` : ''
-  let btns = ''
-  if(sw.status === 'pending'){
-    if(isOwner) btns = `<div class="sp-btns"><button class="sp-btn-accept" onclick="respSwap('${sw.id}','accepted');toggleSwapPanel()">✓ Accept</button><button class="sp-btn-decline" onclick="respSwap('${sw.id}','declined');toggleSwapPanel()">✗ Decline</button></div>`
-    else if(isRequester) btns = `<div class="sp-btns"><button class="sp-btn-cancel" onclick="respSwap('${sw.id}','cancelled');toggleSwapPanel()">🚫 Cancel Request</button></div>`
-  } else if(sw.status === 'otp_pending' || sw.status === 'accepted'){
-    btns = `<button class="sp-btn-otp" onclick="openOtpModal('${sw.id}',event);toggleSwapPanel()">${lockIcon}Enter OTP to Complete Swap</button>`
-    if(isOwner) btns += `<div class="sp-btns" style="margin-top:8px;"><button class="sp-btn-decline" onclick="respSwap('${sw.id}','declined');toggleSwapPanel()">✗ Decline</button></div>`
-  }
-  el.innerHTML = `<div class="sp-status-row"><span class="sp-badge ${sw.status}">${lbl[sw.status]||sw.status}</span><span style="font-size:11px;color:var(--muted);">${sw.ri?.name||'Item'} ⇄ ${sw.oi?.name||'Item'}</span></div>${ptsLine}${btns}`
-}
-
-// ── BOOT ──
-const {data:{session}} = await supabase.auth.getSession()
-if (!session) { location.href='../auth/login.html' }
-me = session.user
-const {data:p} = await supabase.from('profiles').select('*').eq('id',me.id).single()
-myP = p||{}
-const myName = myP.display_name||myP.username||'You'
-const myAv   = myP.avatar_url||av(myName)
-document.getElementById('navName').textContent=myName
-document.getElementById('navAv').src=myAv
-document.getElementById('eqBar').innerHTML = EMOJIS.map(e=>`<span class="eq-e" onclick="insE('${e}')">${e}</span>`).join('')
-
-const params = new URLSearchParams(location.search)
-await loadIb()
-await loadAllSwaps()
-if (params.get('with')) openConv(params.get('with'), params.get('item'), params.get('swap'))
-
-supabase.channel('new-messages-global')
-  .on('postgres_changes', {event:'INSERT', schema:'public', table:'messages', filter:`to_user_id=eq.${me.id}`}, async () => {
-    await loadIb(); updBadge(); updMsgTabBadge()
-  }).subscribe()
-
-// ── TAB SWITCH ──
-window.switchTab = function(tab) {
-  activeTab = tab
-  document.getElementById('tabMsgs').classList.toggle('active', tab==='msgs')
-  document.getElementById('tabSwaps').classList.toggle('active', tab==='swaps')
-  document.getElementById('ibList').style.display   = tab==='msgs'  ? 'block' : 'none'
-  document.getElementById('swapList').style.display = tab==='swaps' ? 'block' : 'none'
-  document.getElementById('searchWrap').style.display = tab==='msgs' ? 'block' : 'none'
-  if (tab==='swaps') renderSwapList()
-}
-
-// ── INBOX ──
-async function loadIb() {
-  const { data: msgs } = await supabase.from('messages')
-    .select('id,from_user_id,to_user_id,body,read,created_at,msg_type,swap_id,item_id')
-    .or(`from_user_id.eq.${me.id},to_user_id.eq.${me.id}`)
-    .order('created_at', { ascending: false }).limit(100)
-  if (!msgs?.length) { renderIbEmpty(); return }
-  const map = new Map()
-  const pids = new Set()
-  for (const m of msgs) {
-    const isMe = m.from_user_id === me.id
-    const p2   = isMe ? m.to_user_id : m.from_user_id
-    if (!map.has(p2)) map.set(p2, { p2, partner: null, last: m, unread: 0, swap: null })
-    if (!isMe && !m.read) map.get(p2).unread++
-    pids.add(p2)
-  }
-  const swapIds = [...new Set(msgs.filter(m => m.swap_id).map(m => m.swap_id))].slice(0, 30)
-  const [profRes, swRes] = await Promise.all([
-    supabase.from('profiles').select('id,username,display_name,avatar_url').in('id', [...pids]),
-    swapIds.length ? supabase.from('swaps').select('id,status').in('id', swapIds) : { data: [] }
-  ])
-  const profMap = {}, swMap = {}
-  profRes.data?.forEach(p => profMap[p.id] = p)
-  swRes.data?.forEach(s => swMap[s.id] = s)
-  for (const [p2, conv] of map) {
-    conv.partner = profMap[p2] || { id: p2, username: 'user', display_name: 'User', avatar_url: null }
-    const sm = msgs.find(m => m.swap_id && (m.from_user_id === p2 || m.to_user_id === p2))
-    if (sm && swMap[sm.swap_id]) conv.swap = swMap[sm.swap_id]
-  }
-  convs = [...map.values()]
-  renderIb(convs); updBadge(); updMsgTabBadge()
-}
-
-function renderIb(list) {
-  const el=document.getElementById('ibList')
-  if (!list.length) { renderIbEmpty(); return }
-  const swapIcon = `<img src="swap.png" alt="Swap" style="width:1.05em;height:1.05em;object-fit:contain;display:inline-block;vertical-align:-0.15em;margin-right:.35em;">`
-  el.innerHTML = list.map(c=>{
-    const pp=c.partner, name=pp.display_name||pp.username||'User', ava=pp.avatar_url||av(name)
-    const isAct=pp.id===pid
-    const preHtml = c.last?.msg_type==='swap_request' ? `${swapIcon}Swap request` : (c.last?.msg_type==='image' ? '📷 Photo' : esc(c.last?.body||'…'))
-    const pill = c.swap?`<div class="c-swap-pill ${c.swap.status}">⇄ ${c.swap.status}</div>`:''
-    return `<div class="conv ${isAct?'active':''} ${c.unread?'unread':''}" data-pid="${pp.id}" onclick="window.__oc('${pp.id}','${c.last?.item_id||''}','${c.last?.swap_id||''}')">
-      <div class="c-av"><img src="${ava}" alt=""/></div>
-      <div class="c-body">
-        <div class="c-r1"><span class="c-name">${esc(name)}</span><span class="c-time">${ago(c.last?.created_at)}</span></div>
-        <div class="c-pre">${preHtml}</div>${pill}
-      </div>
-      ${c.unread?`<div class="c-badge">${c.unread}</div>`:''}
-    </div>`
-  }).join('')
-}
-function renderIbEmpty(){document.getElementById('ibList').innerHTML=`<div class="ib-empty"><div class="ib-empty-icon">💌</div><h4>No messages yet</h4><p>Browse items and tap "Message Swapper" to start a conversation.</p></div>`}
-window.__oc=(a,b,c)=>openConv(a,b||null,c||null)
-window.filterIb=q=>renderIb(q?convs.filter(c=>(c.partner.display_name||c.partner.username||'').toLowerCase().includes(q.toLowerCase())):convs)
-
-// ── LOAD ALL SWAPS ──
-async function loadAllSwaps() {
-  const { data } = await supabase.from('swaps')
-    .select(`*, ri:items!requested_item_id(id,name,images,pts,category), oi:items!offered_item_id(id,name,images,pts,category), requester:profiles!requester_id(id,username,display_name,avatar_url), owner:profiles!owner_id(id,username,display_name,avatar_url)`)
-    .or(`requester_id.eq.${me.id},owner_id.eq.${me.id}`)
-    .order('created_at',{ascending:false})
-  allSwaps = data || []
-  updSwapTabBadge()
-}
-
-function renderSwapList() {
-  const el = document.getElementById('swapList')
-  if (!allSwaps.length) {
-    el.innerHTML = `<div class="ib-empty"><div class="ib-empty-icon"><img src="swap.png" alt="Swaps" style="width:1.35em;height:1.35em;object-fit:contain;display:inline-block;vertical-align:middle;"></div><h4>No swaps yet</h4><p>Send a swap request from any item's detail page.</p></div>`
-    return
-  }
-  const checkIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:1.05em;height:1.05em;display:inline-block;vertical-align:-0.15em;margin-right:.35em;"><polyline points="20 6 9 17 4 12"/></svg>`
-  const lockIcon  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="width:1.05em;height:1.05em;display:inline-block;vertical-align:-0.15em;margin-right:.35em;"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>`
-  const doneIcon  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:1.05em;height:1.05em;display:inline-block;vertical-align:-0.15em;margin-right:.35em;"><path d="M7.5 13.5c1.5 1.5 3.2 2.3 4.5 2.3 1.4 0 3.2-.8 4.5-2.3"/><path d="M7 12c-1.2-1.2-2-2.3-2-3.6 0-1.4 1.1-2.4 2.4-2.4 1 0 1.8.6 2.6 1.4"/><path d="M17 12c1.2-1.2 2-2.3 2-3.6 0-1.4-1.1-2.4-2.4-2.4-1 0-1.8.6-2.6 1.4"/></svg>`
-  const lbl = {pending:'⏳ Pending',accepted:`${checkIcon}Accepted`,declined:'❌ Declined',cancelled:'🚫 Cancelled',swapped:`${doneIcon}Swapped`,otp_pending:`${lockIcon}OTP Required`}
-  el.innerHTML = allSwaps.map(s => {
-    const ri = s.ri?.images?.[0]||FALLBACK, oi = s.oi?.images?.[0]||FALLBACK
-    const rn = s.ri?.name||'Item', on = s.oi?.name||s.offered_item_id?'Item':'(pts only)'
-    const isRequester = s.requester_id === me.id
-    const partner = isRequester ? s.owner : s.requester
-    const pName = partner?.display_name||partner?.username||'User'
-    const isOtpReady = s.status === 'accepted' || s.status === 'otp_pending'
-    const otpBtn = isOtpReady ? `<button class="sr-otp-btn" onclick="openOtpModal('${s.id}',event)">${lockIcon}Enter Swap OTP to Complete</button>` : ''
-    const ptsPill = s.offered_pts > 0 ? `<div class="sr-pts-pill">💰 +${s.offered_pts.toLocaleString()} pts included</div>` : ''
-    return `<div class="swap-row ${sw&&sw.id===s.id?'active':''}" onclick="openSwapConv('${s.id}')">
-      <div class="sr-top">
-        <div class="sr-imgs">
-          ${s.offered_item_id ? `<img class="sr-img" src="${oi}" title="${on}"/>` : `<div class="sr-img" style="background:linear-gradient(135deg,#f0fdf4,#e8f5f0);display:flex;align-items:center;justify-content:center;font-size:16px;">💰</div>`}
-          <img class="sr-img" src="${ri}" title="${rn}"/>
-        </div>
-        <div class="sr-arr">⇄</div>
-        <div class="sr-info">
-          <div class="sr-names">${esc(on)} ⇄ ${esc(rn)}</div>
-          <div class="sr-partner">${isRequester?'You offered to':'Request from'} ${esc(pName)}</div>
-          ${ptsPill}
-        </div>
-      </div>
-      <div class="sr-status"><span class="sr-badge ${s.status}">${lbl[s.status]||s.status}</span><span class="sr-time">${ago(s.created_at)}</span></div>
-      ${otpBtn}
-    </div>`
-  }).join('')
-}
-
-window.openSwapConv = async function(swapId) {
-  const s = allSwaps.find(x => x.id === swapId)
-  if (!s) return
-  const partnerId = s.requester_id === me.id ? s.owner_id : s.requester_id
-  openConv(partnerId, s.requested_item_id, swapId)
-  switchTab('msgs')
-}
-
-async function openConv(partnerId, itemId=null, swapId=null) {
-  pid=partnerId; itmId=itemId&&itemId!=='null'?itemId:null; swId=swapId&&swapId!=='null'?swapId:null; sw=null
-  currentItemData = null
-  document.querySelectorAll('.conv').forEach(el=>{el.classList.toggle('active',el.dataset.pid===partnerId);if(el.dataset.pid===partnerId)el.classList.remove('unread')})
-  supabase.from('messages').update({read:true}).eq('from_user_id',partnerId).eq('to_user_id',me.id).eq('read',false).then(()=>{
-    const c=convs.find(c=>c.partner.id===partnerId);if(c){c.unread=0;updBadge();updMsgTabBadge()}
-  })
-  const c=convs.find(c=>c.partner.id===partnerId);if(c){c.unread=0;updBadge();updMsgTabBadge();renderIb(convs)}
-  const {data:partner} = await supabase.from('profiles').select('*').eq('id',partnerId).single()
-  if (!partner) return
-  const pName=partner.display_name||partner.username||'User', pAv=partner.avatar_url||av(pName)
-  document.getElementById('chHdr').innerHTML=`
-    <div class="ch-hdr-av"><img src="${pAv}" alt=""/></div>
-    <div class="ch-hdr-info"><div class="ch-hdr-name">${esc(pName)}</div><div class="ch-hdr-sub">@${esc(partner.username||'user')}</div></div>
-    <button class="btn-hdr" onclick="location.href='../profile/profile.html?userId=${partner.id}'">View Profile</button>
-    ${itmId?`<button class="btn-hdr" onclick="location.href='../personal/item-detail.html?id=${itmId}'">View Item</button>`:''}
-  `
-  if (itmId) {
-    try {
-      const { data: itm } = await supabase.from('items').select('*').eq('id', itmId).single()
-      if (itm) { currentItemData = itm; renderItemContextBar(itm, null) }
-    } catch(e) {}
-  }
-  if (swId) {
-    let {data:s} = await supabase.from('swaps').select('*,ri:items!requested_item_id(id,name,images,pts,category)').eq('id',swId).single()
-    if (s?.offered_item_id) {
-      const {data:oi} = await supabase.from('items').select('id,name,images,pts,category').eq('id',s.offered_item_id).single()
-      if (oi) s.oi = oi
-    }
-    if (s){sw=s;renderBanner(s);if(currentItemData)renderItemContextBar(currentItemData,s)}
-  }
-  document.getElementById('chEmpty').style.display='none'
-  document.getElementById('chActive').style.display='flex'
-  await loadMsgs(partnerId,partner)
-  if (rts) supabase.removeChannel(rts)
-  rts = supabase.channel(`c-${partnerId}`)
-    .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:`to_user_id=eq.${me.id}`},async pl=>{
-      const m=pl.new
-      if (m.from_user_id!==pid){await loadIb();return}
-      supabase.from('messages').update({read:true}).eq('id',m.id).then(()=>{})
-      if (m.swap_id){
-        let {data:s} = await supabase.from('swaps').select('*,ri:items!requested_item_id(id,name,images,pts,category)').eq('id',m.swap_id).single()
-        if (s?.offered_item_id){const{data:oi}=await supabase.from('items').select('id,name,images,pts,category').eq('id',s.offered_item_id).single();if(oi)s.oi=oi}
-        if(s){sw=s;swId=s.id;renderBanner(s);if(currentItemData)renderItemContextBar(currentItemData,s)}
-      }
-      const {data:ptnr}=await supabase.from('profiles').select('*').eq('id',pid).single()
-      appendMsg(m,ptnr,true)
-      const conv=convs.find(c=>c.partner.id===pid);if(conv)conv.last=m
-    })
-    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'swaps'},async pl=>{
-      if (sw&&pl.new.id===sw.id){
-        let {data:s}=await supabase.from('swaps').select('*,ri:items!requested_item_id(id,name,images,pts,category)').eq('id',sw.id).single()
-        if(s?.offered_item_id){const{data:oi}=await supabase.from('items').select('id,name,images,pts,category').eq('id',s.offered_item_id).single();if(oi)s.oi=oi}
-        if(s){sw=s;renderBanner(s);if(currentItemData)renderItemContextBar(currentItemData,s);document.querySelectorAll(`.sc[data-sid="${s.id}"]`).forEach(card=>updateCard(card,s))}
-        const conv=convs.find(c=>c.partner.id===pid);if(conv&&conv.swap)conv.swap.status=pl.new.status;renderIb(convs)
-        await loadAllSwaps();renderSwapList()
-      }
-    })
-    .subscribe()
-  updSwapPanelBtn()
-}
-
-function updSwapPanelBtn(){
-  const btn = document.getElementById('swapPanelBtn')
-  if(!btn) return
-  if(sw && sw.status !== 'swapped'){
-    btn.style.display = 'flex'
-    btn.classList.toggle('has-swap', sw.status === 'pending' && sw.owner_id === me.id)
-  } else {
-    btn.style.display = 'none'
-    document.getElementById('swapPanel').classList.remove('show')
-  }
-}
-
-function renderItemContextBar(itm, swapData) {
-  const bar = document.getElementById('itemContextBar')
-  if (!itm) { bar.classList.remove('show'); return }
-  const img = (itm.images&&itm.images[0])||itm.image||FALLBACK
-  const status = swapData?.status
-  const checkIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:1.05em;height:1.05em;display:inline-block;vertical-align:-0.15em;margin-right:.35em;"><polyline points="20 6 9 17 4 12"/></svg>`
-  const lockIcon  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="width:1.05em;height:1.05em;display:inline-block;vertical-align:-0.15em;margin-right:.35em;"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>`
-  const doneIcon  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:1.05em;height:1.05em;display:inline-block;vertical-align:-0.15em;margin-right:.35em;"><path d="M7.5 13.5c1.5 1.5 3.2 2.3 4.5 2.3 1.4 0 3.2-.8 4.5-2.3"/><path d="M7 12c-1.2-1.2-2-2.3-2-3.6 0-1.4 1.1-2.4 2.4-2.4 1 0 1.8.6 2.6 1.4"/><path d="M17 12c1.2-1.2 2-2.3 2-3.6 0-1.4-1.1-2.4-2.4-2.4-1 0-1.8.6-2.6 1.4"/></svg>`
-  const statLbl = {pending:'⏳ Pending swap',accepted:`${checkIcon}Swap accepted`,declined:'❌ Swap declined',cancelled:'🚫 Cancelled',swapped:`${doneIcon}Swapped`,otp_pending:`${lockIcon}OTP Required`}
-  const badgeCls = status||'no_swap'
-  const badgeTxt = status ? (statLbl[status]||status) : `<img src="swap.png" alt="Available" style="width:1.05em;height:1.05em;object-fit:contain;display:inline-block;vertical-align:-0.15em;margin-right:.35em;">Available`
-  const ptsNote = swapData?.offered_pts > 0 ? `<span style="font-size:10.5px;color:#16a34a;font-weight:700;margin-left:6px;">+${swapData.offered_pts.toLocaleString()} pts</span>` : ''
-  bar.innerHTML = `
-    <img class="icb-img" src="${img}" alt="${esc(itm.name)}" onclick="location.href='../personal/item-detail.html?id=${itm.id}'" title="View item"/>
-    <div class="icb-info">
-      <div class="icb-name">${esc(itm.name)}</div>
-      <div class="icb-pts">${(itm.pts||0).toLocaleString()} pts · ${esc(itm.category||'')}${ptsNote}</div>
-    </div>
-    <div class="icb-status">
-      <span class="icb-badge ${badgeCls}">${badgeTxt}</span>
-      <button class="icb-view-btn" onclick="location.href='../personal/item-detail.html?id=${itm.id}'">View ↗</button>
-    </div>`
-  bar.classList.add('show')
-}
-
-function renderBanner(s) {
-  const bn=document.getElementById('swBanner')
-  if (!s){bn.classList.remove('show');return}
-  const ri=s.ri?.images?.[0]||FALLBACK, oi=s.oi?.images?.[0]||FALLBACK
-  const rn=s.ri?.name||'Item', on=s.oi?.name||'Item'
-  const checkIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:1.05em;height:1.05em;display:inline-block;vertical-align:-0.15em;margin-right:.35em;"><polyline points="20 6 9 17 4 12"/></svg>`
-  const lockIcon  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="width:1.05em;height:1.05em;display:inline-block;vertical-align:-0.15em;margin-right:.35em;"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>`
-  const doneIcon  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:1.05em;height:1.05em;display:inline-block;vertical-align:-0.15em;margin-right:.35em;"><path d="M7.5 13.5c1.5 1.5 3.2 2.3 4.5 2.3 1.4 0 3.2-.8 4.5-2.3"/><path d="M7 12c-1.2-1.2-2-2.3-2-3.6 0-1.4 1.1-2.4 2.4-2.4 1 0 1.8.6 2.6 1.4"/><path d="M17 12c1.2-1.2 2-2.3 2-3.6 0-1.4-1.1-2.4-2.4-2.4-1 0-1.8.6-2.6 1.4"/></svg>`
-  const lbl={pending:'⏳ Pending',accepted:`${checkIcon}Accepted`,declined:'❌ Declined',cancelled:'🚫 Cancelled',swapped:`${doneIcon}Swapped`,otp_pending:`${lockIcon}OTP Required`}
-  const otpBtn = (s.status==='otp_pending'||s.status==='accepted') && s.status!=='swapped'
-    ? `<button onclick="openOtpModal('${s.id}',event)" style="padding:6px 14px;border-radius:50px;border:none;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;">${lockIcon}Enter OTP</button>`
-    : ''
-  const ptsStrip = s.offered_pts > 0
-    ? `<div class="sc-pts-strip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>+${s.offered_pts.toLocaleString()} pts included in this offer</div>`
-    : ''
-  const oiDisplay = s.offered_item_id
-    ? `<img class="sw-thumb" src="${oi}" title="${on}"/>`
-    : `<div class="sw-thumb" style="background:linear-gradient(135deg,#f0fdf4,#e8f5f0);display:flex;align-items:center;justify-content:center;font-size:18px;border-radius:9px;">💰</div>`
-  bn.innerHTML=`<div class="sw-inner">
-    <div class="sw-pair">
-      ${oiDisplay}
-      <span class="sw-arr">⇄</span>
-      <img class="sw-thumb" src="${ri}" title="${rn}"/>
-      <div><div class="sw-info-t">${esc(s.offered_item_id ? on : (s.offered_pts > 0 ? s.offered_pts.toLocaleString()+' pts' : '?'))} ⇄ ${esc(rn)}</div><div class="sw-info-s">Swap request${s.offered_pts > 0 && s.offered_item_id ? ` · +${s.offered_pts.toLocaleString()} pts` : ''}</div></div>
-    </div>
-    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
-      <div class="sw-badge ${s.status}">${lbl[s.status]||s.status}</div>
-      ${otpBtn}
-    </div>
-  </div>${ptsStrip}`
-  bn.classList.add('show')
-}
-
-async function loadMsgs(partnerId, partner) {
-  const el=document.getElementById('chMsgs')
-  el.innerHTML='<div class="ldr"><div class="spin"></div></div>'
-  const itemCardHtml = currentItemData ? buildItemLinkCard(currentItemData) : ''
-  const {data:msgs} = await supabase.from('messages').select('*')
-    .or(`and(from_user_id.eq.${me.id},to_user_id.eq.${partnerId}),and(from_user_id.eq.${partnerId},to_user_id.eq.${me.id})`)
-    .order('created_at',{ascending:true})
-  el.innerHTML=''
-  if (itemCardHtml) {
-    const pin = document.createElement('div')
-    pin.style.cssText='display:flex;justify-content:center;margin:8px 0 14px;'
-    pin.innerHTML = itemCardHtml
-    el.appendChild(pin)
-  }
-  if (!msgs?.length){el.innerHTML+='<div style="text-align:center;color:#ccc;font-size:13px;margin-top:16px;">No messages yet — say hi! 👋</div>';return}
-  const sids=[...new Set(msgs.filter(m=>m.swap_id).map(m=>m.swap_id))]
-  let smap={}
-  if (sids.length){
-    const {data:swaps}=await supabase.from('swaps').select('*,ri:items!requested_item_id(id,name,images)').in('id',sids)
-    if(swaps){
-      const offerIds=[...new Set(swaps.filter(s=>s.offered_item_id).map(s=>s.offered_item_id))]
-      if(offerIds.length){
-        const {data:ois}=await supabase.from('items').select('id,name,images').in('id',offerIds)
-        ois?.forEach(oi=>swaps.forEach(s=>{ if(s.offered_item_id===oi.id) s.oi=oi }))
-      }
-      swaps.forEach(s=>{
-        smap[s.id]=s
-        if(!sw&&s.id===swId){sw=s;renderBanner(s);if(currentItemData)renderItemContextBar(currentItemData,s)}
-      })
-    }
-  }
-  if (!sw) {
-    const lastSwapMsg=[...msgs].reverse().find(m=>m.swap_id)
-    if(lastSwapMsg&&smap[lastSwapMsg.swap_id]){sw=smap[lastSwapMsg.swap_id];swId=sw.id}
-  }
-  if (sw) {
-    const { data: freshSw } = await supabase.from('swaps').select('*').eq('id', sw.id).single()
-    if (freshSw) { sw = { ...sw, ...freshSw }; smap[sw.id] = sw }
-    renderBanner(sw)
-    if (currentItemData) renderItemContextBar(currentItemData, sw)
-  }
-  let lastDate=null
-  for (let i=0;i<msgs.length;i++){
-    const m=msgs[i],prev=msgs[i-1],next=msgs[i+1]
-    const md=new Date(m.created_at).toDateString()
-    if(md!==lastDate){lastDate=md;const d=document.createElement('div');d.className='date-sep';d.textContent=fmtDate(m.created_at);el.appendChild(d)}
-    appendMsg(m,partner,false,(sw && m.swap_id===sw.id ? sw : smap[m.swap_id])||null,prev,next)
-  }
-  if (sw) document.querySelectorAll(`.sc[data-sid="${sw.id}"]`).forEach(card => updateCard(card, sw))
-  scrollB()
-}
-
-function buildItemLinkCard(itm) {
-  const img = (itm.images&&itm.images[0])||itm.image||FALLBACK
-  const isSwapped = itm.status === 'swapped'
-  const checkIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:1.05em;height:1.05em;display:inline-block;vertical-align:-0.15em;margin-right:.35em;"><polyline points="20 6 9 17 4 12"/></svg>`
-  const doneIcon  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:1.05em;height:1.05em;display:inline-block;vertical-align:-0.15em;margin-right:.35em;"><path d="M7.5 13.5c1.5 1.5 3.2 2.3 4.5 2.3 1.4 0 3.2-.8 4.5-2.3"/><path d="M7 12c-1.2-1.2-2-2.3-2-3.6 0-1.4 1.1-2.4 2.4-2.4 1 0 1.8.6 2.6 1.4"/><path d="M17 12c1.2-1.2 2-2.3 2-3.6 0-1.4-1.1-2.4-2.4-2.4-1 0-1.8.6-2.6 1.4"/></svg>`
-  return `<a class="item-link-card" href="../personal/item-detail.html?id=${itm.id}" target="_blank">
-    <img class="ilc-img" src="${img}" alt="${esc(itm.name)}"/>
-    <div class="ilc-body">
-      <div class="ilc-cat">${esc(itm.category||'Item')}</div>
-      <div class="ilc-name">${esc(itm.name)}</div>
-      <div class="ilc-footer">
-        <span class="ilc-pts">${(itm.pts||0).toLocaleString()} pts</span>
-        <span class="ilc-avail ${isSwapped?'swapped':'available'}">${isSwapped?`${doneIcon}Swapped`:`${checkIcon}Available`}</span>
-      </div>
-    </div>
-  </a>`
-}
-
-function appendMsg(m, partner, scroll=true, swData=null, prev=null, next=null) {
-  const el=document.getElementById('chMsgs')
-  const isMe=m.from_user_id===me.id
-  const pAv=partner?.avatar_url||av(partner?.display_name||'U')
-  const rx=m.reactions||{}
-  const samePrev=prev&&prev.from_user_id===m.from_user_id&&(new Date(m.created_at)-new Date(prev.created_at))<120000
-  const sameNext=next&&next.from_user_id===m.from_user_id&&(new Date(next.created_at)-new Date(m.created_at))<120000
-  const gc=samePrev&&sameNext?'grp-mid same-sender':samePrev?'grp-last same-sender':sameNext?'grp-first':''
-  const row=document.createElement('div')
-  row.className=`mr ${isMe?'mine':''} ${gc}`
-  row.dataset.mid=m.id
-  let inner=''
-  const rr=isMe?`<div class="rr">${m.read
-    ?`<svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 13 13"/><polyline points="9 9 3 15 7 19"/></svg>`
-    :`<svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`}</div>`:''
-  const epop=`<div id="ep-${m.id}" class="ep">${EMOJIS.map(e=>`<span class="ep-e" onclick="reactTo('${m.id}','${e}')">${e}</span>`).join('')}</div>`
-  const rxs=`<div class="rx" id="rx-${m.id}">${rxHTML(rx,m.id)}</div>`
-
-  if (m.msg_type==='swap_request'&&swData) {
-    const ri=swData.ri?.images?.[0]||FALLBACK, oi=swData.oi?.images?.[0]||FALLBACK
-    const rn=swData.ri?.name||'Item', on=swData.oi?.name||swData.offered_item_id||'Item'
-    const isOwn=swData.owner_id===me.id, stat=swData.status
-    const checkIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:1.05em;height:1.05em;display:inline-block;vertical-align:-0.15em;margin-right:.35em;"><polyline points="20 6 9 17 4 12"/></svg>`
-    const lockIcon  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="width:1.05em;height:1.05em;display:inline-block;vertical-align:-0.15em;margin-right:.35em;"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>`
-    const doneIcon  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:1.05em;height:1.05em;display:inline-block;vertical-align:-0.15em;margin-right:.35em;"><path d="M7.5 13.5c1.5 1.5 3.2 2.3 4.5 2.3 1.4 0 3.2-.8 4.5-2.3"/><path d="M7 12c-1.2-1.2-2-2.3-2-3.6 0-1.4 1.1-2.4 2.4-2.4 1 0 1.8.6 2.6 1.4"/><path d="M17 12c1.2-1.2 2-2.3 2-3.6 0-1.4-1.1-2.4-2.4-2.4-1 0-1.8.6-2.6 1.4"/></svg>`
-    const lbl={pending:'⏳ Pending',accepted:`${checkIcon}Accepted`,declined:'❌ Declined',cancelled:'🚫 Cancelled',swapped:`${doneIcon}Swapped`,otp_pending:`${lockIcon}OTP Required`}
-    const ptsStrip = swData.offered_pts > 0
-      ? `<div class="sc-pts-strip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>+${swData.offered_pts.toLocaleString()} pts included</div>`
-      : ''
-    const oiDisplay = swData.offered_item_id
-      ? `<img src="${oi}" alt="${on}"/>`
-      : `<div style="width:100%;aspect-ratio:1;border-radius:10px;border:1px solid var(--border);background:linear-gradient(135deg,#f0fdf4,#e8f5f0);display:flex;align-items:center;justify-content:center;font-size:2rem;margin-bottom:5px;">💰</div>`
-    let swBot=''
-    if (stat==='otp_pending'||stat==='accepted') {
-      swBot=`<div class="sc-acts"><button class="btn-accept" onclick="openOtpModal('${swData.id}',event)">${lockIcon}Enter OTP to Complete</button></div>`
-    } else if (stat==='swapped') {
-      swBot=`<div class="sc-status swapped">${doneIcon}Swap completed!</div>`
-    } else if (stat!=='pending') {
-      swBot=`<div class="sc-status ${stat}">${lbl[stat]}</div>`
-    } else if (isOwn) {
-      swBot=`<div class="sc-acts"><button class="btn-accept" onclick="respSwap('${swData.id}','accepted')">✓ Accept</button><button class="btn-decline" onclick="respSwap('${swData.id}','declined')">✗ Decline</button></div>`
-    } else {
-      swBot=`<button class="btn-cancel-swap" onclick="respSwap('${swData.id}','cancelled')">Cancel Request</button>`
-    }
-    inner=`<div class="bw">
-      <div class="sc" data-sid="${swData.id}">
-        <div class="sc-hdr"><span class="sc-hdr-icon"><img src="swap.png" alt="Swap" style="width:1.05em;height:1.05em;object-fit:contain;display:inline-block;vertical-align:middle;"></span><div><div class="sc-hdr-t">Swap Request</div><div class="sc-hdr-s">${isMe?'You offered':'They offered'}</div></div></div>
-        <div class="sc-items">
-          <div class="sc-i">${oiDisplay}<div class="sc-i-n">${esc(swData.offered_item_id ? on : (swData.offered_pts > 0 ? swData.offered_pts.toLocaleString()+' pts' : '?'))}</div><div class="sc-i-p">${isMe?'Your offer':'Their offer'}</div></div>
-          <div class="sc-arr">⇄</div>
-          <div class="sc-i"><img src="${ri}" alt="${rn}"/><div class="sc-i-n">${esc(rn)}</div><div class="sc-i-p">${isMe?'Their item':'Your item'}</div></div>
-        </div>
-        ${ptsStrip}
-        ${m.body?`<div class="sc-note">"${esc(m.body)}"</div>`:''}
-        <div class="sc-bot">${swBot}</div>
-      </div>${rxs}</div>`
-  } else if (['swap_accepted','swap_declined','swap_cancelled','swap_swapped'].includes(m.msg_type)) {
-    inner=`<div class="bw"><div class="bubble">${esc(m.body)}${rr}</div></div>`
-  } else if (m.msg_type==='image'&&m.body) {
-    inner=`<div class="bw"><div class="msg-acts"><div class="mac" onclick="openEp('${m.id}',this)">😊</div></div><div class="bubble" style="padding:5px;"><img class="bub-img" src="${esc(m.body)}" onclick="openLb(this.src)"/>${rr}</div>${epop}${rxs}</div>`
-  } else {
-    inner=`<div class="bw"><div class="msg-acts"><div class="mac" onclick="openEp('${m.id}',this)">😊</div></div><div class="bubble">${esc(m.body)}${rr}</div>${epop}${rxs}</div>`
-  }
-  row.innerHTML=isMe?`<div class="mr-av-sp"></div>${inner}`:`<div class="mr-av"><img src="${pAv}" alt=""/></div>${inner}`
-  el.appendChild(row)
-  if(scroll)scrollB()
-}
-
-function rxHTML(rx,mid){
-  return Object.entries(rx).filter(([e,u])=>u?.length).map(([e,u])=>{
-    const mine=u.includes(me.id)
-    return `<div class="rxp ${mine?'mine':''}" onclick="reactTo('${mid}','${e}')" title="${u.length}">${e}<span>${u.length}</span></div>`
-  }).join('')
-}
-
-function updateCard(card,s) {
-  const bot=card.querySelector('.sc-bot'); if(!bot)return
-  const checkIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:1.05em;height:1.05em;display:inline-block;vertical-align:-0.15em;margin-right:.35em;"><polyline points="20 6 9 17 4 12"/></svg>`
-  const lockIcon  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="width:1.05em;height:1.05em;display:inline-block;vertical-align:-0.15em;margin-right:.35em;"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>`
-  const doneIcon  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:1.05em;height:1.05em;display:inline-block;vertical-align:-0.15em;margin-right:.35em;"><path d="M7.5 13.5c1.5 1.5 3.2 2.3 4.5 2.3 1.4 0 3.2-.8 4.5-2.3"/><path d="M7 12c-1.2-1.2-2-2.3-2-3.6 0-1.4 1.1-2.4 2.4-2.4 1 0 1.8.6 2.6 1.4"/><path d="M17 12c1.2-1.2 2-2.3 2-3.6 0-1.4-1.1-2.4-2.4-2.4-1 0-1.8.6-2.6 1.4"/></svg>`
-  const lbl={pending:'⏳ Pending',accepted:`${checkIcon}Accepted`,declined:'❌ Declined',cancelled:'🚫 Cancelled',swapped:`${doneIcon}Swap completed!`,otp_pending:`${lockIcon}OTP Required`}
-  const isOwn=s.owner_id===me.id
-  if (s.status==='swapped') {
-    bot.innerHTML=`<div class="sc-status swapped">${doneIcon}Swap completed!</div>`
-  } else if (s.status==='otp_pending'||s.status==='accepted') {
-    bot.innerHTML=`<div class="sc-acts"><button class="btn-accept" onclick="openOtpModal('${s.id}',event)">${lockIcon}Enter OTP to Complete</button></div>`
-  } else if (s.status!=='pending') {
-    bot.innerHTML=`<div class="sc-status ${s.status}">${lbl[s.status]||s.status}</div>`
-  } else if (isOwn) {
-    bot.innerHTML=`<div class="sc-acts"><button class="btn-accept" onclick="respSwap('${s.id}','accepted')">✓ Accept</button><button class="btn-decline" onclick="respSwap('${s.id}','declined')">✗ Decline</button></div>`
-  } else {
-    bot.innerHTML=`<button class="btn-cancel-swap" onclick="respSwap('${s.id}','cancelled')">Cancel Request</button>`
-  }
-}
-
-window.sendMsg = async function() {
-  const inp=document.getElementById('chInp'), body=inp.value.trim()
-  if (!body&&!pendImgs.length) return
-  if (!pid) return
-  document.getElementById('sendBtn').disabled=true
-  for (const f of pendImgs) {
-    const ext=f.name.split('.').pop(), path=`chat/${me.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-    const {error:ue}=await supabase.storage.from('item-images').upload(path,f,{upsert:false})
-    if(!ue){const {data:{publicUrl}}=supabase.storage.from('item-images').getPublicUrl(path);await supabase.from('messages').insert({from_user_id:me.id,to_user_id:pid,item_id:itmId||null,body:publicUrl,msg_type:'image',read:false})}
-  }
-  pendImgs=[];document.getElementById('imgStrip').innerHTML='';document.getElementById('imgStrip').classList.remove('show')
-  if (body) {
-    const {data:nm}=await supabase.from('messages').insert({from_user_id:me.id,to_user_id:pid,item_id:itmId||null,body,msg_type:'text',read:false}).select().single()
-    if(nm){const {data:ptnr}=await supabase.from('profiles').select('*').eq('id',pid).single();appendMsg(nm,ptnr,true);const c=convs.find(c=>c.partner.id===pid);if(c){c.last=nm;renderIb(convs)}}
-  }
-  inp.value='';autoRz(inp);document.getElementById('sendBtn').disabled=false;inp.focus()
-}
-
-window.respSwap = async function(sid, ns) {
-  const cl={accepted:'Accept this swap? An OTP code will be generated.',declined:'Decline this swap?',cancelled:'Cancel your swap request?'}
-  if(!confirm(cl[ns]))return
-  if (ns === 'declined' || ns === 'cancelled') {
-    await refundSwapPts(sid)
-  }
-  const { error: swErr } = await supabase.from('swaps').update({status: ns==='accepted' ? 'otp_pending' : ns}).eq('id',sid)
-  if (swErr) { showToast('❌ Failed: ' + swErr.message); return }
-  const bm={accepted:'Swap accepted! Use the OTP button to confirm the physical exchange.',declined:'❌ Swap request declined.',cancelled:'🚫 Swap request cancelled.'}
-  const mt = ns==='accepted' ? 'swap_accepted' : ns==='declined' ? 'swap_declined' : 'swap_cancelled'
-  await supabase.from('messages').insert({from_user_id:me.id,to_user_id:pid,body:bm[ns],msg_type:mt,swap_id:sid,read:false})
-  if(sw){sw.status=ns==='accepted'?'otp_pending':ns;renderBanner(sw);if(currentItemData)renderItemContextBar(currentItemData,sw)}
-  document.querySelectorAll(`.sc[data-sid="${sid}"]`).forEach(c=>updateCard(c,{...sw,status:ns==='accepted'?'otp_pending':ns}))
-  updSwapPanelBtn(); renderSwapPanel()
-  const lbl={accepted:'Swap accepted! Enter OTP to complete.',declined:'Swap declined.',cancelled:'Swap request cancelled.'}
-  showToast(lbl[ns])
-  await loadAllSwaps(); renderSwapList()
-  if (ns==='accepted') openOtpModal(sid, null)
-}
-
-function gen4() { return String(Math.floor(1000 + Math.random() * 9000)) }
-
-window.openOtpModal = async function(swapId, e) {
-  if (e) e.stopPropagation()
-  currentSwapId = swapId
-  const { data: swapRow } = await supabase.from('swaps').select('id,requester_id,owner_id,otp_requester,otp_owner,status,offered_pts').eq('id',swapId).single()
-  if (!swapRow) { showToast('Could not load swap.'); return }
-  const amRequester = swapRow.requester_id === me.id
-  const myField     = amRequester ? 'otp_requester' : 'otp_owner'
-  const storeKey    = `suot_otp_${swapId}_${me.id}`
-  let code = localStorage.getItem(storeKey) || swapRow[myField]
-  if (!code) {
-    code = gen4()
-    localStorage.setItem(storeKey, code)
-    await supabase.from('swaps').update({ [myField]: code, status: 'otp_pending' }).eq('id',swapId)
-  } else {
-    localStorage.setItem(storeKey, code)
-    const updateData = {}
-    if (!swapRow[myField]) updateData[myField] = code
-    if (swapRow.status !== 'otp_pending' && swapRow.status !== 'swapped') updateData.status = 'otp_pending'
-    if (Object.keys(updateData).length) await supabase.from('swaps').update(updateData).eq('id',swapId)
-  }
-  myOtpCode = code
-  document.getElementById('otpMain').style.display = 'block'
-  document.getElementById('otpSuccess').style.display = 'none'
-  document.getElementById('otpMyCode').textContent = code
-  document.querySelectorAll('#otpInputs input').forEach(i => { i.value = ''; i.classList.remove('filled') })
-  document.getElementById('otpVerifyBtn').disabled = true
-  const ptsNote = swapRow.offered_pts > 0
-    ? `<div style="font-size:12px;color:#16a34a;font-weight:700;margin-bottom:12px;padding:8px 12px;background:#f0fdf4;border-radius:10px;">💰 ${swapRow.offered_pts.toLocaleString()} pts will be transferred on confirmation</div>`
-    : ''
-  document.querySelector('.otp-sub').innerHTML = `Share your code with the other swapper, and enter theirs below to confirm the exchange.${ptsNote ? '<br/>' + ptsNote : ''}`
-  document.getElementById('otpOverlay').classList.add('open')
-}
-
-window.closeOtp = function() {
-  document.getElementById('otpOverlay').classList.remove('open')
-  myOtpCode = null; currentSwapId = null
-}
-window.copyOtp = function() {
-  if (myOtpCode) navigator.clipboard.writeText(myOtpCode).then(()=>showToast('Code copied!')).catch(()=>showToast('Code: '+myOtpCode))
-}
-window.otpInput = function(el,idx) {
-  el.value=el.value.replace(/\D/g,'').slice(-1)
-  el.classList.toggle('filled',el.value!=='')
-  if(el.value&&idx<3)document.querySelectorAll('#otpInputs input')[idx+1]?.focus()
-  document.getElementById('otpVerifyBtn').disabled=[...document.querySelectorAll('#otpInputs input')].some(i=>i.value==='')
-}
-window.otpKey = function(el,e,idx) {
-  if(e.key==='Backspace'&&!el.value&&idx>0)document.querySelectorAll('#otpInputs input')[idx-1]?.focus()
-}
-
-window.verifyOtp = async function() {
-  const entered=[...document.querySelectorAll('#otpInputs input')].map(i=>i.value).join('')
-  if (!currentSwapId) return
-  const {data:swapRow}=await supabase.from('swaps').select('otp_requester,otp_owner,requester_id,owner_id').eq('id',currentSwapId).single()
-  if (!swapRow) { showToast('Could not verify. Try again.'); return }
-  const amRequester=swapRow.requester_id===me.id
-  const partnerCode=amRequester?swapRow.otp_owner:swapRow.otp_requester
-  const myStoredCode=amRequester?swapRow.otp_requester:swapRow.otp_owner
-  if (!myStoredCode) { showToast('Generate your own code first.'); return }
-  if (!partnerCode) { showToast("The other swapper hasn't generated their code yet."); return }
-  if (entered!==partnerCode) { showToast('❌ Wrong code — double-check with your swap partner.'); return }
-
-  await transferSwapPts(currentSwapId)
-
-  const { data: swapFull2 } = await supabase.from('swaps')
-    .select('requester_id, owner_id, offered_pts, requested_pts')
-    .eq('id', currentSwapId).single()
-  if (swapFull2) {
-    if (swapFull2.offered_pts > 0)
-      await earnPtsFromSwap(swapFull2.owner_id, swapFull2.offered_pts, `Earned from swap #${currentSwapId}`)
-    if (swapFull2.requested_pts > 0)
-      await earnPtsFromSwap(swapFull2.requester_id, swapFull2.requested_pts, `Earned from swap #${currentSwapId}`)
-  }
-  await supabase.from('swaps').update({status:'swapped'}).eq('id',currentSwapId)
-
-  const {data:swapFull}=await supabase.from('swaps').select('requested_item_id,offered_item_id').eq('id',currentSwapId).single()
-  if (swapFull) {
-    const updates = [supabase.from('items').update({status:'swapped'}).eq('id',swapFull.requested_item_id)]
-    if (swapFull.offered_item_id) updates.push(supabase.from('items').update({status:'swapped'}).eq('id',swapFull.offered_item_id))
-    await Promise.all(updates)
-  }
-  await supabase.from('messages').insert({from_user_id:me.id,to_user_id:pid,body:'Swap confirmed! Both codes matched. The items are now marked as swapped.',msg_type:'swap_swapped',swap_id:currentSwapId,read:false})
-  localStorage.removeItem(`suot_otp_${currentSwapId}_${me.id}`)
-  if (sw){sw.status='swapped';renderBanner(sw);if(currentItemData){currentItemData.status='swapped';renderItemContextBar(currentItemData,sw)}}
-  document.querySelectorAll(`.sc[data-sid="${currentSwapId}"]`).forEach(c=>updateCard(c,{...sw,status:'swapped'}))
-  await loadAllSwaps(); renderSwapList()
-  document.getElementById('otpMain').style.display='none'
-  document.getElementById('otpSuccess').style.display='flex'
-}
-
-window.reactTo = async function(mid,emoji) {
-  document.querySelectorAll('.ep.open').forEach(p=>p.classList.remove('open'))
-  const{data:m}=await supabase.from('messages').select('reactions').eq('id',mid).single()
-  const rx=m?.reactions||{}
-  if(!rx[emoji])rx[emoji]=[]
-  const i=rx[emoji].indexOf(me.id)
-  if(i>-1)rx[emoji].splice(i,1);else rx[emoji].push(me.id)
-  if(!rx[emoji].length)delete rx[emoji]
-  await supabase.from('messages').update({reactions:rx}).eq('id',mid)
-  const strip=document.getElementById(`rx-${mid}`);if(strip)strip.innerHTML=rxHTML(rx,mid)
-}
-window.openEp=function(mid,btn){const ep=document.getElementById(`ep-${mid}`);if(!ep)return;document.querySelectorAll('.ep.open').forEach(p=>{if(p!==ep)p.classList.remove('open')});ep.classList.toggle('open')}
-document.addEventListener('click',e=>{if(!e.target.closest('.mac')&&!e.target.closest('.ep'))document.querySelectorAll('.ep.open').forEach(p=>p.classList.remove('open'))})
-
-window.handleImgs=function(input){const files=[...input.files];if(!files.length)return;pendImgs.push(...files);const strip=document.getElementById('imgStrip');strip.classList.add('show');files.forEach((f,i)=>{const r=new FileReader();r.onload=ev=>{const t=document.createElement('div');t.className='img-th';t.innerHTML=`<img src="${ev.target.result}"/><button class="img-rm" onclick="rmImg(${pendImgs.length-files.length+i})">×</button>`;strip.appendChild(t)};r.readAsDataURL(f)});input.value=''}
-window.rmImg=function(i){pendImgs.splice(i,1);const s=document.getElementById('imgStrip');s.querySelectorAll('.img-th')[i]?.remove();if(!pendImgs.length)s.classList.remove('show')}
-window.openLb=function(src){document.getElementById('lbImg').src=src;document.getElementById('lb').classList.add('open')}
-window.closeLb=function(){document.getElementById('lb').classList.remove('open')}
-
-window.toggleEq=function(){document.getElementById('eqBar').classList.toggle('show')}
-window.insE=function(e){const i=document.getElementById('chInp');i.value+=e;i.focus()}
-window.onKey=function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();window.sendMsg()};if(e.key==='Escape')document.getElementById('eqBar').classList.remove('show')}
-window.onInp=function(el){autoRz(el);document.getElementById('eqBar').classList.remove('show')}
-
-function updBadge(){const t=convs.filter(c=>c.unread>0).length,b=document.getElementById('navBadge');if(t>0){b.textContent=t;b.style.display='flex'}else b.style.display='none'}
-function updMsgTabBadge(){const t=convs.filter(c=>c.unread>0).length,b=document.getElementById('msgTabBadge');if(t>0){b.textContent=t;b.style.display='flex'}else b.style.display='none'}
-function updSwapTabBadge(){const t=allSwaps.filter(s=>s.status==='pending'&&s.owner_id===me.id).length,b=document.getElementById('swapTabBadge');if(t>0){b.textContent=t;b.style.display='flex'}else b.style.display='none'}
-function scrollB(){const e=document.getElementById('chMsgs');e.scrollTop=e.scrollHeight}
-function autoRz(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px'}
-function av(name){return`https://ui-avatars.com/api/?name=${encodeURIComponent(name||'U')}&background=EBE0E3&color=C994A7&size=100`}
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}
-function ago(iso){if(!iso)return'';const d=Date.now()-new Date(iso).getTime(),m=Math.floor(d/60000),h=Math.floor(d/3600000),dy=Math.floor(d/86400000);if(m<1)return'now';if(m<60)return m+'m';if(h<24)return h+'h';if(dy<7)return dy+'d';return new Date(iso).toLocaleDateString('en-PH',{month:'short',day:'numeric'})}
-function fmtDate(iso){const d=new Date(iso),t=new Date();if(d.toDateString()===t.toDateString())return'Today';const y=new Date(t);y.setDate(t.getDate()-1);if(d.toDateString()===y.toDateString())return'Yesterday';return d.toLocaleDateString('en-PH',{month:'long',day:'numeric',year:'numeric'})}
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200)}
-window.doLogout=async function(){if(confirm('Log out?')){await supabase.auth.signOut();location.href='../auth/login.html'}}
-</script>
-
 <!-- PICK ITEM MODAL -->
 <div class="otp-overlay" id="pickItemOverlay">
   <div class="otp-box" style="max-width:520px;text-align:left;">
-    <div class="otp-icon">👗</div>
     <div class="otp-title">Choose Your Offer</div>
-    <div class="otp-sub">Pick one of your items to offer in exchange for this swap.</div>
+    <div class="otp-sub">Pick one of your items to offer in exchange.</div>
     <div id="pickItemGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;max-height:320px;overflow-y:auto;"></div>
     <button class="otp-verify-btn" id="pickItemConfirmBtn" onclick="confirmPickItem()" disabled>Confirm Offer ✦</button>
     <button class="otp-cancel-btn" onclick="closePickItem()">Cancel</button>
   </div>
 </div>
+
+<div class="toast" id="toast"></div>
+<script type="module" src="message.js"></script>
 </body>
 </html>
