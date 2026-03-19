@@ -2,8 +2,8 @@ import { supabase } from '../db/supabase.js'
 
 // ── Toggle between login / signup ──────────────────────────────
 function toggleAuth() {
-    const login  = document.getElementById('loginSection')
-    const signup = document.getElementById('signupSection')
+    const login   = document.getElementById('loginSection')
+    const signup  = document.getElementById('signupSection')
     const isLogin = login.style.display !== 'none'
     login.style.display  = isLogin ? 'none'  : 'block'
     signup.style.display = isLogin ? 'block' : 'none'
@@ -33,9 +33,9 @@ function clearError() {
 }
 
 function setLoading(btn, loading) {
-    btn.disabled     = loading
-    btn.dataset.orig = btn.dataset.orig || btn.textContent
-    btn.textContent  = loading ? 'Please wait…' : btn.dataset.orig
+    btn.disabled      = loading
+    btn.dataset.orig  = btn.dataset.orig || btn.textContent
+    btn.textContent   = loading ? 'Please wait…' : btn.dataset.orig
     btn.style.opacity = loading ? '0.7' : '1'
 }
 
@@ -52,32 +52,29 @@ const RULES = [
 
 function calcStrength(pw) {
     const passed = RULES.filter(r => r.test(pw)).length
-    if (pw.length === 0) return { score: 0, label: '—', color: '#eee' }
-    if (passed <= 1)     return { score: 25,  label: 'Weak',      color: '#ef4444' }
-    if (passed === 2)    return { score: 50,  label: 'Fair',      color: '#f97316' }
-    if (passed === 3)    return { score: 75,  label: 'Good',      color: '#eab308' }
-    return               { score: 100, label: 'Strong ✓',  color: '#4A635D' }
+    if (pw.length === 0) return { score: 0,   label: '—',        color: '#eee' }
+    if (passed <= 1)     return { score: 25,  label: 'Weak',     color: '#ef4444' }
+    if (passed === 2)    return { score: 50,  label: 'Fair',     color: '#f97316' }
+    if (passed === 3)    return { score: 75,  label: 'Good',     color: '#eab308' }
+    return                      { score: 100, label: 'Strong ✓', color: '#4A635D' }
 }
 
 function updatePasswordUI(pw) {
-    const rules      = document.getElementById('pwRules')
-    const strengthW  = document.getElementById('pwStrengthWrap')
-    const fill       = document.getElementById('pwStrengthFill')
-    const lbl        = document.getElementById('pwStrengthLabel')
+    const rules     = document.getElementById('pwRules')
+    const strengthW = document.getElementById('pwStrengthWrap')
+    const fill      = document.getElementById('pwStrengthFill')
+    const lbl       = document.getElementById('pwStrengthLabel')
     if (!rules) return
 
-    // Show/hide panels
     const show = pw.length > 0
     rules.classList.toggle('visible', show)
     strengthW.classList.toggle('visible', show)
 
-    // Update each rule row
     RULES.forEach(r => {
         const el = document.getElementById(r.id)
         if (el) el.classList.toggle('met', r.test(pw))
     })
 
-    // Strength bar
     const { score, label, color } = calcStrength(pw)
     fill.style.width      = score + '%'
     fill.style.background = color
@@ -108,10 +105,10 @@ function checkMatch() {
     if (!cfm) { msg.className = 'pw-match-msg'; return }
     msg.classList.add('visible')
     if (pw === cfm) {
-        msg.className = 'pw-match-msg visible ok'
+        msg.className   = 'pw-match-msg visible ok'
         msg.textContent = '✓ Passwords match'
     } else {
-        msg.className = 'pw-match-msg visible err'
+        msg.className   = 'pw-match-msg visible err'
         msg.textContent = '✗ Passwords do not match'
     }
 }
@@ -128,7 +125,7 @@ if (loginForm) {
         clearError()
 
         const email    = loginForm.querySelector('input[type="email"]').value.trim()
-        const password = loginForm.querySelector('input[type="password"]').value
+        const password = document.getElementById('loginPassword').value         // ← FIXED
         const btn      = loginForm.querySelector('button[type="submit"]')
 
         if (!email || !password) { showError('Please fill in all fields.'); return }
@@ -148,8 +145,8 @@ if (loginForm) {
         }
 
         const name = data.user.user_metadata?.full_name
-              || data.user.user_metadata?.name
-              || data.user.email.split('@')[0]
+                  || data.user.user_metadata?.name
+                  || data.user.email.split('@')[0]
         localStorage.setItem('suotUser',   name)
         localStorage.setItem('suotEmail',  data.user.email)
         localStorage.setItem('suotUserId', data.user.id)
@@ -176,7 +173,6 @@ if (signupForm) {
             return
         }
 
-        // Password requirements check
         if (!isPasswordValid(password)) {
             showError('Please meet all password requirements.')
             document.getElementById('pwRules')?.classList.add('visible')
@@ -185,7 +181,6 @@ if (signupForm) {
             return
         }
 
-        // Confirm match check
         if (password !== confirm) {
             showError('Passwords do not match.')
             return
@@ -203,7 +198,7 @@ if (signupForm) {
 
         if (error) {
             const msgs = {
-                'User already registered': 'An account with this email already exists.',
+                'User already registered':                   'An account with this email already exists.',
                 'Password should be at least 6 characters': 'Password must be at least 8 characters and meet all requirements.',
             }
             showError(msgs[error.message] || error.message)
@@ -243,36 +238,21 @@ if (signupForm) {
 
 
 // ── GOOGLE SIGN IN / SIGN UP ───────────────────────────────────
-// Both the Sign In and Sign Up Google buttons use the same OAuth flow.
-// Supabase detects whether the Google account already exists and either
-// signs in or creates a new account automatically — no extra logic needed.
 async function signInWithGoogle() {
     const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-            // After Google redirects back, Supabase handles the session and
-            // redirects to this URL. Adjust if your app is hosted elsewhere.
             redirectTo: `${window.location.origin}/src/dashboard/dashboard.html`
         }
     })
     if (error) showError('Google sign-in failed. Please try again.')
 }
 
-const googleSignInBtn  = document.getElementById('googleSignInBtn')
-const googleSignUpBtn  = document.getElementById('googleSignUpBtn')
+const googleSignInBtn = document.getElementById('googleSignInBtn')
+const googleSignUpBtn = document.getElementById('googleSignUpBtn')
 if (googleSignInBtn) googleSignInBtn.addEventListener('click', signInWithGoogle)
 if (googleSignUpBtn) googleSignUpBtn.addEventListener('click', signInWithGoogle)
 
-// ── PASSWORD VISIBILITY TOGGLE ─────────────────────────────────
-function togglePw(inputId, btn) {
-    const input = document.getElementById(inputId)
-    if (!input) return
-    const isHidden = input.type === 'password'
-    input.type = isHidden ? 'text' : 'password'
-    btn.querySelector('.eye-open').style.display  = isHidden ? 'none'  : ''
-    btn.querySelector('.eye-closed').style.display = isHidden ? '' : 'none'
-}
-window.togglePw = togglePw
 
 // ── AUTH STATE: redirect if already logged in ──────────────────
 supabase.auth.getSession().then(({ data: { session } }) => {
@@ -285,3 +265,15 @@ supabase.auth.getSession().then(({ data: { session } }) => {
         window.location.href = '../dashboard/dashboard.html'
     }
 })
+
+
+// ── PASSWORD VISIBILITY TOGGLE ─────────────────────────────────
+function togglePw(inputId, btn) {
+    const input = document.getElementById(inputId)
+    if (!input) return
+    const isHidden = input.type === 'password'
+    input.type = isHidden ? 'text' : 'password'
+    btn.querySelector('.eye-open').style.display   = isHidden ? 'none' : ''
+    btn.querySelector('.eye-closed').style.display = isHidden ? ''     : 'none'
+}
+window.togglePw = togglePw
