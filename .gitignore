@@ -1,0 +1,15 @@
+# ============================================================
+#  Suot Project — .gitignore
+# ============================================================
+
+# API keys and secrets — NEVER commit these
+personal/config.js
+config.js
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor folders
+.vscode/
+.idea/
