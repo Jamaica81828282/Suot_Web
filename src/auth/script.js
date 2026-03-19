@@ -23,8 +23,7 @@ function showError(msg) {
         margin: 8px 0 0; text-align:center;
         animation: fadeIn .25s ease;
     `
-    // Insert after the active form's submit button
-    const activeForm = document.querySelector('#loginSection form, #signupSection form:not([style*="none"])')
+    const activeForm = document.querySelector('#loginSection form, #signupSection form')
     if (activeForm) activeForm.appendChild(el)
 }
 
@@ -34,10 +33,90 @@ function clearError() {
 }
 
 function setLoading(btn, loading) {
-    btn.disabled    = loading
+    btn.disabled     = loading
     btn.dataset.orig = btn.dataset.orig || btn.textContent
     btn.textContent  = loading ? 'Please wait…' : btn.dataset.orig
     btn.style.opacity = loading ? '0.7' : '1'
+}
+
+
+// ══════════════════════════════════════════
+//  PASSWORD REQUIREMENTS
+// ══════════════════════════════════════════
+const RULES = [
+    { id: 'rule-length',  test: v => v.length >= 8,          label: 'At least 8 characters' },
+    { id: 'rule-upper',   test: v => /[A-Z]/.test(v),        label: 'One uppercase letter' },
+    { id: 'rule-number',  test: v => /[0-9]/.test(v),        label: 'One number' },
+    { id: 'rule-special', test: v => /[^A-Za-z0-9]/.test(v), label: 'One special character' },
+]
+
+function calcStrength(pw) {
+    const passed = RULES.filter(r => r.test(pw)).length
+    if (pw.length === 0) return { score: 0, label: '—', color: '#eee' }
+    if (passed <= 1)     return { score: 25,  label: 'Weak',      color: '#ef4444' }
+    if (passed === 2)    return { score: 50,  label: 'Fair',      color: '#f97316' }
+    if (passed === 3)    return { score: 75,  label: 'Good',      color: '#eab308' }
+    return               { score: 100, label: 'Strong ✓',  color: '#4A635D' }
+}
+
+function updatePasswordUI(pw) {
+    const rules      = document.getElementById('pwRules')
+    const strengthW  = document.getElementById('pwStrengthWrap')
+    const fill       = document.getElementById('pwStrengthFill')
+    const lbl        = document.getElementById('pwStrengthLabel')
+    if (!rules) return
+
+    // Show/hide panels
+    const show = pw.length > 0
+    rules.classList.toggle('visible', show)
+    strengthW.classList.toggle('visible', show)
+
+    // Update each rule row
+    RULES.forEach(r => {
+        const el = document.getElementById(r.id)
+        if (el) el.classList.toggle('met', r.test(pw))
+    })
+
+    // Strength bar
+    const { score, label, color } = calcStrength(pw)
+    fill.style.width      = score + '%'
+    fill.style.background = color
+    lbl.style.color       = color
+    lbl.textContent       = show ? label : '—'
+}
+
+function isPasswordValid(pw) {
+    return RULES.every(r => r.test(pw))
+}
+
+// ── Password input listener ──
+const pwInput = document.getElementById('signupPassword')
+if (pwInput) {
+    pwInput.addEventListener('input', () => {
+        updatePasswordUI(pwInput.value)
+        checkMatch()
+    })
+}
+
+// ── Confirm password match ──
+const confirmInput = document.getElementById('signupConfirm')
+function checkMatch() {
+    const msg = document.getElementById('pwMatchMsg')
+    if (!msg || !confirmInput || !pwInput) return
+    const pw  = pwInput.value
+    const cfm = confirmInput.value
+    if (!cfm) { msg.className = 'pw-match-msg'; return }
+    msg.classList.add('visible')
+    if (pw === cfm) {
+        msg.className = 'pw-match-msg visible ok'
+        msg.textContent = '✓ Passwords match'
+    } else {
+        msg.className = 'pw-match-msg visible err'
+        msg.textContent = '✗ Passwords do not match'
+    }
+}
+if (confirmInput) {
+    confirmInput.addEventListener('input', checkMatch)
 }
 
 
@@ -52,19 +131,13 @@ if (loginForm) {
         const password = loginForm.querySelector('input[type="password"]').value
         const btn      = loginForm.querySelector('button[type="submit"]')
 
-        if (!email || !password) {
-            showError('Please fill in all fields.')
-            return
-        }
+        if (!email || !password) { showError('Please fill in all fields.'); return }
 
         setLoading(btn, true)
-
         const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-
         setLoading(btn, false)
 
         if (error) {
-            // Make Supabase errors human-readable
             const msgs = {
                 'Invalid login credentials': 'Incorrect email or password.',
                 'Email not confirmed':       'Please verify your email first. Check your inbox.',
@@ -74,14 +147,12 @@ if (loginForm) {
             return
         }
 
-        // Save name and id to localStorage for dashboard display and namespaced storage
         const name = data.user.user_metadata?.full_name
               || data.user.user_metadata?.name
               || data.user.email.split('@')[0]
-        localStorage.setItem('suotUser', name)
-        localStorage.setItem('suotEmail', data.user.email)
+        localStorage.setItem('suotUser',   name)
+        localStorage.setItem('suotEmail',  data.user.email)
         localStorage.setItem('suotUserId', data.user.id)
-
         window.location.href = '../dashboard/dashboard.html'
     })
 }
@@ -95,16 +166,28 @@ if (signupForm) {
         clearError()
 
         const fullName = document.getElementById('signupName').value.trim()
-        const email    = signupForm.querySelector('input[type="email"]').value.trim()
-        const password = signupForm.querySelector('input[type="password"]').value
-        const btn      = signupForm.querySelector('button[type="submit"]')
+        const email    = document.getElementById('signupEmail').value.trim()
+        const password = document.getElementById('signupPassword').value
+        const confirm  = document.getElementById('signupConfirm').value
+        const btn      = document.getElementById('signupBtn')
 
-        if (!fullName || !email || !password) {
+        if (!fullName || !email || !password || !confirm) {
             showError('Please fill in all fields.')
             return
         }
-        if (password.length < 6) {
-            showError('Password must be at least 6 characters.')
+
+        // Password requirements check
+        if (!isPasswordValid(password)) {
+            showError('Please meet all password requirements.')
+            document.getElementById('pwRules')?.classList.add('visible')
+            document.getElementById('pwStrengthWrap')?.classList.add('visible')
+            updatePasswordUI(password)
+            return
+        }
+
+        // Confirm match check
+        if (password !== confirm) {
+            showError('Passwords do not match.')
             return
         }
 
@@ -113,9 +196,7 @@ if (signupForm) {
         const { data, error } = await supabase.auth.signUp({
             email,
             password,
-            options: {
-                data: { full_name: fullName }   // stored in user_metadata
-            }
+            options: { data: { full_name: fullName } }
         })
 
         setLoading(btn, false)
@@ -123,15 +204,14 @@ if (signupForm) {
         if (error) {
             const msgs = {
                 'User already registered': 'An account with this email already exists.',
-                'Password should be at least 6 characters': 'Password must be at least 6 characters.',
+                'Password should be at least 6 characters': 'Password must be at least 8 characters and meet all requirements.',
             }
             showError(msgs[error.message] || error.message)
             return
         }
 
-        // Supabase may require email confirmation depending on your settings
+        // Email confirmation required
         if (data.user && !data.session) {
-            // Email confirmation required — show message instead of redirecting
             signupForm.innerHTML = `
                 <div style="text-align:center; padding: 20px 0; display:flex; flex-direction:column; gap:12px;">
                     <div style="font-size:2.5rem;">📬</div>
@@ -151,10 +231,10 @@ if (signupForm) {
             return
         }
 
-        // If email confirmation is OFF in Supabase — session is returned immediately
+        // Email confirmation OFF — session returned immediately
         if (data.session) {
-            localStorage.setItem('suotUser',  fullName)
-            localStorage.setItem('suotEmail', email)
+            localStorage.setItem('suotUser',   fullName)
+            localStorage.setItem('suotEmail',  email)
             localStorage.setItem('suotUserId', data.user.id)
             window.location.href = '../dashboard/dashboard.html'
         }
@@ -162,29 +242,35 @@ if (signupForm) {
 }
 
 
-// ── GOOGLE SIGN IN ─────────────────────────────────────────────
-const googleBtn = document.querySelector('.btn-google')
-if (googleBtn) {
-    googleBtn.addEventListener('click', async () => {
-        const { error } = await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-                redirectTo: window.location.origin + '/dashboard/dashboard.html'
-            }
-        })
-        if (error) showError('Google sign-in failed. Please try again.')
+// ── GOOGLE SIGN IN / SIGN UP ───────────────────────────────────
+// Both the Sign In and Sign Up Google buttons use the same OAuth flow.
+// Supabase detects whether the Google account already exists and either
+// signs in or creates a new account automatically — no extra logic needed.
+async function signInWithGoogle() {
+    const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+            // After Google redirects back, Supabase handles the session and
+            // redirects to this URL. Adjust if your app is hosted elsewhere.
+            redirectTo: `${window.location.origin}/src/dashboard/dashboard.html`
+        }
     })
+    if (error) showError('Google sign-in failed. Please try again.')
 }
+
+const googleSignInBtn  = document.getElementById('googleSignInBtn')
+const googleSignUpBtn  = document.getElementById('googleSignUpBtn')
+if (googleSignInBtn) googleSignInBtn.addEventListener('click', signInWithGoogle)
+if (googleSignUpBtn) googleSignUpBtn.addEventListener('click', signInWithGoogle)
 
 
 // ── AUTH STATE: redirect if already logged in ──────────────────
 supabase.auth.getSession().then(({ data: { session } }) => {
     if (session) {
-        // Already logged in — skip the auth page
         const name = session.user.user_metadata?.full_name
                   || session.user.email.split('@')[0]
-        localStorage.setItem('suotUser',  name)
-        localStorage.setItem('suotEmail', session.user.email)
+        localStorage.setItem('suotUser',   name)
+        localStorage.setItem('suotEmail',  session.user.email)
         localStorage.setItem('suotUserId', session.user.id)
         window.location.href = '../dashboard/dashboard.html'
     }
