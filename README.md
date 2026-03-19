@@ -127,6 +127,6 @@ Right-click `src/auth/login.html` → **Open with Live Server**
 
 <div align="center">
 
-Built for **SYSARCH / CS Finals** &nbsp;·&nbsp; © 2025 Suot Team &nbsp;·&nbsp; Academic Use Only
+Built for **SYSTEM INTEGRATION & ARCHITECTURE** &nbsp;·&nbsp; © 2025 Suot &nbsp;·&nbsp; Academic Use Only
 
 </div>
