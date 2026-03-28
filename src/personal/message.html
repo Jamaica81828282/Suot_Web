@@ -9,136 +9,158 @@
   <link rel="stylesheet" href="message.css"/>
   <style>
     /* ── VIDEO CALL OVERLAYS ── */
-    .vc-overlay {
-      position: fixed; inset: 0; z-index: 99999;
-      display: none; align-items: center; justify-content: center;
-      padding: 20px;
-    }
-    .vc-overlay.open { display: flex; }
-    .vc-bg {
-      position: absolute; inset: 0;
-      background: linear-gradient(135deg, rgba(74,99,93,.95), rgba(55,80,74,.98));
-      backdrop-filter: blur(20px);
-    }
-    .vc-card {
-      position: relative; z-index: 1;
-      display: flex; flex-direction: column; align-items: center;
-      gap: 12px; text-align: center; max-width: 340px; width: 100%;
-    }
-    .vc-avatar-wrap {
-      position: relative; width: 110px; height: 110px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .vc-avatar-wrap img {
-      width: 110px; height: 110px; border-radius: 50%;
-      object-fit: cover; border: 3px solid rgba(255,255,255,.3);
-      position: relative; z-index: 1;
-    }
-    .vc-pulse {
-      position: absolute; inset: -8px; border-radius: 50%;
-      background: rgba(255,255,255,.15);
-      animation: vcPulse 1.6s ease-in-out infinite;
-    }
-    .vc-pulse:nth-child(2) { inset: -18px; animation-delay: .5s; background: rgba(255,255,255,.08); }
-    .vc-pulse:nth-child(3) { inset: -30px; animation-delay: 1s; background: rgba(255,255,255,.04); }
-    @keyframes vcPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.08);opacity:.6} }
-    .vc-name { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 6px; }
-    .vc-status { font-size: 13px; color: rgba(255,255,255,.6); font-weight: 500; display: flex; align-items: center; gap: 6px; }
-    .vc-dots span { display:inline-block; width:4px; height:4px; border-radius:50%; background:rgba(255,255,255,.6); animation:vcDot 1.2s infinite; }
-    .vc-dots span:nth-child(2) { animation-delay:.2s; }
-    .vc-dots span:nth-child(3) { animation-delay:.4s; }
-    @keyframes vcDot { 0%,60%,100%{transform:scale(1);opacity:.4}30%{transform:scale(1.4);opacity:1} }
-    .vc-btns { display:flex; gap:24px; margin-top:16px; }
-    .vc-btn { width:64px; height:64px; border-radius:50%; border:none; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; transition:all .2s; gap:4px; }
-    .vc-btn svg { width:24px; height:24px; }
-    .vc-btn span { font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,.8); margin-top:4px; position:absolute; bottom:-22px; white-space:nowrap; }
-    .vc-btn-wrap { position:relative; display:flex; flex-direction:column; align-items:center; }
-    .vc-btn.decline { background:#ef4444; color:#fff; box-shadow:0 4px 20px rgba(239,68,68,.4); }
-    .vc-btn.decline:hover { background:#dc2626; transform:scale(1.08); }
-    .vc-btn.accept  { background:#22c55e; color:#fff; box-shadow:0 4px 20px rgba(34,197,94,.4); }
-    .vc-btn.accept:hover { background:#16a34a; transform:scale(1.08); }
-    .vc-btn.cancel  { background:rgba(255,255,255,.2); color:#fff; }
-    .vc-btn.cancel:hover { background:rgba(255,255,255,.3); transform:scale(1.08); }
-    .vc-brand { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
-    .vc-brand svg { width:16px; height:16px; color:rgba(255,255,255,.5); }
-    .vc-brand span { font-size:12px; color:rgba(255,255,255,.5); font-weight:600; letter-spacing:.5px; }
+.vc-overlay {
+  position: fixed; inset: 0; z-index: 99999;
+  display: none; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.vc-overlay.open { display: flex; }
+.vc-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(74,99,93,.95), rgba(55,80,74,.98));
+  backdrop-filter: blur(20px);
+}
+.vc-card {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 12px; text-align: center; max-width: 340px; width: 100%;
+}
+.vc-avatar-wrap {
+  position: relative; width: 110px; height: 110px;
+  display: flex; align-items: center; justify-content: center;
+}
+.vc-avatar-wrap img {
+  width: 110px; height: 110px; border-radius: 50%;
+  object-fit: cover; border: 3px solid rgba(255,255,255,.3);
+  position: relative; z-index: 1;
+}
+.vc-pulse {
+  position: absolute; inset: -8px; border-radius: 50%;
+  background: rgba(255,255,255,.15);
+  animation: vcPulse 1.6s ease-in-out infinite;
+}
+.vc-pulse:nth-child(2) { inset: -18px; animation-delay: .5s; background: rgba(255,255,255,.08); }
+.vc-pulse:nth-child(3) { inset: -30px; animation-delay: 1s; background: rgba(255,255,255,.04); }
+@keyframes vcPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.08);opacity:.6} }
+.vc-name { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 6px; }
+.vc-status { font-size: 13px; color: rgba(255,255,255,.6); font-weight: 500; display: flex; align-items: center; gap: 6px; }
+.vc-dots span { display:inline-block; width:4px; height:4px; border-radius:50%; background:rgba(255,255,255,.6); animation:vcDot 1.2s infinite; }
+.vc-dots span:nth-child(2) { animation-delay:.2s; }
+.vc-dots span:nth-child(3) { animation-delay:.4s; }
+@keyframes vcDot { 0%,60%,100%{transform:scale(1);opacity:.4}30%{transform:scale(1.4);opacity:1} }
+.vc-btns { display:flex; gap:24px; margin-top:16px; }
+.vc-btn { width:64px; height:64px; border-radius:50%; border:none; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; transition:all .2s; gap:4px; }
+.vc-btn svg { width:24px; height:24px; }
+.vc-btn span { font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,.8); margin-top:4px; position:absolute; bottom:-22px; white-space:nowrap; }
+.vc-btn-wrap { position:relative; display:flex; flex-direction:column; align-items:center; }
+.vc-btn.decline { background:#ef4444; color:#fff; box-shadow:0 4px 20px rgba(239,68,68,.4); }
+.vc-btn.decline:hover { background:#dc2626; transform:scale(1.08); }
+.vc-btn.accept  { background:#22c55e; color:#fff; box-shadow:0 4px 20px rgba(34,197,94,.4); }
+.vc-btn.accept:hover { background:#16a34a; transform:scale(1.08); }
+.vc-btn.cancel  { background:rgba(255,255,255,.2); color:#fff; }
+.vc-btn.cancel:hover { background:rgba(255,255,255,.3); transform:scale(1.08); }
+.vc-brand { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.vc-brand svg { width:16px; height:16px; color:rgba(255,255,255,.5); }
+.vc-brand span { font-size:12px; color:rgba(255,255,255,.5); font-weight:600; letter-spacing:.5px; }
 
-    /* ── ACTIVE CALL BOX (WebRTC) ── */
-    .vc-active-box {
-      position: relative; z-index: 1;
-      background: rgba(0,0,0,.3); border-radius: 24px;
-      overflow: hidden; width: 100%; max-width: 820px;
-    }
-    .vc-active-hdr {
-      display:flex; justify-content:space-between; align-items:center;
-      padding:14px 18px; background:rgba(0,0,0,.25);
-    }
-    .vc-active-hdr-left { display:flex; align-items:center; gap:10px; }
-    .vc-active-hdr-left img { width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,.3); }
-    .vc-active-name { font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:#fff; }
-    .vc-active-timer { font-size:11px; color:rgba(255,255,255,.6); }
-    .vc-end-btn { display:flex; align-items:center; gap:6px; background:#ef4444; color:#fff; border:none; padding:9px 18px; border-radius:50px; font-family:'DM Sans',sans-serif; font-weight:700; font-size:13px; cursor:pointer; transition:.2s; }
-    .vc-end-btn:hover { background:#dc2626; }
-    .vc-end-btn svg { width:13px; height:13px; }
+/* ── ACTIVE CALL — TRUE FULLSCREEN ── */
+#activeCallOverlay {
+  padding: 0;
+}
+.vc-active-box {
+  position: fixed; inset: 0; z-index: 1;
+  width: 100vw; height: 100vh;
+  background: #111; overflow: hidden;
+  border-radius: 0; display: flex; flex-direction: column;
+}
+.vc-active-hdr {
+  position: absolute; top: 0; left: 0; right: 0;
+  z-index: 10;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 20px 24px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%);
+}
+.vc-active-hdr-left { display:flex; align-items:center; gap:10px; }
+.vc-active-hdr-left img { width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,.3); }
+.vc-active-name { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; color:#fff; }
+.vc-active-timer { font-size:12px; color:rgba(255,255,255,.6); margin-top:2px; }
+.vc-end-btn { display:flex; align-items:center; gap:6px; background:#ef4444; color:#fff; border:none; padding:10px 20px; border-radius:50px; font-family:'DM Sans',sans-serif; font-weight:700; font-size:13px; cursor:pointer; transition:.2s; box-shadow:0 4px 16px rgba(239,68,68,.4); }
+.vc-end-btn:hover { background:#dc2626; transform:scale(1.04); }
+.vc-end-btn svg { width:14px; height:14px; }
 
-    /* WebRTC video area */
-    .vc-video-area {
-      position: relative; width: 100%; height: 65vh;
-      background: #111; overflow: hidden;
-    }
-    .vc-remote-vid {
-      width: 100%; height: 100%; object-fit: cover;
-      display: block; background: #111;
-    }
-    .vc-local-vid {
-      position: absolute; bottom: 16px; right: 16px;
-      width: 160px; height: 120px; object-fit: cover;
-      border-radius: 12px; border: 2px solid rgba(255,255,255,.3);
-      z-index: 2; background: #222;
-    }
-    .vc-connecting {
-      position: absolute; inset: 0;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 14px; background: #111; z-index: 3;
-    }
-    .vc-connecting-av {
-      width: 80px; height: 80px; border-radius: 50%;
-      object-fit: cover; border: 3px solid rgba(255,255,255,.2);
-      animation: vcPulse 1.6s ease-in-out infinite;
-    }
-    .vc-connecting-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.2rem; font-weight: 700; color: #fff;
-    }
-    .vc-connecting-status {
-      font-size: 13px; color: rgba(255,255,255,.55);
-      display: flex; align-items: center; gap: 6px;
-    }
+/* Remote video fills entire screen */
+.vc-video-area {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  background: #111; overflow: hidden;
+}
+.vc-remote-vid {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block; background: #111;
+}
 
-    /* Call controls row */
-    .vc-controls {
-      display: flex; justify-content: center; gap: 12px;
-      padding: 12px 18px; background: rgba(0,0,0,.3);
-    }
-    .vc-ctrl-btn {
-      width: 46px; height: 46px; border-radius: 50%;
-      background: rgba(255,255,255,.14); border: none;
-      color: #fff; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: background .15s; flex-shrink: 0;
-    }
-    .vc-ctrl-btn:hover { background: rgba(255,255,255,.25); }
-    .vc-ctrl-btn.muted { background: rgba(239,68,68,.7); }
-    .vc-ctrl-btn svg { width: 20px; height: 20px; }
+/* Local video PiP — bottom right corner */
+.vc-local-vid {
+  position: absolute; bottom: 120px; right: 20px;
+  width: 180px; height: 130px;
+  object-fit: cover; border-radius: 16px;
+  border: 2px solid rgba(255,255,255,.3);
+  z-index: 5; background: #222;
+  box-shadow: 0 8px 32px rgba(0,0,0,.4);
+  cursor: move;
+}
 
-    .vc-footer { padding: 8px 18px 12px; text-align:center; }
-    .vc-footer span { font-size:11px; color:rgba(255,255,255,.35); display:flex; align-items:center; justify-content:center; gap:5px; }
-    .vc-footer svg { width:11px; height:11px; }
+/* Connecting overlay */
+.vc-connecting {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 14px; background: #1a2e2a; z-index: 3;
+}
+.vc-connecting-av {
+  width: 100px; height: 100px; border-radius: 50%;
+  object-fit: cover; border: 3px solid rgba(255,255,255,.2);
+  animation: vcPulse 1.6s ease-in-out infinite;
+}
+.vc-connecting-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem; font-weight: 700; color: #fff;
+}
+.vc-connecting-status {
+  font-size: 13px; color: rgba(255,255,255,.55);
+  display: flex; align-items: center; gap: 6px;
+}
 
-    /* Declined/ended notice */
-    .vc-notice { font-size:14px; color:rgba(255,255,255,.8); font-weight:600; background:rgba(255,255,255,.1); padding:10px 20px; border-radius:50px; margin-top:8px; }
-  </style>
+/* Controls pinned to bottom */
+.vc-controls {
+  position: absolute; bottom: 40px; left: 0; right: 0;
+  z-index: 10;
+  display: flex; justify-content: center; gap: 16px;
+  padding: 12px 18px;
+}
+.vc-ctrl-btn {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: rgba(255,255,255,.18); border: none;
+  color: #fff; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s; flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(0,0,0,.3);
+  backdrop-filter: blur(8px);
+}
+.vc-ctrl-btn:hover { background: rgba(255,255,255,.3); }
+.vc-ctrl-btn.muted { background: rgba(239,68,68,.7); }
+.vc-ctrl-btn svg { width: 22px; height: 22px; }
+
+/* Footer pinned to very bottom */
+.vc-footer {
+  position: absolute; bottom: 10px; left: 0; right: 0;
+  z-index: 10; text-align: center; padding: 0;
+}
+.vc-footer span { font-size:11px; color:rgba(255,255,255,.3); display:flex; align-items:center; justify-content:center; gap:5px; }
+.vc-footer svg { width:11px; height:11px; }
+
+.vc-notice { font-size:14px; color:rgba(255,255,255,.8); font-weight:600; background:rgba(255,255,255,.1); padding:10px 20px; border-radius:50px; margin-top:8px; }
+   </style>
 </head>
 <body class="dash-body">
 
