@@ -2,8 +2,7 @@
 
 <img src="src/auth/Logo/logo.jpg" alt="Suot Logo" width="100" style="border-radius:20px"/>
 
-## Documentation
-[→ View Architecture Doc](https://jamaica81828282.github.io/Suot/architecture.html)
+[→ View Architecture Doc](https://jamaica81828282.github.io/Suot/diagrams/architecture.html)
 # Suot
 ### *Style passed on.*
 
