@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suot | Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --pink: #C994A7; --pink-dark: #b07f92;
+            --green: #4A635D; --green-lt: #5d7a73;
+            --bg: #FDFBFC; --surface: #fff;
+            --border: #ede8ea; --border-lt: #f5f0f2;
+            --text: #1a1a1a; --text-muted: #888; --text-sub: #bbb;
+            --warn: #d97706; --danger: #e05577; --info: #2563eb; --success: #16a34a;
+            --sidebar-w: 240px;
+        }
+        body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); display:flex; min-height:100vh; overflow:hidden; }
+        .side-nav { width:var(--sidebar-w); background:var(--surface); border-right:1.5px solid var(--border); display:flex; flex-direction:column; height:100vh; overflow:hidden; flex-shrink:0; position:sticky; top:0; }
+        .nav-brand { padding:24px 20px 18px; border-bottom:1.5px solid var(--border-lt); flex-shrink:0; }
+        .dash-logo { width:48px; height:48px; border-radius:12px; object-fit:cover; border:2px solid var(--border); }
+        .logo-tagline { font-family:'Great Vibes',cursive; font-size:15px; color:var(--pink); margin-top:4px; }
+        .admin-badge-wrap { padding:12px 20px 0; flex-shrink:0; }
+        .admin-badge { display:inline-flex; align-items:center; gap:6px; background:linear-gradient(135deg,#fff0f4,#fce8ef); border:1.5px solid #f5cdd8; color:var(--danger); font-size:10.5px; font-weight:800; padding:5px 10px; border-radius:20px; letter-spacing:.6px; text-transform:uppercase; }
+        .admin-badge svg { width:11px; height:11px; }
+        .admin-profile-card { display:flex; align-items:center; gap:10px; padding:14px 20px; border-bottom:1.5px solid var(--border-lt); flex-shrink:0; }
+        .avatar-wrap { width:36px; height:36px; border-radius:50%; overflow:hidden; border:2px solid var(--border); flex-shrink:0; }
+        .avatar-wrap img { width:100%; height:100%; object-fit:cover; }
+        .admin-meta h4 { font-size:13px; font-weight:700; color:var(--text); }
+        .admin-meta p  { font-size:10.5px; color:var(--danger); font-weight:700; }
+        .nav-scroll { flex:1 1 0; min-height:0; overflow-y:auto; padding:10px 0 20px; }
+        .nav-scroll::-webkit-scrollbar { width:3px; }
+        .nav-scroll::-webkit-scrollbar-thumb { background:#eee; border-radius:3px; }
+        .nav-section-label { font-size:9.5px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--text-sub); padding:16px 20px 6px; }
+        .nav-link { display:flex; align-items:center; gap:9px; padding:10px 20px; font-size:13px; font-weight:600; color:var(--text-muted); background:none; border:none; width:100%; cursor:pointer; text-align:left; transition:all .15s; border-left:3px solid transparent; font-family:'Inter',sans-serif; }
+        .nav-link svg { width:15px; height:15px; flex-shrink:0; opacity:.7; }
+        .nav-link:hover { background:#faf4f6; color:var(--text); border-left-color:var(--border); }
+        .nav-link:hover svg { opacity:1; }
+        .nav-link.active { background:linear-gradient(90deg,#fff0f4,#fff); color:var(--pink-dark); border-left-color:var(--pink); font-weight:700; }
+        .nav-link.active svg { opacity:1; }
+        .nav-link .badge { margin-left:auto; background:var(--pink); color:#fff; font-size:9.5px; font-weight:800; min-width:18px; height:18px; border-radius:50px; display:flex; align-items:center; justify-content:center; padding:0 5px; }
+        .nav-link .badge.warn { background:var(--warn); }
+        .btn-logout { margin:12px 16px; padding:10px; border-radius:10px; border:1.5px solid var(--border); background:transparent; color:var(--text-muted); font-family:'Inter',sans-serif; font-size:12.5px; font-weight:700; cursor:pointer; transition:all .2s; flex-shrink:0; }
+        .btn-logout:hover { background:#fdf0f3; color:var(--danger); border-color:#f5cdd8; }
+        .main-content { flex:1; display:flex; flex-direction:column; height:100vh; overflow-y:auto; }
+        .main-content::-webkit-scrollbar { width:4px; }
+        .main-content::-webkit-scrollbar-thumb { background:#eee; border-radius:4px; }
+        .top-bar { position:sticky; top:0; z-index:100; background:rgba(253,251,252,.92); backdrop-filter:blur(12px); border-bottom:1.5px solid var(--border-lt); padding:0 28px; height:64px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+        .top-bar h2 { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--text); }
+        .top-bar h2 em { color:var(--pink); font-style:italic; }
+        .top-right { display:flex; align-items:center; gap:12px; }
+        .top-search { display:flex; align-items:center; gap:8px; background:var(--surface); border:1.5px solid var(--border); border-radius:50px; padding:8px 16px; width:220px; transition:border-color .2s; }
+        .top-search:focus-within { border-color:var(--pink); }
+        .top-search svg { width:14px; height:14px; color:var(--text-sub); flex-shrink:0; }
+        .top-search input { border:none; outline:none; font-family:'Inter',sans-serif; font-size:12.5px; color:var(--text); background:transparent; width:100%; }
+        .top-search input::placeholder { color:var(--text-sub); }
+        .icon-btn { width:38px; height:38px; border-radius:50%; background:var(--surface); border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--green); transition:all .2s; }
+        .icon-btn:hover { background:#faf4f6; border-color:var(--pink); color:var(--pink); }
+        .icon-btn svg { width:17px; height:17px; }
+        .page-inner { padding:28px 28px 60px; }
+        .admin-section { display:none; }
+        .admin-section.active { display:block; }
+        .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(175px,1fr)); gap:16px; margin-bottom:28px; }
+        .stat-card { background:var(--surface); border:1.5px solid var(--border); border-radius:18px; padding:20px 22px; display:flex; flex-direction:column; gap:10px; transition:box-shadow .2s,transform .2s; }
+        .stat-card:hover { box-shadow:0 8px 28px rgba(74,99,93,.1); transform:translateY(-2px); }
+        .stat-card-top { display:flex; align-items:center; justify-content:space-between; }
+        .stat-icon { width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center; }
+        .stat-icon svg { width:18px; height:18px; }
+        .stat-icon.pink   { background:#fff0f4; color:var(--danger); }
+        .stat-icon.green  { background:#edf7f4; color:var(--green); }
+        .stat-icon.amber  { background:#fff8ec; color:var(--warn); }
+        .stat-icon.blue   { background:#e8f4ff; color:var(--info); }
+        .stat-icon.purple { background:#f5f0ff; color:#7c5cbf; }
+        .stat-value { font-family:'Playfair Display',serif; font-size:28px; font-weight:700; color:var(--text); line-height:1; }
+        .stat-label { font-size:11.5px; color:var(--text-muted); font-weight:600; }
+        .section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:10px; }
+        .section-title { font-family:'Playfair Display',serif; font-size:17px; font-weight:700; color:var(--text); }
+        .section-title span { color:var(--pink); }
+        .table-wrap { background:var(--surface); border:1.5px solid var(--border); border-radius:18px; overflow:hidden; }
+        table { width:100%; border-collapse:collapse; }
+        thead th { background:#faf4f6; font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:.8px; color:var(--text-muted); padding:12px 18px; text-align:left; border-bottom:1.5px solid var(--border-lt); }
+        tbody tr { border-bottom:1px solid var(--border-lt); transition:background .15s; }
+        tbody tr:last-child { border-bottom:none; }
+        tbody tr:hover { background:#fdfbfc; }
+        td { padding:13px 18px; font-size:13px; color:var(--text); vertical-align:middle; }
+        .empty-row td { text-align:center; padding:40px; color:var(--text-sub); font-size:13px; }
+        .user-cell { display:flex; align-items:center; gap:10px; }
+        .user-cell img { width:32px; height:32px; border-radius:50%; border:1.5px solid var(--border); object-fit:cover; flex-shrink:0; }
+        .user-cell-meta strong { display:block; font-size:13px; font-weight:700; }
+        .user-cell-meta span { display:block; font-size:11px; color:var(--text-muted); }
+        .item-cell { display:flex; align-items:center; gap:10px; }
+        .item-thumb { width:42px; height:42px; border-radius:10px; object-fit:cover; border:1.5px solid var(--border); flex-shrink:0; background:#f0e8eb; }
+        .item-cell-meta strong { display:block; font-size:13px; font-weight:700; }
+        .item-cell-meta span { display:block; font-size:11px; color:var(--text-muted); }
+        .pill { display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:20px; font-size:10.5px; font-weight:700; }
+        .pill::before { content:''; width:6px; height:6px; border-radius:50%; background:currentColor; }
+        .pill.active    { background:#edf7f4; color:var(--success); }
+        .pill.pending   { background:#fff8ec; color:var(--warn); }
+        .pill.banned    { background:#fff0f4; color:var(--danger); }
+        .pill.approved  { background:#edf7f4; color:var(--success); }
+        .pill.rejected  { background:#fff0f4; color:var(--danger); }
+        .pill.completed { background:#e8f4ff; color:var(--info); }
+        .pill.swapped   { background:#e8f4ff; color:var(--info); }
+        .pill.declined  { background:#fff0f4; color:var(--danger); }
+        .pill.cancelled { background:#f5f0f2; color:var(--text-muted); }
+        .pill.topup     { background:#edf7f4; color:var(--success); }
+        .pill.earn      { background:#edf7f4; color:var(--success); }
+        .pill.spend     { background:#fff0f4; color:var(--danger); }
+        .pill.overflow  { background:#fff8ec; color:var(--warn); }
+        .pill.refill    { background:#e8f4ff; color:var(--info); }
+        .pill.expired   { background:#f5f0f2; color:var(--text-muted); }
+        .pill.otp_pending { background:#fff8ec; color:var(--warn); }
+        .action-row { display:flex; align-items:center; gap:6px; }
+        .act-btn { display:inline-flex; align-items:center; gap:4px; padding:5px 11px; border-radius:8px; border:1.5px solid; font-family:'Inter',sans-serif; font-size:11.5px; font-weight:700; cursor:pointer; transition:all .15s; background:transparent; }
+        .act-btn svg { width:11px; height:11px; }
+        .act-btn.approve { color:var(--success); border-color:#bbf7d0; }
+        .act-btn.approve:hover { background:#edf7f4; }
+        .act-btn.reject  { color:var(--danger); border-color:#fecdd3; }
+        .act-btn.reject:hover { background:#fff0f4; }
+        .act-btn.ban     { color:var(--danger); border-color:#fecdd3; }
+        .act-btn.ban:hover { background:#fff0f4; }
+        .act-btn.unban   { color:var(--text-muted); border-color:var(--border); }
+        .act-btn.unban:hover { background:#faf4f6; }
+        .filter-row { display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
+        .filter-select { padding:8px 32px 8px 14px; border-radius:50px; border:1.5px solid var(--border); font-family:'Inter',sans-serif; font-size:12px; font-weight:600; color:var(--text); background:var(--surface); cursor:pointer; outline:none; transition:border-color .2s; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23bbb' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; }
+        .filter-select:focus { border-color:var(--pink); }
+        .filter-input { padding:8px 14px; border-radius:50px; border:1.5px solid var(--border); font-family:'Inter',sans-serif; font-size:12px; font-weight:600; color:var(--text); background:var(--surface); outline:none; transition:border-color .2s; min-width:200px; }
+        .filter-input:focus { border-color:var(--pink); }
+        .primary-btn { display:inline-flex; align-items:center; gap:6px; padding:9px 18px; border-radius:50px; background:var(--green); color:#fff; border:none; font-family:'Inter',sans-serif; font-size:12.5px; font-weight:700; cursor:pointer; transition:all .2s; }
+        .primary-btn:hover { background:var(--green-lt); transform:translateY(-1px); }
+        .primary-btn svg { width:13px; height:13px; }
+        .tab-bar { display:flex; gap:0; background:#faf4f6; border-radius:12px; padding:4px; width:fit-content; margin-bottom:20px; }
+        .tab-btn { padding:8px 18px; border-radius:9px; border:none; font-family:'Inter',sans-serif; font-size:12.5px; font-weight:700; color:var(--text-muted); background:transparent; cursor:pointer; transition:all .2s; }
+        .tab-btn.active { background:var(--surface); color:var(--pink-dark); box-shadow:0 2px 8px rgba(0,0,0,.06); }
+        .charts-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:28px; }
+        .chart-card { background:var(--surface); border:1.5px solid var(--border); border-radius:18px; padding:20px 22px; }
+        .chart-card-title { font-size:13px; font-weight:700; color:var(--text); margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+        .chart-card-title svg { width:15px; height:15px; color:var(--pink); }
+        .bar-chart { display:flex; align-items:flex-end; gap:8px; height:110px; }
+        .bar-col { display:flex; flex-direction:column; align-items:center; gap:5px; flex:1; }
+        .bar { width:100%; border-radius:6px 6px 0 0; background:linear-gradient(180deg,var(--pink) 0%,var(--pink-dark) 100%); transition:opacity .2s; cursor:default; min-height:4px; }
+        .bar:hover { opacity:.8; }
+        .bar-label { font-size:9px; font-weight:700; color:var(--text-sub); text-align:center; }
+        .bar-val   { font-size:10px; font-weight:700; color:var(--text-muted); }
+        .activity-feed { display:flex; flex-direction:column; }
+        .activity-item { display:flex; align-items:flex-start; gap:12px; padding:12px 0; border-bottom:1px solid var(--border-lt); }
+        .activity-item:last-child { border-bottom:none; }
+        .act-icon { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .act-icon svg { width:15px; height:15px; }
+        .act-icon.topup    { background:#edf7f4; color:var(--success); }
+        .act-icon.earn     { background:#edf7f4; color:var(--success); }
+        .act-icon.spend    { background:#fff0f4; color:var(--danger); }
+        .act-icon.overflow { background:#fff8ec; color:var(--warn); }
+        .act-icon.refill   { background:#e8f4ff; color:var(--info); }
+        .act-icon.expired  { background:#f5f0f2; color:var(--text-muted); }
+        .act-text { flex:1; }
+        .act-text p { font-size:12.5px; color:var(--text); line-height:1.5; }
+        .act-text p strong { font-weight:700; }
+        .act-time { font-size:10.5px; color:var(--text-sub); margin-top:2px; }
+        .wallet-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+        .wallet-stat { background:var(--surface); border:1.5px solid var(--border); border-radius:16px; padding:18px 20px; }
+        .wallet-stat label { font-size:10.5px; font-weight:800; letter-spacing:.5px; text-transform:uppercase; color:var(--text-sub); display:block; margin-bottom:6px; }
+        .wallet-stat .val { font-family:'Playfair Display',serif; font-size:24px; font-weight:700; color:var(--text); }
+        .wallet-stat .sub { font-size:11px; color:var(--text-muted); margin-top:2px; }
+        .settings-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+        .settings-card { background:var(--surface); border:1.5px solid var(--border); border-radius:18px; padding:22px; }
+        .settings-card h4 { font-size:14px; font-weight:700; margin-bottom:4px; }
+        .settings-card p  { font-size:12px; color:var(--text-muted); margin-bottom:16px; line-height:1.5; }
+        .form-field { margin-bottom:14px; }
+        .form-field label { display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:6px; }
+        .form-field input, .form-field select, .form-field textarea { width:100%; padding:9px 14px; border:1.5px solid var(--border); border-radius:10px; font-family:'Inter',sans-serif; font-size:13px; color:var(--text); background:var(--surface); outline:none; transition:border-color .2s; }
+        .form-field input:focus, .form-field select:focus, .form-field textarea:focus { border-color:var(--pink); }
+        .toggle-row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border-lt); }
+        .toggle-row:last-child { border-bottom:none; }
+        .toggle-row-text label { font-size:13px; font-weight:600; color:var(--text); }
+        .toggle-row-text span  { font-size:11px; color:var(--text-muted); }
+        .toggle { width:40px; height:22px; border-radius:50px; background:#ddd; position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; border:none; }
+        .toggle.on { background:var(--green); }
+        .toggle::after { content:''; position:absolute; top:3px; left:3px; width:16px; height:16px; border-radius:50%; background:#fff; transition:left .2s; box-shadow:0 1px 3px rgba(0,0,0,.2); }
+        .toggle.on::after { left:21px; }
+        .report-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px; margin-bottom:28px; }
+        .report-card { background:var(--surface); border:1.5px solid var(--border); border-radius:16px; padding:20px; display:flex; flex-direction:column; gap:14px; transition:all .2s; }
+        .report-card:hover { border-color:var(--pink); box-shadow:0 6px 24px rgba(201,148,167,.15); transform:translateY(-2px); }
+        .report-icon { width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; }
+        .report-icon svg { width:20px; height:20px; }
+        .report-card h4 { font-size:14px; font-weight:700; color:var(--text); }
+        .report-card p  { font-size:11.5px; color:var(--text-muted); line-height:1.5; }
+        .generate-btn { display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:700; color:var(--pink); background:none; border:none; padding:0; cursor:pointer; font-family:'Inter',sans-serif; }
+        .generate-btn:hover { color:var(--pink-dark); }
+        .pagination { display:flex; align-items:center; gap:6px; margin-top:16px; justify-content:flex-end; }
+        .page-btn { width:34px; height:34px; border-radius:8px; border:1.5px solid var(--border); background:transparent; font-family:'Inter',sans-serif; font-size:12.5px; font-weight:700; color:var(--text-muted); cursor:pointer; transition:all .15s; }
+        .page-btn:hover { border-color:var(--pink); color:var(--pink); }
+        .page-btn.active { background:var(--green); border-color:var(--green); color:#fff; }
+        .skeleton { background:linear-gradient(90deg,#f0e8eb 25%,#faf4f6 50%,#f0e8eb 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; border-radius:8px; }
+        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+        .modal-overlay { position:fixed; inset:0; background:rgba(26,26,26,.45); backdrop-filter:blur(4px); z-index:9999; display:none; align-items:center; justify-content:center; }
+        .modal-overlay.open { display:flex; }
+        .modal { background:var(--surface); border-radius:22px; padding:30px; width:460px; max-width:90vw; box-shadow:0 24px 64px rgba(0,0,0,.18); animation:modalIn .25s cubic-bezier(.34,1.56,.64,1) both; }
+        @keyframes modalIn { from{opacity:0;transform:scale(.92)} to{opacity:1;transform:scale(1)} }
+        .modal-title { font-family:'Playfair Display',serif; font-size:19px; font-weight:700; color:var(--text); margin-bottom:6px; }
+        .modal-sub   { font-size:12.5px; color:var(--text-muted); margin-bottom:4px; }
+        .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:24px; }
+        .modal-cancel  { padding:10px 20px; border-radius:50px; border:1.5px solid var(--border); background:transparent; color:var(--text-muted); font-family:'Inter',sans-serif; font-size:13px; font-weight:700; cursor:pointer; }
+        .modal-confirm { padding:10px 20px; border-radius:50px; border:none; background:var(--danger); color:#fff; font-family:'Inter',sans-serif; font-size:13px; font-weight:700; cursor:pointer; }
+        .modal-confirm.green { background:var(--success); }
+        .toast { position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(20px); background:#1a1a1a; color:#fff; font-size:13px; font-weight:600; padding:12px 22px; border-radius:50px; opacity:0; pointer-events:none; transition:all .3s cubic-bezier(.34,1.56,.64,1); z-index:99999; display:flex; align-items:center; gap:8px; white-space:nowrap; }
+        .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+        .toast svg { width:14px; height:14px; }
+
+        /* ── BADGE ICON UPLOAD ── */
+        .badge-icon-upload {
+            display: flex; align-items: center; gap: 10px;
+            padding: 7px 10px; border: 1.5px dashed var(--border);
+            border-radius: 10px; background: #fdfbfc; cursor: pointer;
+            transition: border-color .2s, background .2s; min-height: 40px;
+        }
+        .badge-icon-upload:hover { border-color: var(--pink); background: #fff8fa; }
+        .badge-icon-preview {
+            width: 36px; height: 36px; border-radius: 8px; object-fit: cover;
+            border: 1.5px solid var(--border); flex-shrink: 0; display: none;
+        }
+        .badge-icon-placeholder {
+            width: 36px; height: 36px; border-radius: 8px; background: #f0dfe5;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; flex-shrink: 0;
+        }
+        .badge-icon-upload-text { flex: 1; }
+        .badge-icon-upload-text strong { display: block; font-size: 12px; font-weight: 700; color: var(--text); }
+        .badge-icon-upload-text span  { display: block; font-size: 10.5px; color: var(--text-muted); }
+        .badge-icon-upload-ldr {
+            font-size: 10.5px; font-weight: 700; color: var(--pink);
+            display: none; align-items: center; gap: 5px;
+        }
+        .badge-icon-upload-ldr .spin {
+            width: 12px; height: 12px; border: 2px solid #f0dfe5;
+            border-top-color: var(--pink); border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── BAN REASON MODAL ── */
+        .ban-reason-box {
+            background: var(--surface); border-radius: 22px; padding: 30px;
+            width: 500px; max-width: 92vw;
+            box-shadow: 0 24px 64px rgba(0,0,0,.2);
+            animation: modalIn .25s cubic-bezier(.34,1.56,.64,1) both;
+        }
+        .ban-reason-box h3 {
+            font-family: 'Playfair Display', serif; font-size: 20px;
+            font-weight: 700; color: var(--text); margin-bottom: 6px;
+        }
+        .ban-reason-box .sub {
+            font-size: 13px; color: var(--text-muted);
+            margin-bottom: 18px; line-height: 1.5;
+        }
+        .ban-reason-box .sub strong { color: var(--danger); }
+        .ban-presets-label {
+            font-size: 11px; font-weight: 800; text-transform: uppercase;
+            letter-spacing: .6px; color: var(--text-sub); margin-bottom: 8px;
+        }
+        .ban-presets { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
+        .ban-preset {
+            padding: 5px 13px; border-radius: 20px; border: 1.5px solid var(--border);
+            background: transparent; font-family: 'Inter', sans-serif;
+            font-size: 11.5px; font-weight: 600; color: var(--text-muted);
+            cursor: pointer; transition: all .15s;
+        }
+        .ban-preset:hover, .ban-preset.selected {
+            border-color: var(--danger); color: var(--danger); background: #fff0f4;
+        }
+        .ban-reason-textarea {
+            width: 100%; padding: 12px 14px; border: 1.5px solid var(--border);
+            border-radius: 12px; font-family: 'Inter', sans-serif; font-size: 13px;
+            color: var(--text); background: var(--surface); outline: none;
+            resize: vertical; min-height: 90px; transition: border-color .2s;
+        }
+        .ban-reason-textarea:focus { border-color: var(--danger); }
+        .ban-char-count { font-size: 11px; color: var(--text-sub); text-align: right; margin-top: 4px; }
+
+        /* ── EDIT BADGE MODAL ── */
+        .edit-badge-box {
+            background: var(--surface); border-radius: 22px; padding: 30px;
+            width: 520px; max-width: 94vw;
+            box-shadow: 0 24px 64px rgba(0,0,0,.2);
+            animation: modalIn .25s cubic-bezier(.34,1.56,.64,1) both;
+        }
+        .edit-badge-box h3 {
+            font-family: 'Playfair Display', serif; font-size: 20px;
+            font-weight: 700; color: var(--text); margin-bottom: 18px;
+        }
+        .edit-badge-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;
+        }
+        .edit-badge-field { display: flex; flex-direction: column; gap: 5px; }
+        .edit-badge-field label {
+            font-size: 11px; font-weight: 800; text-transform: uppercase;
+            letter-spacing: .6px; color: var(--text-muted);
+        }
+        .edit-badge-field input,
+        .edit-badge-field select {
+            padding: 9px 14px; border: 1.5px solid var(--border); border-radius: 10px;
+            font-family: 'Inter', sans-serif; font-size: 13px; color: var(--text);
+            background: var(--surface); outline: none; transition: border-color .2s;
+        }
+        .edit-badge-field input:focus,
+        .edit-badge-field select:focus { border-color: var(--pink); }
+        .edit-badge-field.full { grid-column: 1 / -1; }
+    </style>
+</head>
+<body>
+
+<aside class="side-nav">
+    <div class="nav-brand">
+        <img src="../auth/Logo/logo.jpg" class="dash-logo" alt="Suot">
+        <p class="logo-tagline">Style passed on.</p>
+    </div>
+    <div class="admin-badge-wrap">
+        <span class="admin-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Super Admin Panel
+        </span>
+    </div>
+    <div class="admin-profile-card">
+        <div class="avatar-wrap"><img id="adminAvatar" src="https://ui-avatars.com/api/?name=A&background=f5cdd8&color=e05577&bold=true" alt="Admin"></div>
+        <div class="admin-meta"><h4 id="adminName">Loading…</h4><p>Super Admin</p></div>
+    </div>
+    <div class="nav-scroll">
+        <p class="nav-section-label">Overview</p>
+        <button class="nav-link active" onclick="showSection('overview',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            Dashboard
+        </button>
+        <p class="nav-section-label">Management</p>
+        <button class="nav-link" onclick="showSection('users',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+            Users <span class="badge" id="navBadgeUsers">…</span>
+        </button>
+        <button class="nav-link" onclick="showSection('items',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.57a1 1 0 00.99.84H7v10c0 .55.45 1 1 1h8c.55 0 1-.45 1-1V10h4.15a1 1 0 00.99-.84l.58-3.57a2 2 0 00-1.34-2.23z"/></svg>
+            Items <span class="badge warn" id="navBadgeItems">…</span>
+        </button>
+        <button class="nav-link" onclick="showSection('swaps',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+            Swaps <span class="badge" id="navBadgeSwaps">…</span>
+        </button>
+        <button class="nav-link" onclick="showSection('wallet',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            Points & Wallet
+        </button>
+        <button class="nav-link" onclick="showSection('reports',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Reports
+        </button>
+        <button class="nav-link" onclick="showSection('meetup',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Meetup Spots
+        </button>
+        <button class="nav-link" onclick="showSection('badges',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+            Badges
+        </button>
+        <p class="nav-section-label">System</p>
+        <button class="nav-link" onclick="showSection('settings',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+            Settings
+        </button>
+    </div>
+    <button class="btn-logout" onclick="confirmLogout()">← Exit Admin</button>
+</aside>
+
+<main class="main-content">
+    <header class="top-bar">
+        <h2 id="pageTitle">Overview <em>Dashboard</em></h2>
+        <div class="top-right">
+            <div class="top-search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" placeholder="Search users, items…" id="globalSearch" oninput="handleGlobalSearch(this.value)">
+            </div>
+            <button class="icon-btn" onclick="loadData()" title="Refresh">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+            </button>
+        </div>
+    </header>
+
+    <div class="page-inner">
+
+        <!-- OVERVIEW -->
+        <div class="admin-section active" id="sec-overview">
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card"><div class="skeleton" style="height:90px;"></div></div>
+                <div class="stat-card"><div class="skeleton" style="height:90px;"></div></div>
+                <div class="stat-card"><div class="skeleton" style="height:90px;"></div></div>
+                <div class="stat-card"><div class="skeleton" style="height:90px;"></div></div>
+                <div class="stat-card"><div class="skeleton" style="height:90px;"></div></div>
+            </div>
+            <div class="charts-row">
+                <div class="chart-card">
+                    <div class="chart-card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Items by Category</div>
+                    <div class="bar-chart" id="catBarChart"><div class="skeleton" style="width:100%;height:110px;"></div></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>Swaps by Status</div>
+                    <div class="bar-chart" id="swapBarChart"><div class="skeleton" style="width:100%;height:110px;"></div></div>
+                </div>
+            </div>
+            <div class="section-header"><h3 class="section-title">Recent <span>Wallet Activity</span></h3></div>
+            <div class="table-wrap" style="padding:6px 18px;">
+                <div class="activity-feed" id="activityFeed"><div class="skeleton" style="height:180px;margin:10px 0;"></div></div>
+            </div>
+        </div>
+
+        <!-- USERS -->
+        <div class="admin-section" id="sec-users">
+            <div class="filter-row">
+                <select class="filter-select" id="userStatusFilter" onchange="applyUserFilter()"><option value="all">All Users</option><option value="active">Active</option><option value="banned">Banned</option></select>
+                <input class="filter-input" type="text" id="userSearch" placeholder="Search by name…" oninput="applyUserFilter()">
+                <button class="primary-btn" style="margin-left:auto;" onclick="exportCSV('users')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export CSV</button>
+            </div>
+            <div class="table-wrap"><table><thead><tr><th>User</th><th>Active Pts</th><th>Buffer Pts</th><th>Joined</th><th>Status</th><th>Role</th><th>Actions</th></tr></thead><tbody id="usersTableBody"><tr><td colspan="7"><div class="skeleton" style="height:40px;margin:10px;"></div></td></tr></tbody></table></div>
+            <div class="pagination" id="usersPagination"></div>
+        </div>
+
+        <!-- ITEMS -->
+        <div class="admin-section" id="sec-items">
+            <div class="tab-bar">
+                <button class="tab-btn active" onclick="setItemTab('all',this)">All</button>
+                <button class="tab-btn" onclick="setItemTab('swapped',this)">Swapped</button>
+            </div>
+            <div class="filter-row">
+                <select class="filter-select" id="itemCatFilter" onchange="applyItemFilter()"><option value="all">All Categories</option><option value="tops">Tops</option><option value="bottoms">Bottoms</option><option value="accessories">Accessories</option></select>
+                <button class="primary-btn" style="margin-left:auto;" onclick="exportCSV('items')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export CSV</button>
+            </div>
+            <div class="table-wrap"><table><thead><tr><th>Item</th><th>Seller</th><th>Category</th><th>Points</th><th>Listed</th><th>Status</th><th>Actions</th></tr></thead><tbody id="itemsTableBody"><tr><td colspan="7"><div class="skeleton" style="height:40px;margin:10px;"></div></td></tr></tbody></table></div>
+            <div class="pagination" id="itemsPagination"></div>
+        </div>
+
+        <!-- SWAPS -->
+        <div class="admin-section" id="sec-swaps">
+            <div class="filter-row">
+                <select class="filter-select" id="swapStatusFilter" onchange="applySwapFilter()"><option value="all">All Statuses</option><option value="pending">Pending</option><option value="otp_pending">OTP Pending</option><option value="swapped">Completed</option><option value="declined">Declined</option><option value="cancelled">Cancelled</option></select>
+                <button class="primary-btn" style="margin-left:auto;" onclick="exportCSV('swaps')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export CSV</button>
+            </div>
+            <div class="table-wrap"><table><thead><tr><th>Swap ID</th><th>Seller</th><th>Buyer</th><th>Offer Type</th><th>Points</th><th>Listed</th><th>Status</th></tr></thead><tbody id="swapsTableBody"><tr><td colspan="7"><div class="skeleton" style="height:40px;margin:10px;"></div></td></tr></tbody></table></div>
+            <div class="pagination" id="swapsPagination"></div>
+        </div>
+
+        <!-- WALLET -->
+        <div class="admin-section" id="sec-wallet">
+            <div class="wallet-row" id="walletStats">
+                <div class="wallet-stat"><label>Loading…</label><div class="val skeleton" style="height:34px;width:140px;border-radius:6px;"></div></div>
+                <div class="wallet-stat"><label>Loading…</label><div class="val skeleton" style="height:34px;width:140px;border-radius:6px;"></div></div>
+                <div class="wallet-stat"><label>Loading…</label><div class="val skeleton" style="height:34px;width:140px;border-radius:6px;"></div></div>
+                <div class="wallet-stat"><label>Loading…</label><div class="val skeleton" style="height:34px;width:140px;border-radius:6px;"></div></div>
+            </div>
+            <div class="section-header"><h3 class="section-title">Wallet <span>Event Log</span></h3><button class="primary-btn" onclick="exportCSV('wallet_events')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export CSV</button></div>
+            <div class="table-wrap"><table><thead><tr><th>User</th><th>Event</th><th>Amount</th><th>From</th><th>To</th><th>Note</th><th>Date</th></tr></thead><tbody id="walletTableBody"><tr><td colspan="7"><div class="skeleton" style="height:40px;margin:10px;"></div></td></tr></tbody></table></div>
+            <div class="pagination" id="walletPagination"></div>
+        </div>
+
+        <!-- REPORTS -->
+        <div class="admin-section" id="sec-reports">
+            <div class="section-header" style="margin-bottom:20px;"><h3 class="section-title">Generate <span>Reports</span></h3></div>
+            <div class="report-grid">
+                <div class="report-card"><div class="report-icon" style="background:#faf4f6;color:var(--pink);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><h4>User Report</h4><p>All users — name, points balance, buffer, role, joined date.</p><button class="generate-btn" onclick="exportCSV('users')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download CSV</button></div>
+                <div class="report-card"><div class="report-icon" style="background:#edf7f4;color:var(--green);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.57a1 1 0 00.99.84H7v10c0 .55.45 1 1 1h8c.55 0 1-.45 1-1V10h4.15a1 1 0 00.99-.84l.58-3.57a2 2 0 00-1.34-2.23z"/></svg></div><h4>Items Report</h4><p>All listings — name, category, points, status, seller.</p><button class="generate-btn" onclick="exportCSV('items')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download CSV</button></div>
+                <div class="report-card"><div class="report-icon" style="background:#e8f4ff;color:var(--info);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg></div><h4>Swaps Report</h4><p>All swaps — parties, points exchanged, status, date.</p><button class="generate-btn" onclick="exportCSV('swaps')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download CSV</button></div>
+                <div class="report-card"><div class="report-icon" style="background:#fff8ec;color:var(--warn);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><h4>Wallet Events Report</h4><p>Full ledger — all top-ups, earns, spends, overflows, refills, expiries.</p><button class="generate-btn" onclick="exportCSV('wallet_events')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download CSV</button></div>
+            </div>
+        </div>
+
+        <!-- MEETUP SPOTS -->
+        <div class="admin-section" id="sec-meetup">
+            <div class="stats-grid" id="meetupStats">
+                <div class="stat-card"><div class="skeleton" style="height:90px;"></div></div>
+                <div class="stat-card"><div class="skeleton" style="height:90px;"></div></div>
+                <div class="stat-card"><div class="skeleton" style="height:90px;"></div></div>
+            </div>
+            <div style="margin-bottom:28px;">
+                <div class="chart-card">
+                    <div class="chart-card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Top Preferred Meetup Locations</div>
+                    <div id="meetupBarChart" style="display:flex;align-items:flex-end;gap:10px;height:140px;"><div class="skeleton" style="width:100%;height:140px;"></div></div>
+                </div>
+            </div>
+            <div class="section-header"><h3 class="section-title">All <span>Meetup Locations</span></h3></div>
+            <div class="table-wrap"><table><thead><tr><th>Address</th><th>Items Listed Here</th><th>% of Total</th><th>Coordinates</th></tr></thead><tbody id="meetupTableBody"><tr><td colspan="4"><div class="skeleton" style="height:40px;margin:10px;"></div></td></tr></tbody></table></div>
+        </div>
+
+        <!-- BADGES -->
+        <div class="admin-section" id="sec-badges">
+            <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:18px;padding:22px;margin-bottom:24px;">
+                <h3 class="section-title" style="margin-bottom:16px;">Create <span>New Badge</span></h3>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px;">
+                    <div class="form-field" style="margin:0;">
+                        <label style="display:block;font-size:11.5px;font-weight:700;color:var(--text-muted);margin-bottom:6px;">Badge Name</label>
+                        <input type="text" id="badgeName" placeholder="e.g. Active Swapper" style="width:100%;padding:9px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;color:var(--text);background:var(--surface);outline:none;">
+                    </div>
+
+                    <!-- ── CHANGE 1: Custom image upload replaces the old emoji text input ── -->
+                    <div class="form-field" style="margin:0;">
+                        <label style="display:block;font-size:11.5px;font-weight:700;color:var(--text-muted);margin-bottom:6px;">Badge Icon</label>
+                        <!-- Hidden input stores the final Supabase public URL -->
+                        <input type="hidden" id="badgeIcon" value="">
+                        <!-- Hidden file input -->
+                        <input type="file" id="badgeIconFile" accept="image/*" style="display:none;" onchange="handleBadgeIconUpload(this)">
+                        <!-- Clickable upload area -->
+                        <div class="badge-icon-upload" onclick="document.getElementById('badgeIconFile').click()">
+                            <div class="badge-icon-placeholder" id="badgeIconPlaceholder">🏅</div>
+                            <img class="badge-icon-preview" id="badgeIconPreview" src="" alt="Icon preview">
+                            <div class="badge-icon-upload-text" id="badgeIconUploadText">
+                                <strong>Upload Icon</strong>
+                                <span>PNG, JPG, SVG · max 2MB</span>
+                            </div>
+                            <div class="badge-icon-upload-ldr" id="badgeIconLoader">
+                                <div class="spin"></div> Uploading…
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-field" style="margin:0;">
+                        <label style="display:block;font-size:11.5px;font-weight:700;color:var(--text-muted);margin-bottom:6px;">Criteria Type</label>
+                        <select id="badgeCriteria" onchange="handleCriteriaChange(this)" style="width:100%;padding:9px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;color:var(--text);background:var(--surface);outline:none;appearance:none;">
+                            <option value="swaps_completed">Swaps Completed</option>
+                            <option value="items_posted">Items Posted</option>
+                            <option value="items_wishlisted">Items Wishlisted</option>
+                            <option value="followers">Followers Gained</option>
+                            <option value="__custom__">✏️ Custom…</option>
+                        </select>
+                        <div id="customCriteriaWrap" style="display:none;margin-top:8px;">
+                            <input type="text" id="customCriteriaInput"
+                                placeholder="e.g. Profile Completed, First Swap, VIP Member…"
+                                style="width:100%;padding:9px 14px;border:1.5px solid var(--pink);border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;color:var(--text);background:var(--surface);outline:none;"
+                                oninput="updateBadgePreview()">
+                            <div style="font-size:10.5px;color:var(--text-sub);margin-top:4px;">This will be saved as the criteria type for this badge.</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:2fr 1fr auto;gap:14px;align-items:end;">
+                    <div class="form-field" style="margin:0;">
+                        <label style="display:block;font-size:11.5px;font-weight:700;color:var(--text-muted);margin-bottom:6px;">Description</label>
+                        <input type="text" id="badgeDescription" placeholder="e.g. Complete 10 swaps to earn this badge" style="width:100%;padding:9px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;color:var(--text);background:var(--surface);outline:none;">
+                    </div>
+                    <div class="form-field" style="margin:0;">
+                        <label style="display:block;font-size:11.5px;font-weight:700;color:var(--text-muted);margin-bottom:6px;">Threshold</label>
+                        <input type="number" id="badgeThreshold" value="10" min="1" style="width:100%;padding:9px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;color:var(--text);background:var(--surface);outline:none;">
+                    </div>
+                    <button class="primary-btn" onclick="doCreateBadge()" style="height:40px;white-space:nowrap;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                        Create Badge
+                    </button>
+                </div>
+            </div>
+
+            <!-- BADGE PREVIEW -->
+            <div id="badgePreviewRow" style="display:none;margin-bottom:24px;">
+                <h3 class="section-title" style="margin-bottom:14px;">Preview</h3>
+                <div id="badgePreviewCard" style="display:inline-flex;flex-direction:column;align-items:center;gap:10px;background:var(--surface);border:1.5px solid var(--border);border-radius:18px;padding:22px 30px;min-width:160px;"></div>
+            </div>
+
+            <!-- BADGES TABLE -->
+            <div class="section-header">
+                <h3 class="section-title">All <span>Badges</span></h3>
+                <span id="badgesCount" style="font-size:12px;color:var(--text-muted);font-weight:600;"></span>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Badge</th><th>Criteria</th><th>Threshold</th><th>Earned By</th><th>Created</th><th>Actions</th></tr></thead>
+                    <tbody id="badgesTableBody"><tr><td colspan="6"><div class="skeleton" style="height:40px;margin:10px;"></div></td></tr></tbody>
+                </table>
+            </div>
+
+            <div class="modal-overlay" id="earnedByModal">
+                <div class="modal" style="width:500px;">
+                    <div class="modal-title" id="earnedByTitle">Earned By</div>
+                    <div class="modal-sub" id="earnedBySub" style="margin-bottom:14px;"></div>
+                    <div id="earnedByList" style="max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;"></div>
+                    <div class="modal-actions"><button class="modal-cancel" onclick="document.getElementById('earnedByModal').classList.remove('open')">Close</button></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS -->
+        <div class="admin-section" id="sec-settings">
+            <div class="settings-grid">
+                <div class="settings-card">
+                    <h4>Admin Account</h4><p>Your admin profile pulled live from Supabase.</p>
+                    <div class="form-field"><label>Display Name</label><input type="text" id="settingName" placeholder="Loading…"></div>
+                    <div class="form-field"><label>Email</label><input type="text" id="settingEmail" placeholder="Loading…" readonly style="opacity:.6;cursor:not-allowed;"></div>
+                    <button class="primary-btn" onclick="saveAdminName()">Save Changes</button>
+                </div>
+                <div class="settings-card">
+                    <h4>Platform Controls</h4><p>Toggle platform-wide features for all users.</p>
+                    <div class="toggle-row"><div class="toggle-row-text"><label>AI Price Suggester</label><br><span>Gemini-powered pricing hints</span></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+                    <div class="toggle-row"><div class="toggle-row-text"><label>Video Calls (WebRTC)</label><br><span>P2P calls between users</span></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
+
+                    <div class="toggle-row"><div class="toggle-row-text"><label>Maintenance Mode</label><br><span>Show maintenance page to users</span></div><button class="toggle" onclick="this.classList.toggle('on')"></button></div>
+                </div>
+                <div class="settings-card">
+                    <h4>Wallet Configuration</h4><p>Platform-wide Pasa-Points rules. Update constants in supabase.js to apply.</p>
+                    <div class="form-field"><label>Active Wallet Cap (pts)</label><input type="number" value="2500"></div>
+                    <div class="form-field"><label>Auto-refill Threshold (pts)</label><input type="number" value="500"></div>
+                    <div class="form-field"><label>Buffer Expiry (days)</label><input type="number" value="30"></div>
+                    <button class="primary-btn" onclick="showToast('Update ACTIVE_CAP, REFILL_TRIGGER, and BUFFER_TTL_DAYS in supabase.js to apply.')">View Note</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<div class="modal-overlay" id="confirmModal">
+    <div class="modal">
+        <div class="modal-title" id="modalTitle">Confirm</div>
+        <div class="modal-sub" id="modalSub">Are you sure?</div>
+        <div class="modal-actions">
+            <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+            <button class="modal-confirm" id="modalConfirmBtn" onclick="runModalCallback()">Confirm</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- ── BAN REASON MODAL ── -->
+<div class="modal-overlay" id="banReasonModal">
+    <div class="ban-reason-box">
+        <h3>Ban User</h3>
+        <p class="sub">You are about to ban <strong id="banTargetName"></strong>. This reason will be shown to them when they try to log in.</p>
+        <p class="ban-presets-label">Quick reasons</p>
+        <div class="ban-presets">
+            <button class="ban-preset" onclick="selectBanPreset(this,'Violation of community guidelines.')">Community guidelines</button>
+            <button class="ban-preset" onclick="selectBanPreset(this,'Spam or abusive behavior.')">Spam / Abuse</button>
+            <button class="ban-preset" onclick="selectBanPreset(this,'Fraudulent or suspicious activity detected.')">Fraud</button>
+            <button class="ban-preset" onclick="selectBanPreset(this,'Repeated policy violations.')">Repeated violations</button>
+            <button class="ban-preset" onclick="selectBanPreset(this,'Inappropriate content was posted.')">Inappropriate content</button>
+        </div>
+        <textarea class="ban-reason-textarea" id="banReasonInput" placeholder="Or type a custom reason…" oninput="updateBanCharCount()" maxlength="300"></textarea>
+        <p class="ban-char-count"><span id="banCharCount">0</span> / 300</p>
+        <div class="modal-actions">
+            <button class="modal-cancel" onclick="closeBanModal()">Cancel</button>
+            <button class="modal-confirm" onclick="confirmBan()">Confirm Ban</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- ── EDIT BADGE MODAL ── -->
+<div class="modal-overlay" id="editBadgeModal">
+    <div class="edit-badge-box">
+        <h3>Edit Badge</h3>
+        <input type="hidden" id="editBadgeId">
+        <div class="edit-badge-grid">
+            <div class="edit-badge-field full">
+                <label>Badge Name</label>
+                <input type="text" id="editBadgeName" placeholder="Badge name">
+            </div>
+            <div class="edit-badge-field">
+                <label>Criteria Type</label>
+                <select id="editBadgeCriteria">
+                    <option value="swaps_completed">Swaps Completed</option>
+                    <option value="items_posted">Items Posted</option>
+                    <option value="items_wishlisted">Items Wishlisted</option>
+                    <option value="followers">Followers Gained</option>
+                    <option value="__custom__">&#9999;&#65039; Custom…</option>
+                </select>
+                <input type="text" id="editBadgeCustomCriteria"
+                    placeholder="Custom criteria type…"
+                    style="display:none;margin-top:8px;padding:9px 14px;border:1.5px solid var(--pink);border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;color:var(--text);background:var(--surface);outline:none;">
+            </div>
+            <div class="edit-badge-field">
+                <label>Threshold</label>
+                <input type="number" id="editBadgeThreshold" min="1" value="10">
+            </div>
+            <div class="edit-badge-field full">
+                <label>Description</label>
+                <input type="text" id="editBadgeDescription" placeholder="Badge description">
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="modal-cancel" onclick="closeEditBadgeModal()">Cancel</button>
+            <button class="modal-confirm green" onclick="saveEditBadge()">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    <span id="toastMsg"></span>
+</div>
+
+<script type="module">
+import { supabase } from '../db/supabase.js'
+
+const { data: { session } } = await supabase.auth.getSession()
+if (!session) { window.location.href = '../auth/login.html' }
+const { data: me } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
+if (me?.role !== 'super_admin') { window.location.href = '../dashboard/dashboard.html' }
+
+const adminDisplayName = me?.display_name || me?.username || 'Admin'
+document.getElementById('adminName').textContent = adminDisplayName
+document.getElementById('adminAvatar').src = me?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(adminDisplayName)}&background=f5cdd8&color=e05577&bold=true`
+document.getElementById('settingName').value = adminDisplayName
+document.getElementById('settingEmail').value = session.user.email || ''
+
+let allUsers=[], allItems=[], allSwaps=[], allWallet=[]
+const PER_PAGE=10
+let userPage=0, itemPage=0, swapPage=0, walletPage=0
+let filteredUsers=[], filteredItems=[], filteredSwaps=[], filteredWallet=[]
+let currentItemTab='all'
+
+// ── DELETE ITEM ──
+window.doDeleteItem = function(itemId, name) {
+    openModal(
+        'Delete Item',
+        'Permanently delete <strong>' + name + '</strong>? This cannot be undone.',
+        'Delete', true,
+        async () => {
+            const { error } = await supabase.from('items').delete().eq('id', itemId)
+            if (error) { showToast('Error: ' + error.message); return }
+            allItems = allItems.filter(i => i.id !== itemId)
+            showToast('"' + name + '" deleted.')
+            applyItemFilter()
+            loadOverviewStats()
+        }
+    )
+}
+
+// ── EDIT BADGE MODAL ──
+window.openEditBadgeModal = function(badgeId) {
+    const badge = allBadges.find(b => b.id === badgeId)
+    if (!badge) return
+    document.getElementById('editBadgeId').value          = badge.id
+    document.getElementById('editBadgeName').value        = badge.name || ''
+    document.getElementById('editBadgeDescription').value = badge.description || ''
+    document.getElementById('editBadgeThreshold').value   = badge.threshold || 1
+
+    const knownCriteria = ['swaps_completed','items_posted','items_wishlisted','followers']
+    const criteriaSelect = document.getElementById('editBadgeCriteria')
+    const customInput    = document.getElementById('editBadgeCustomCriteria')
+
+    if (knownCriteria.includes(badge.criteria_type)) {
+        criteriaSelect.value      = badge.criteria_type
+        customInput.style.display = 'none'
+        customInput.value         = ''
+    } else {
+        criteriaSelect.value      = '__custom__'
+        customInput.style.display = 'block'
+        customInput.value         = badge.criteria_type || ''
+    }
+
+    document.getElementById('editBadgeModal').classList.add('open')
+}
+
+window.closeEditBadgeModal = function() {
+    document.getElementById('editBadgeModal').classList.remove('open')
+}
+
+document.getElementById('editBadgeCriteria').addEventListener('change', function() {
+    const customInput = document.getElementById('editBadgeCustomCriteria')
+    customInput.style.display = this.value === '__custom__' ? 'block' : 'none'
+    if (this.value !== '__custom__') customInput.value = ''
+})
+
+document.getElementById('editBadgeModal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeEditBadgeModal()
+})
+
+window.saveEditBadge = async function() {
+    const id          = document.getElementById('editBadgeId').value
+    const name        = document.getElementById('editBadgeName').value.trim()
+    const description = document.getElementById('editBadgeDescription').value.trim()
+    const threshold   = parseInt(document.getElementById('editBadgeThreshold').value) || 1
+    const criteriaSelect = document.getElementById('editBadgeCriteria')
+    const criteria = criteriaSelect.value === '__custom__'
+        ? (document.getElementById('editBadgeCustomCriteria').value.trim() || 'custom')
+        : criteriaSelect.value
+
+    if (!name) { showToast('Badge name is required.'); return }
+
+    const { error } = await supabase.from('badges')
+        .update({ name, description, criteria_type: criteria, threshold })
+        .eq('id', id)
+
+    if (error) { showToast('Error: ' + error.message); return }
+
+    const idx = allBadges.findIndex(b => b.id === id)
+    if (idx !== -1) allBadges[idx] = { ...allBadges[idx], name, description, criteria_type: criteria, threshold }
+
+    renderBadgesTable()
+    document.getElementById('badgesCount').textContent = allBadges.length + ' badge' + (allBadges.length !== 1 ? 's' : '')
+    closeEditBadgeModal()
+    showToast('"' + name + '" updated!')
+}
+
+window.loadData = async function() {
+    await Promise.all([loadUsers(),loadItems(),loadSwaps(),loadWalletEvents(),loadActivityFeed(),loadMeetupSpots(),loadBadges()])
+    await loadOverviewStats()
+    renderWalletStats()
+}
+
+async function loadUsers() {
+    const{data,error}=await supabase.from('profiles').select('id,username,display_name,avatar_url,pts,circulation_buffer,created_at,role,ban_reason').order('created_at',{ascending:false})
+    if(error){console.error(error);return}
+    allUsers=data||[]; document.getElementById('navBadgeUsers').textContent=allUsers.length
+    filteredUsers=[...allUsers]; userPage=0; renderUsers()
+}
+
+async function loadItems() {
+    const{data,error}=await supabase.from('items').select('id,name,category,pts,status,images,created_at,profiles(username,display_name)').order('created_at',{ascending:false})
+    if(error){console.error(error);return}
+    allItems=data||[]
+    const pending=allItems.filter(i=>!i.status||i.status==='pending').length
+    document.getElementById('navBadgeItems').textContent=pending||allItems.length
+    applyItemFilter()
+}
+
+async function loadSwaps() {
+    const { data, error } = await supabase
+        .from('swaps')
+        .select('*')
+        .order('created_at', { ascending: false })
+    if (error) { console.error('swaps error:', error); return }
+
+    // Collect all unique profile IDs from requester_id + owner_id
+    const profileIds = [...new Set([
+        ...(data||[]).map(s => s.requester_id).filter(Boolean),
+        ...(data||[]).map(s => s.owner_id).filter(Boolean)
+    ])]
+
+    // Fetch their names in a single query — no FK constraint needed
+    let profileMap = {}
+    if (profileIds.length) {
+        const { data: profiles } = await supabase
+            .from('profiles')
+            .select('id, display_name, username')
+            .in('id', profileIds)
+        ;(profiles||[]).forEach(p => { profileMap[p.id] = p })
+    }
+
+    // Merge profile data back onto each swap
+    allSwaps = (data||[]).map(s => ({
+        ...s,
+        requester: profileMap[s.requester_id] || null,
+        owner:     profileMap[s.owner_id]     || null
+    }))
+
+    document.getElementById('navBadgeSwaps').textContent = allSwaps.length
+    filteredSwaps = [...allSwaps]
+    swapPage = 0
+    renderSwaps()
+}
+
+async function loadWalletEvents() {
+    const{data,error}=await supabase.from('wallet_events').select('id,user_id,event_type,amount,from_wallet,to_wallet,note,created_at,profiles(display_name,username)').order('created_at',{ascending:false}).limit(300)
+    if(error){console.error(error);return}
+    allWallet=data||[]; filteredWallet=[...allWallet]; walletPage=0; renderWallet()
+}
+
+async function loadOverviewStats() {
+    const[{count:totalUsers},{count:totalItems},{count:completedSwaps}]=await Promise.all([
+        supabase.from('profiles').select('*',{count:'exact',head:true}),
+        supabase.from('items').select('*',{count:'exact',head:true}),
+        supabase.from('items').select('*',{count:'exact',head:true}).eq('status','swapped'),
+    ])
+    const totalPts=allUsers.reduce((s,u)=>s+(u.pts||0),0), totalBuf=allUsers.reduce((s,u)=>s+(u.circulation_buffer||0),0)
+    document.getElementById('statsGrid').innerHTML=[
+        mk_stat('pink',svgUsers,totalUsers||0,'Total Users'),mk_stat('green',svgItems,totalItems||0,'Items Listed'),
+        mk_stat('blue',svgSwaps,completedSwaps||0,'Completed Swaps'),mk_stat('amber',svgWallet,(totalPts).toLocaleString()+' pts','Active Pts (Total)'),
+        mk_stat('purple',svgWallet,(totalBuf).toLocaleString()+' pts','Buffer Pts (Total)'),
+    ].join('')
+    renderCategoryChart(); renderSwapStatusChart()
+}
+
+async function loadActivityFeed() {
+    const{data,error}=await supabase.from('wallet_events').select('event_type,amount,note,created_at,profiles(display_name,username)').order('created_at',{ascending:false}).limit(10)
+    if(error){console.error(error);return}
+    const feed=document.getElementById('activityFeed')
+    if(!data?.length){feed.innerHTML='<p style="text-align:center;color:#bbb;padding:24px 0;font-size:13px;">No wallet activity yet.</p>';return}
+    feed.innerHTML=data.map(e=>{const name=e.profiles?.display_name||e.profiles?.username||'Unknown user'
+        return`<div class="activity-item"><div class="act-icon ${e.event_type}">${svgWallet}</div><div class="act-text"><p><strong>${name}</strong> — <strong>${e.event_type}</strong> of <strong>${(e.amount||0).toLocaleString()} pts</strong>${e.note?` · <span style="color:var(--text-muted)">${e.note}</span>`:''}</p><div class="act-time">${timeAgo(e.created_at)}</div></div></div>`
+    }).join('')
+}
+
+function renderUsers() {
+    const tbody=document.getElementById('usersTableBody'), page=filteredUsers.slice(userPage*PER_PAGE,(userPage+1)*PER_PAGE)
+    if(!page.length){tbody.innerHTML='<tr class="empty-row"><td colspan="7">No users found.</td></tr>';mkPager('usersPagination',0,0,()=>{});return}
+        tbody.innerHTML=page.map(u=>{
+        const name=u.display_name||u.username||'(no name)'
+        const avatar=u.avatar_url||`https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=EBE0E3&color=C994A7`
+        const status=u.role==='banned'?'banned':'active'
+        const banNote = u.role==='banned' && u.ban_reason
+            ? `<div style="font-size:10.5px;color:#e05577;margin-top:4px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-style:italic;" title="${esc(u.ban_reason)}">📋 ${esc(u.ban_reason)}</div>`
+            : ''
+        const roleLabel = u.role==='super_admin'
+            ? `<span style="display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:var(--danger);background:linear-gradient(135deg,#fff0f4,#fce8ef);border:1.5px solid #f5cdd8;padding:3px 10px;border-radius:20px;">🛡 Super Admin</span>`
+            : `<span style="font-size:11.5px;font-weight:600;color:var(--text-muted);">Member</span>`
+        return`<tr>
+            <td><div class="user-cell"><img src="${avatar}" alt="${esc(name)}"><div class="user-cell-meta"><strong>${esc(name)}</strong><span>${u.id.slice(0,14)}…</span></div></div></td>
+            <td>${(u.pts||0).toLocaleString()} pts</td>
+            <td>${(u.circulation_buffer||0).toLocaleString()} pts</td>
+            <td>${fmtDate(u.created_at)}</td>
+            <td><span class="pill ${status}">${cap(status)}</span>${banNote}</td>
+            <td>${roleLabel}</td>
+            <td><div class="action-row">${
+                u.role==='super_admin'
+                    ? ''
+                    : u.role==='banned'
+                        ? `<button class="act-btn unban" onclick="doBanUser('${u.id}','${esc(name)}',false)">Unban</button>`
+                        : `<button class="act-btn ban" onclick="doBanUser('${u.id}','${esc(name)}',true)">Ban</button>`
+            }</div></td>
+        </tr>`
+    }).join('')
+    mkPager('usersPagination',filteredUsers.length,userPage,p=>{userPage=p;renderUsers()})
+}
+
+window.applyUserFilter=function(){const status=document.getElementById('userStatusFilter').value,q=(document.getElementById('userSearch').value||'').toLowerCase();filteredUsers=allUsers.filter(u=>{const name=(u.display_name||u.username||'').toLowerCase(),roleOk=status==='all'||(status==='banned'?u.role==='banned':u.role!=='banned');return roleOk&&(!q||name.includes(q))});userPage=0;renderUsers()}
+
+// ── BAN MODAL HELPERS ──
+let _banUid = null, _banName = null
+
+window.selectBanPreset = function(btn, reason) {
+    document.querySelectorAll('.ban-preset').forEach(b => b.classList.remove('selected'))
+    btn.classList.add('selected')
+    document.getElementById('banReasonInput').value = reason
+    updateBanCharCount()
+}
+
+window.handleCriteriaChange = function(select) {
+    const wrap = document.getElementById('customCriteriaWrap')
+    const input = document.getElementById('customCriteriaInput')
+    if (select.value === '__custom__') {
+        wrap.style.display = 'block'
+        input.focus()
+    } else {
+        wrap.style.display = 'none'
+        input.value = ''
+    }
+    updateBadgePreview()
+}
+
+window.updateBanCharCount = function() {
+    document.getElementById('banCharCount').textContent = document.getElementById('banReasonInput').value.length
+}
+
+window.closeBanModal = function() {
+    document.getElementById('banReasonModal').classList.remove('open')
+    document.querySelectorAll('.ban-preset').forEach(b => b.classList.remove('selected'))
+    document.getElementById('banReasonInput').value = ''
+    document.getElementById('banCharCount').textContent = '0'
+    _banUid = null; _banName = null
+}
+
+window.confirmBan = async function() {
+    const reason = document.getElementById('banReasonInput').value.trim() || 'Violation of community guidelines.'
+    if (!_banUid) return
+    const { error } = await supabase.from('profiles')
+        .update({ role: 'banned', ban_reason: reason })
+        .eq('id', _banUid)
+    if (error) { showToast('Error: ' + error.message); return }
+    showToast(`${_banName} has been banned.`)
+    closeBanModal()
+    await loadUsers()
+}
+
+document.getElementById('banReasonModal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeBanModal()
+})
+
+window.doBanUser = function(uid, name, ban) {
+    if (ban) {
+        _banUid = uid
+        _banName = name
+        document.getElementById('banTargetName').textContent = name
+        document.getElementById('banReasonInput').value = ''
+        document.getElementById('banCharCount').textContent = '0'
+        document.querySelectorAll('.ban-preset').forEach(b => b.classList.remove('selected'))
+        document.getElementById('banReasonModal').classList.add('open')
+    } else {
+        openModal('Unban User', `Unban <strong>${name}</strong>? They will be able to log in again.`, 'Unban', false, async () => {
+            const { error } = await supabase.from('profiles')
+                .update({ role: 'user', ban_reason: null })
+                .eq('id', uid)
+            if (error) { showToast('Error: ' + error.message); return }
+            showToast(`${name} has been unbanned.`)
+            await loadUsers()
+        })
+    }
+}
+
+function renderItems() {
+    const tbody=document.getElementById('itemsTableBody'),catF=document.getElementById('itemCatFilter')?.value||'all'
+    let list=currentItemTab==='all'?[...allItems]:allItems.filter(i=>(i.status||'pending')===currentItemTab)
+    if(catF!=='all')list=list.filter(i=>(i.category||'').toLowerCase()===catF)
+    filteredItems=list
+    const page=filteredItems.slice(itemPage*PER_PAGE,(itemPage+1)*PER_PAGE)
+    if(!page.length){tbody.innerHTML='<tr class="empty-row"><td colspan="7">No items found.</td></tr>';mkPager('itemsPagination',0,0,()=>{});return}
+    tbody.innerHTML=page.map(it=>{const img=it.images?.[0]||'',seller=it.profiles?.display_name||it.profiles?.username||'—',status=it.status||'pending'
+        return`<tr><td><div class="item-cell">${img?`<img class="item-thumb" src="${img}" alt="${esc(it.name)}">`:'<div class="item-thumb"></div>'}<div class="item-cell-meta"><strong>${esc(it.name)}</strong><span>#${it.id.slice(0,8)}</span></div></div></td><td>${esc(seller)}</td><td>${it.category||'—'}</td><td>${(it.pts||0).toLocaleString()} pts</td><td>${fmtDate(it.created_at)}</td><td><span class="pill ${status}">${cap(status)}</span></td><td><div class="action-row"><button class="act-btn reject" onclick="doDeleteItem('${it.id}','${esc(it.name)}')">Delete</button></div></td></tr>`
+    }).join('')
+    mkPager('itemsPagination',filteredItems.length,itemPage,p=>{itemPage=p;renderItems()})
+}
+
+window.setItemTab=function(tab,btn){currentItemTab=tab;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');itemPage=0;renderItems()}
+window.applyItemFilter=function(){itemPage=0;renderItems()}
+window.doItemStatus=function(itemId,name,newStatus){openModal(newStatus==='approved'?'Approve Item':'Reject Item',`${newStatus==='approved'?'Approve':'Reject'} <strong>${name}</strong>?`,cap(newStatus),newStatus==='rejected',async()=>{const{error}=await supabase.from('items').update({status:newStatus}).eq('id',itemId);if(error){showToast('Error: '+error.message);return}showToast(`"${name}" ${newStatus}.`);await loadItems();loadOverviewStats()})}
+
+function renderSwaps() {
+    const tbody=document.getElementById('swapsTableBody'),sf=document.getElementById('swapStatusFilter')?.value||'all'
+    filteredSwaps=sf==='all'?[...allSwaps]:allSwaps.filter(s=>s.status===sf)
+    const page=filteredSwaps.slice(swapPage*PER_PAGE,(swapPage+1)*PER_PAGE)
+    if(!page.length){tbody.innerHTML='<tr class="empty-row"><td colspan="7">No swaps found.</td></tr>';mkPager('swapsPagination',0,0,()=>{});return}
+    tbody.innerHTML=page.map(s=>{
+        const seller     = s.owner?.display_name||s.owner?.username||s.owner_id?.slice(0,8)||'—'
+        const buyer      = s.requester?.display_name||s.requester?.username||s.requester_id?.slice(0,8)||'—'
+        const offerType  = (s.offered_item_id && s.offered_pts > 0) ? 'Item + Points' : (s.offered_item_id ? 'Item Only' : 'Points Only')
+        const pts        = (s.offered_pts||0).toLocaleString()
+        const status     = s.status||'pending'
+        return`<tr>
+            <td><code style="font-size:11px;background:#f5f0f2;padding:3px 8px;border-radius:6px;">${s.id.slice(0,12)}…</code></td>
+            <td>${esc(seller)}</td>
+            <td>${esc(buyer)}</td>
+            <td><span style="font-size:11.5px;font-weight:700;color:var(--text-muted);">${offerType}</span></td>
+            <td>${pts} pts</td>
+            <td>${fmtDate(s.created_at)}</td>
+            <td><span class="pill ${status}">${cap(status.replace('_',' '))}</span></td>
+        </tr>`
+    }).join('')
+    mkPager('swapsPagination',filteredSwaps.length,swapPage,p=>{swapPage=p;renderSwaps()})
+}
+window.applySwapFilter=function(){swapPage=0;renderSwaps()}
+
+function renderWallet() {
+    const tbody=document.getElementById('walletTableBody'),page=filteredWallet.slice(walletPage*PER_PAGE,(walletPage+1)*PER_PAGE)
+    if(!page.length){tbody.innerHTML='<tr class="empty-row"><td colspan="7">No wallet events.</td></tr>';return}
+    tbody.innerHTML=page.map(e=>{const name=e.profiles?.display_name||e.profiles?.username||e.user_id?.slice(0,8)
+        return`<tr><td>${esc(name)}</td><td><span class="pill ${e.event_type}">${e.event_type}</span></td><td>${(e.amount||0).toLocaleString()} pts</td><td>${e.from_wallet||'—'}</td><td>${e.to_wallet||'—'}</td><td style="font-size:11.5px;color:var(--text-muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${e.note||'—'}</td><td>${fmtDate(e.created_at)}</td></tr>`
+    }).join('')
+    mkPager('walletPagination',filteredWallet.length,walletPage,p=>{walletPage=p;renderWallet()})
+}
+
+function renderWalletStats() {
+    const totalActive=allUsers.reduce((s,u)=>s+(u.pts||0),0),totalBuffer=allUsers.reduce((s,u)=>s+(u.circulation_buffer||0),0)
+    const totalTopup=allWallet.filter(e=>e.event_type==='topup').reduce((s,e)=>s+(e.amount||0),0)
+    const totalExpired=allWallet.filter(e=>e.event_type==='expired').reduce((s,e)=>s+(e.amount||0),0)
+    document.getElementById('walletStats').innerHTML=`<div class="wallet-stat"><label>Total Active Points</label><div class="val">${totalActive.toLocaleString()} pts</div><div class="sub">Sum of all active wallets</div></div><div class="wallet-stat"><label>Total Buffer Points</label><div class="val">${totalBuffer.toLocaleString()} pts</div><div class="sub">Sum of all circulation buffers</div></div><div class="wallet-stat"><label>All-Time Top-Ups</label><div class="val">${totalTopup.toLocaleString()} pts</div><div class="sub">From wallet_events ledger</div></div><div class="wallet-stat"><label>All-Time Expired</label><div class="val">${totalExpired.toLocaleString()} pts</div><div class="sub">From buffer expiries</div></div>`
+}
+
+function renderCategoryChart() {
+    const cats={};allItems.forEach(i=>{const c=(i.category||'other').toLowerCase();cats[c]=(cats[c]||0)+1})
+    const entries=Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,6),max=Math.max(...entries.map(e=>e[1]),1)
+    document.getElementById('catBarChart').innerHTML=entries.length?entries.map(([cat,n])=>`<div class="bar-col"><div class="bar-val">${n}</div><div class="bar" style="height:${Math.round((n/max)*80)}px;"></div><div class="bar-label">${cat.slice(0,7)}</div></div>`).join(''):'<p style="color:#bbb;font-size:12px;margin:auto;">No items yet.</p>'
+}
+
+function renderSwapStatusChart() {
+    const sts={};allSwaps.forEach(s=>{const st=s.status||'pending';sts[st]=(sts[st]||0)+1})
+    const entries=Object.entries(sts),max=Math.max(...entries.map(e=>e[1]),1)
+    const colors={swapped:'#4A635D',pending:'#d97706',otp_pending:'#f97316',declined:'#e05577',cancelled:'#bbb'}
+    document.getElementById('swapBarChart').innerHTML=entries.length?entries.map(([st,n])=>`<div class="bar-col"><div class="bar-val">${n}</div><div class="bar" style="height:${Math.round((n/max)*80)}px;background:${colors[st]||'#C994A7'};"></div><div class="bar-label">${st.slice(0,7)}</div></div>`).join(''):'<p style="color:#bbb;font-size:12px;margin:auto;">No swaps yet.</p>'
+}
+
+window.exportCSV=function(type){let headers=[],rows=[]
+    if(type==='users'){headers=['Name','Points','Buffer','Joined','Role','Ban Reason'];rows=allUsers.map(u=>[u.display_name||u.username,u.pts,u.circulation_buffer,u.created_at,u.role,u.ban_reason||''])}
+    else if(type==='items'){headers=['Name','Category','Points','Status','Seller','Listed'];rows=allItems.map(i=>[i.name,i.category,i.pts,i.status,i.profiles?.display_name||i.profiles?.username,i.created_at])}
+    else if(type==='swaps'){headers=['ID','Requester','Owner','Offered Pts','Requested Pts','Status','Date'];rows=allSwaps.map(s=>[s.id,s.requester?.display_name||s.requester_id,s.owner?.display_name||s.owner_id,s.offered_pts,s.requested_pts,s.status,s.created_at])}
+    else if(type==='wallet_events'){headers=['User','Event','Amount','From','To','Note','Date'];rows=allWallet.map(e=>[e.profiles?.display_name||e.user_id,e.event_type,e.amount,e.from_wallet,e.to_wallet,e.note,e.created_at])}
+    const csv=[headers,...rows].map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n')
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`suot-${type}-${Date.now()}.csv`;a.click();showToast(`${type} exported!`)
+}
+
+window.saveAdminName=async function(){const name=document.getElementById('settingName').value.trim();if(!name){showToast('Name cannot be empty.');return}
+    const{error}=await supabase.from('profiles').update({display_name:name}).eq('id',session.user.id);if(error){showToast('Error: '+error.message);return}
+    document.getElementById('adminName').textContent=name;showToast('Name updated!')}
+
+window.handleGlobalSearch=function(q){const lower=q.toLowerCase(),activeId=document.querySelector('.admin-section.active')?.id
+    if(activeId==='sec-users'){filteredUsers=allUsers.filter(u=>(u.display_name||u.username||'').toLowerCase().includes(lower));userPage=0;renderUsers()}
+    else if(activeId==='sec-items'){filteredItems=allItems.filter(i=>(i.name||'').toLowerCase().includes(lower));itemPage=0;renderItems()}}
+
+window.showSection=function(id,btn){document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'))
+    document.getElementById('sec-'+id)?.classList.add('active');if(btn)btn.classList.add('active')
+    const titles={overview:'Overview <em>Dashboard</em>',users:'User <em>Management</em>',items:'Item <em>Catalog</em>',swaps:'Swap <em>Monitor</em>',wallet:'Points & <em>Wallet</em>',reports:'Generate <em>Reports</em>',meetup:'Meetup <em>Spots</em>',badges:'Badge <em>Management</em>',settings:'System <em>Settings</em>'}
+    document.getElementById('pageTitle').innerHTML=titles[id]||id}
+
+function mkPager(containerId,total,cur,cb){const pages=Math.ceil(total/PER_PAGE),el=document.getElementById(containerId);if(!el)return;if(pages<=1){el.innerHTML='';return}
+    const key='__pager_'+containerId; window[key]=cb;
+    el.innerHTML=Array.from({length:pages},(_,i)=>`<button class="page-btn ${i===cur?'active':''}" onclick="window['${key}'](${i})">${i+1}</button>`).join('')}
+
+let _cb=null
+window.openModal=function(title,sub,label,isDanger,cb){document.getElementById('modalTitle').textContent=title;document.getElementById('modalSub').innerHTML=sub
+    const btn=document.getElementById('modalConfirmBtn');btn.textContent=label;btn.className='modal-confirm'+(isDanger?'':' green');_cb=cb;document.getElementById('confirmModal').classList.add('open')}
+window.closeModal=function(){document.getElementById('confirmModal').classList.remove('open')}
+window.runModalCallback=function(){closeModal();_cb?.()}
+document.getElementById('confirmModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal()})
+
+window.confirmLogout=function(){openModal('Exit Admin Panel','Return to login?','Exit',false,async()=>{await supabase.auth.signOut();['suotUserId','suotUser','suotEmail'].forEach(k=>localStorage.removeItem(k));window.location.href='../auth/login.html'})}
+window.showToast=function(msg){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200)}
+
+function timeAgo(iso){if(!iso)return'';const d=Date.now()-new Date(iso).getTime(),m=Math.floor(d/60000),h=Math.floor(d/3600000),day=Math.floor(d/86400000)
+    if(m<1)return'just now';if(m<60)return`${m}m ago`;if(h<24)return`${h}h ago`;if(day<7)return`${day}d ago`;return new Date(iso).toLocaleDateString('en-PH',{month:'short',day:'numeric'})}
+function fmtDate(iso){if(!iso)return'—';return new Date(iso).toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'})}
+function cap(s){return s?s.charAt(0).toUpperCase()+s.slice(1):''}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function mk_stat(iconClass,iconSvg,value,label){return`<div class="stat-card"><div class="stat-card-top"><div class="stat-icon ${iconClass}">${iconSvg}</div></div><div class="stat-value">${value}</div><div class="stat-label">${label}</div></div>`}
+
+const svgUsers=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>`
+const svgItems=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.57a1 1 0 00.99.84H7v10c0 .55.45 1 1 1h8c.55 0 1-.45 1-1V10h4.15a1 1 0 00.99-.84l.58-3.57a2 2 0 00-1.34-2.23z"/></svg>`
+const svgSwaps=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>`
+const svgWallet=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>`
+const svgFlag=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>`
+
+// ── CHANGE 2: Upload badge icon image to Supabase Storage ──────────────────
+window.handleBadgeIconUpload = async function(input) {
+    const file = input.files[0]
+    if (!file) return
+
+    // Validate size (2MB max)
+    if (file.size > 2 * 1024 * 1024) {
+        showToast('Image must be under 2MB.'); input.value = ''; return
+    }
+
+    // Show local preview immediately while uploading
+    const reader = new FileReader()
+    reader.onload = e => {
+        document.getElementById('badgeIconPlaceholder').style.display = 'none'
+        document.getElementById('badgeIconPreview').src = e.target.result
+        document.getElementById('badgeIconPreview').style.display = 'block'
+    }
+    reader.readAsDataURL(file)
+
+    // Show loading state
+    document.getElementById('badgeIconUploadText').style.display = 'none'
+    document.getElementById('badgeIconLoader').style.display = 'flex'
+
+    try {
+        const ext  = file.name.split('.').pop()
+        const path = `badges/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+
+        const { error: upErr } = await supabase.storage
+            .from('badge-icons')
+            .upload(path, file, { upsert: false, contentType: file.type })
+
+        if (upErr) throw upErr
+
+        const { data: { publicUrl } } = supabase.storage
+            .from('badge-icons')
+            .getPublicUrl(path)
+
+        // Store URL in hidden input
+        document.getElementById('badgeIcon').value = publicUrl
+
+        // Update upload area text
+        document.getElementById('badgeIconUploadText').innerHTML =
+            `<strong style="color:var(--success);">✓ Icon uploaded</strong><span>${file.name}</span>`
+        document.getElementById('badgeIconUploadText').style.display = 'block'
+
+        updateBadgePreview()
+        showToast('Icon uploaded!')
+
+    } catch(e) {
+        console.error('Icon upload failed:', e)
+        showToast('Upload failed: ' + (e.message || 'unknown error'))
+        // Reset to default state
+        document.getElementById('badgeIconPreview').style.display = 'none'
+        document.getElementById('badgeIconPlaceholder').style.display = 'flex'
+        document.getElementById('badgeIconUploadText').innerHTML = '<strong>Upload Icon</strong><span>PNG, JPG, SVG · max 2MB</span>'
+        document.getElementById('badgeIconUploadText').style.display = 'block'
+        document.getElementById('badgeIcon').value = ''
+        input.value = ''
+    } finally {
+        document.getElementById('badgeIconLoader').style.display = 'none'
+    }
+}
+
+// ── CHANGE 3: renderBadgeIcon — show <img> for URLs, emoji for text ──────────
+function renderBadgeIcon(icon, sizePx = '44px', radiusPx = '12px') {
+    if (!icon) return `<div style="width:${sizePx};height:${sizePx};background:linear-gradient(135deg,#fff0f4,#fce8ef);border-radius:${radiusPx};display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🏅</div>`
+    if (icon.startsWith('http') || icon.startsWith('/') || icon.startsWith('data:')) {
+        return `<img src="${icon}" style="width:${sizePx};height:${sizePx};border-radius:${radiusPx};object-fit:cover;border:1.5px solid var(--border);flex-shrink:0;">`
+    }
+    // Fallback: emoji or short text
+    return `<div style="width:${sizePx};height:${sizePx};background:linear-gradient(135deg,#fff0f4,#fce8ef);border-radius:${radiusPx};display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">${icon}</div>`
+}
+
+// ── MEETUP SPOTS ──────────────────────────────────────────────────────────────
+async function loadMeetupSpots() {
+    const{data,error}=await supabase.from('items').select('meetup_address,latitude,longitude').not('meetup_address','is',null).order('created_at',{ascending:false})
+    if(error){console.error(error);return}
+    const counts={},coords={}
+    ;(data||[]).forEach(i=>{const addr=i.meetup_address?.trim();if(!addr)return;counts[addr]=(counts[addr]||0)+1;if(!coords[addr]&&i.latitude)coords[addr]={lat:i.latitude,lng:i.longitude}})
+    const entries=Object.entries(counts).sort((a,b)=>b[1]-a[1]),total=entries.reduce((s,[,n])=>s+n,0),top=entries[0]
+    document.getElementById('meetupStats').innerHTML=[mk_stat('green',svgFlag,entries.length,'Unique Locations'),mk_stat('pink',svgFlag,total,'Items with Meetup Set'),mk_stat('amber',svgFlag,top?esc(top[0].length>28?top[0].slice(0,28)+'…':top[0]):'—','Most Popular Spot')].join('')
+    const chartData=entries.slice(0,8),maxVal=Math.max(...chartData.map(e=>e[1]),1),barColors=['#C994A7','#4A635D','#d97706','#2563eb','#7c5cbf','#e05577','#16a34a','#b07f92']
+    document.getElementById('meetupBarChart').innerHTML=chartData.length?chartData.map(([addr,n],i)=>`<div style="display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;min-width:0;"><div style="font-size:10px;font-weight:700;color:var(--text-muted);">${n}</div><div style="width:100%;border-radius:6px 6px 0 0;background:${barColors[i%barColors.length]};height:${Math.round((n/maxVal)*110)}px;min-height:4px;" title="${esc(addr)}"></div><div style="font-size:8.5px;font-weight:700;color:var(--text-sub);text-align:center;word-break:break-word;max-width:80px;line-height:1.3;">${esc(addr.length>22?addr.slice(0,22)+'…':addr)}</div></div>`).join(''):'<p style="color:#bbb;font-size:12px;margin:auto;">No meetup locations set yet.</p>'
+    document.getElementById('meetupTableBody').innerHTML=entries.length?entries.map(([addr,n])=>{const pct=total>0?((n/total)*100).toFixed(1):'0.0',c=coords[addr],mapsLink=c?`<a href="https://www.google.com/maps?q=${c.lat},${c.lng}" target="_blank" style="color:var(--pink);font-size:11.5px;font-weight:700;">${c.lat.toFixed(4)}, ${c.lng.toFixed(4)} ↗</a>`:'—';return`<tr><td><strong style="font-size:13px;">${esc(addr)}</strong></td><td>${n} item${n!==1?'s':''}</td><td><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;height:6px;background:#f0dfe5;border-radius:6px;overflow:hidden;min-width:80px;"><div style="width:${pct}%;height:100%;background:var(--pink);border-radius:6px;"></div></div><span style="font-size:11.5px;font-weight:700;color:var(--text-muted);white-space:nowrap;">${pct}%</span></div></td><td>${mapsLink}</td></tr>`}).join(''):'<tr class="empty-row"><td colspan="4">No meetup locations found.</td></tr>'
+}
+
+// ── BADGES ────────────────────────────────────────────────────────────────────
+let allBadges=[]
+
+async function loadBadges() {
+    const{data,error}=await supabase.from('badges').select('*').order('created_at',{ascending:false})
+    if(error){console.error(error);return}
+    allBadges=data||[]
+    document.getElementById('badgesCount').textContent=`${allBadges.length} badge${allBadges.length!==1?'s':''}`
+    renderBadgesTable()
+}
+
+async function renderBadgesTable() {
+    const tbody=document.getElementById('badgesTableBody')
+    if(!allBadges.length){tbody.innerHTML='<tr class="empty-row"><td colspan="6">No badges created yet. Create your first badge above!</td></tr>';return}
+    const earnedCounts={}
+    await Promise.all(allBadges.map(async b=>{const{count}=await supabase.from('user_badges').select('*',{count:'exact',head:true}).eq('badge_id',b.id);earnedCounts[b.id]=count||0}))
+    const criteriaLabels={swaps_completed:'🔄 Swaps Completed',items_posted:'📦 Items Posted',items_wishlisted:'⭐ Items Wishlisted',followers:'🤝 Followers Gained'}
+    // Uses renderBadgeIcon() to display image or emoji correctly
+    tbody.innerHTML=allBadges.map(b=>`<tr><td><div style="display:flex;align-items:center;gap:12px;">${renderBadgeIcon(b.icon)}<div><strong style="font-size:13px;display:block;">${esc(b.name)}</strong><span style="font-size:11px;color:var(--text-muted);">${esc(b.description||'')}</span></div></div></td><td><span style="font-size:12.5px;">${criteriaLabels[b.criteria_type]||b.criteria_type}</span></td><td><strong style="font-family:'Playfair Display',serif;font-size:17px;">${b.threshold}</strong></td><td><button class="act-btn view" onclick="showEarnedBy('${b.id}','${esc(b.name)}','${esc(b.icon||'')}')">${earnedCounts[b.id]} user${earnedCounts[b.id]!==1?'s':''}</button></td><td>${fmtDate(b.created_at)}</td><td><button class="act-btn reject" onclick="doDeleteBadge('${b.id}','${esc(b.name)}')">Delete</button><button class="act-btn approve" onclick="openEditBadgeModal('${b.id}')">Edit</button></td></tr>`).join('')
+}
+
+window.doCreateBadge=async function(){
+    const name=document.getElementById('badgeName').value.trim()
+    const icon=document.getElementById('badgeIcon').value.trim()||'🏅'
+    const description=document.getElementById('badgeDescription').value.trim()
+    const criteriaSelect = document.getElementById('badgeCriteria')
+    const criteria = criteriaSelect.value === '__custom__'
+        ? (document.getElementById('customCriteriaInput').value.trim() || 'custom')
+        : criteriaSelect.value
+    const threshold=parseInt(document.getElementById('badgeThreshold').value)||1
+    if(!name){showToast('Badge name is required.');return}
+    const{data,error}=await supabase.from('badges').insert({name,icon,description,criteria_type:criteria,threshold}).select().single()
+    if(error){showToast('Error: '+error.message);return}
+    allBadges.unshift(data); renderBadgesTable()
+    document.getElementById('badgesCount').textContent=`${allBadges.length} badge${allBadges.length!==1?'s':''}`
+    // Reset form including icon upload UI
+    document.getElementById('badgeName').value=''
+    document.getElementById('badgeIcon').value=''
+    document.getElementById('badgeIconFile').value=''
+    document.getElementById('badgeIconPreview').style.display='none'
+    document.getElementById('badgeIconPlaceholder').style.display='flex'
+    document.getElementById('badgeIconUploadText').innerHTML='<strong>Upload Icon</strong><span>PNG, JPG, SVG · max 2MB</span>'
+    document.getElementById('badgeDescription').value=''
+    document.getElementById('badgeThreshold').value='10'
+    document.getElementById('customCriteriaInput').value=''
+    document.getElementById('customCriteriaWrap').style.display='none'
+    document.getElementById('badgePreviewRow').style.display='none'
+    showToast(`"${name}" badge created!`)
+}
+
+window.doDeleteBadge=function(badgeId,name){openModal('Delete Badge',`Permanently delete the <strong>${name}</strong> badge? All user progress will be lost.`,'Delete',true,async()=>{const{error}=await supabase.from('badges').delete().eq('id',badgeId);if(error){showToast('Error: '+error.message);return};allBadges=allBadges.filter(b=>b.id!==badgeId);renderBadgesTable();document.getElementById('badgesCount').textContent=`${allBadges.length} badge${allBadges.length!==1?'s':''}`;showToast('Badge deleted.')})}
+
+window.showEarnedBy=async function(badgeId,badgeName,badgeIcon){
+    document.getElementById('earnedByTitle').innerHTML=`${renderBadgeIcon(badgeIcon,'24px','6px')} <span style="margin-left:6px;">${esc(badgeName)}</span>`
+    document.getElementById('earnedBySub').textContent='Users who have earned this badge'
+    const list=document.getElementById('earnedByList')
+    list.innerHTML='<div class="skeleton" style="height:40px;border-radius:8px;"></div>'
+    document.getElementById('earnedByModal').classList.add('open')
+    const{data,error}=await supabase.from('user_badges').select('earned_at,claimed,profiles(display_name,username,avatar_url)').eq('badge_id',badgeId).order('earned_at',{ascending:false})
+    if(error||!data?.length){list.innerHTML='<p style="text-align:center;color:#bbb;font-size:13px;padding:20px 0;">No users have earned this badge yet.</p>';return}
+    list.innerHTML=data.map(row=>{const p=row.profiles||{},name=p.display_name||p.username||'Unknown',av=p.avatar_url||`https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=EBE0E3&color=C994A7`
+        return`<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border-lt);"><img src="${av}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:1.5px solid var(--border);"><div style="flex:1;"><strong style="font-size:13px;">${esc(name)}</strong><span style="display:block;font-size:11px;color:var(--text-muted);">Earned ${fmtDate(row.earned_at)}</span></div><span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;${row.claimed?'background:#edf7f4;color:var(--success);':'background:#fff8ec;color:var(--warn);'}">${row.claimed?'Claimed':'Unclaimed'}</span></div>`
+    }).join('')
+}
+
+// Live badge preview — listens on all fields except icon (icon updates via upload callback)
+;['badgeName','badgeDescription','badgeCriteria','badgeThreshold'].forEach(id=>{document.getElementById(id)?.addEventListener('input',updateBadgePreview)})
+
+function updateBadgePreview() {
+    const name=document.getElementById('badgeName').value.trim()
+    const icon=document.getElementById('badgeIcon').value.trim()||'🏅'
+    const desc=document.getElementById('badgeDescription').value.trim()
+    const threshold=document.getElementById('badgeThreshold').value||'10'
+    const criteria=document.getElementById('badgeCriteria').value
+    const criteriaRaw = document.getElementById('badgeCriteria').value === '__custom__'
+        ? (document.getElementById('customCriteriaInput')?.value.trim() || 'Custom')
+        : document.getElementById('badgeCriteria').value
+    const criteriaLabels={swaps_completed:'Swaps',items_posted:'Items Posted',items_wishlisted:'Wishlisted',followers:'Followers'}
+    const criteriaDisplay = criteriaLabels[criteriaRaw] || criteriaRaw
+    if(!name){document.getElementById('badgePreviewRow').style.display='none';return}
+    document.getElementById('badgePreviewRow').style.display='block'
+    // Show image or emoji in preview
+    const iconHtml = icon.startsWith('http')||icon.startsWith('data:')
+        ? `<img src="${icon}" style="width:56px;height:56px;border-radius:14px;object-fit:cover;border:1.5px solid var(--border);">`
+        : `<div style="font-size:40px;line-height:1;">${icon}</div>`
+    document.getElementById('badgePreviewCard').innerHTML=`${iconHtml}<strong style="font-size:14px;color:var(--text);text-align:center;">${esc(name)}</strong><p style="font-size:11.5px;color:var(--text-muted);text-align:center;max-width:180px;margin:0;">${esc(desc)}</p><div style="background:#f0e8eb;border-radius:50px;padding:4px 14px;font-size:11px;font-weight:700;color:var(--pink-dark);">0 / ${threshold} ${criteriaLabels[criteria]||criteria}</div><div style="background:#faf4f6;border:1.5px solid #f0dfe5;border-radius:50px;padding:6px 18px;font-size:12px;font-weight:700;color:#bbb;opacity:.5;">Claim Badge</div>`
+}
+window.updateBadgePreview = updateBadgePreview
+
+loadData()
+</script>
+</body>
+</html>
