@@ -6,35 +6,71 @@ const FALLBACK = 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=40
 let me=null, myP=null, convs=[], allSwaps=[], pid=null, itmId=null, swId=null, sw=null, rts=null, pendImgs=[]
 let activeTab='msgs', currentItemData=null, myOtpCode=null, currentSwapId=null
 
-// ══════════════════════════════════════════
-//  VIDEO CALL STATE (WebRTC)
-// ══════════════════════════════════════════
-let callChannel   = null
-let currentCallRoom = null
-let currentCallPid  = null
-let ringInterval  = null
-let callTimerInt  = null
-let callSeconds   = 0
-let ringCtx       = null
-let callTimeout   = null
-let pendingOffer  = null   // WebRTC offer stored until Accept clicked
-let peerConn      = null   // RTCPeerConnection
-let localStream   = null   // local camera/mic stream
-let micMuted      = false
-let camOff        = false
-let iceCandidateQueue = []  // buffer ICE candidates until remote desc is set
+// ══════════════════════════════════════════════════════════════
+//  VIDEO CALL STATE
+// ══════════════════════════════════════════════════════════════
+let callChannel        = null
+let currentCallPid     = null
+let partnerCallChannel = null
+let ringInterval       = null
+let callTimerInt       = null
+let callSeconds        = 0
+let ringCtx            = null
+let callTimeout        = null
+let pendingOffer       = null
+let peerConn           = null
+let localStream        = null
+let micMuted           = false
+let camOff             = false
+let iceCandidateQueue  = []
+let outboundIceBuf     = []
+let answerApplied      = false
+let processingAnswer   = false
 
-// Google's free STUN servers — no account needed
 const ICE_SERVERS = {
   iceServers: [
-    { urls: 'stun:stun.l.google.com:19302' },
-    { urls: 'stun:stun1.l.google.com:19302' },
-    { urls: 'stun:stun2.l.google.com:19302' },
-    { urls: 'stun:stun3.l.google.com:19302' },
+    { urls: ['stun:hk-turn1.xirsys.com'] },
+    {
+      username: 'iZqgYbnzH_Brq4IFMFYfnMd9RPtOS-beV1TTLHIUVNKBtDReVRjCvQZix-0AhxuwAAAAAGnH4Z1KYW1haWNh',
+      credential: '0b3e8f18-2ab0-11f1-8861-aa4d1230739f',
+      urls: [
+        'turn:hk-turn1.xirsys.com:80?transport=udp',
+        'turn:hk-turn1.xirsys.com:3478?transport=udp',
+        'turn:hk-turn1.xirsys.com:80?transport=tcp',
+        'turn:hk-turn1.xirsys.com:3478?transport=tcp',
+        'turns:hk-turn1.xirsys.com:443?transport=tcp',
+        'turns:hk-turn1.xirsys.com:5349?transport=tcp'
+      ]
+    }
   ]
 }
+function hideConnecting() {
+  const overlay = document.getElementById('vcConnecting')
+  if (overlay) overlay.style.display = 'none'
+}
 
-// ── GET LOCAL CAMERA/MIC ──
+let connectingPollInterval = null
+function startConnectingPoll() {
+  stopConnectingPoll()
+  connectingPollInterval = setInterval(() => {
+    const remVid = document.getElementById('remoteVideo')
+    const overlay = document.getElementById('vcConnecting')
+    if (!overlay || overlay.style.display === 'none') { stopConnectingPoll(); return }
+    if (remVid?.srcObject) {
+      const tracks = remVid.srcObject.getTracks?.()
+      if (tracks?.length > 0) { hideConnecting(); stopConnectingPoll(); return }
+    }
+    const ice = peerConn?.iceConnectionState
+    if (ice === 'connected' || ice === 'completed') {
+      hideConnecting(); stopConnectingPoll()
+    }
+  }, 500)
+}
+function stopConnectingPoll() {
+  if (connectingPollInterval) { clearInterval(connectingPollInterval); connectingPollInterval = null }
+}
+
+// ── GET LOCAL CAMERA/MIC ──────────────────────────────────────
 async function getLocalStream() {
   try {
     localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
@@ -47,49 +83,70 @@ async function getLocalStream() {
   }
 }
 
-// ── CREATE PEER CONNECTION ──
+// ── CREATE PEER CONNECTION ────────────────────────────────────
 function setupPeerConnection() {
   if (peerConn) { peerConn.close(); peerConn = null }
-  peerConn = new RTCPeerConnection(ICE_SERVERS)
+  answerApplied = false
+  // processingAnswer intentionally NOT reset here — owned by acceptCall()
+  // Force 'relay' — skip broken mDNS/local candidates, use only TURN
+peerConn = new RTCPeerConnection(ICE_SERVERS) // remove iceTransportPolicy
 
-  // Add local media tracks
   if (localStream) {
-    localStream.getTracks().forEach(track => peerConn.addTrack(track, localStream))
-  }
-
-  // When remote stream arrives → show it
-  peerConn.ontrack = (e) => {
-    const remVid = document.getElementById('remoteVideo')
-    if (remVid && e.streams[0]) {
-      remVid.srcObject = e.streams[0]
-      document.getElementById('vcConnecting').style.display = 'none'
+    // FIX: Use addStream when available — react-native-webrtc's onaddstream
+    // fires reliably when the caller uses addStream. When the web uses addTrack,
+    // the mobile's onaddstream never fires, causing permanent black screen.
+    if (typeof peerConn.addStream === 'function') {
+      peerConn.addStream(localStream)
+      console.log('[CALL] Web using addStream')
+    } else {
+      localStream.getTracks().forEach(track => peerConn.addTrack(track, localStream))
+      console.log('[CALL] Web using addTrack fallback')
     }
   }
 
-  // Send ICE candidates to the other peer via Supabase
+  // FIX: Collect tracks manually in case e.streams[0] is undefined
+  // (happens in some browser/rn-webrtc version combos with addTrack)
+  const collectedTracks = []
+ peerConn.ontrack = (e) => {
+  console.log('[CALL] Web ontrack fired')
+  const remVid = document.getElementById('remoteVideo')
+  if (!remVid) return
+  if (e.streams?.[0]) { remVid.srcObject = e.streams[0] }
+  else if (e.track) { collectedTracks.push(e.track); remVid.srcObject = new MediaStream(collectedTracks) }
+  remVid.style.display = 'block'
+  hideConnecting(); stopConnectingPoll()
+}
+  // Buffer outbound ICE if partnerCallChannel not ready yet
   peerConn.onicecandidate = (e) => {
-    if (e.candidate && currentCallPid) {
-      supabase.channel(`vc-${currentCallPid}`).send({
+    if (!e.candidate) return
+    if (partnerCallChannel) {
+      partnerCallChannel.send({
         type: 'broadcast', event: 'ice_candidate',
         payload: { candidate: e.candidate.toJSON() }
-      })
+      }).catch(err => console.warn('[CALL] ICE send failed:', err))
+    } else {
+      console.log('[CALL] Buffering outbound ICE candidate')
+      outboundIceBuf.push(e.candidate.toJSON())
     }
   }
 
-  peerConn.onconnectionstatechange = () => {
-    const s = peerConn?.connectionState
-    if (s === 'connected') {
-      document.getElementById('vcConnecting').style.display = 'none'
-    }
-    if (s === 'failed' || s === 'disconnected') {
-      showToast('Call disconnected.'); endCall()
-    }
-  }
+ peerConn.onconnectionstatechange = () => {
+  const state = peerConn?.connectionState
+  console.log('[CALL] Web connectionState:', state)
+  if (state === 'connected') { hideConnecting(); stopConnectingPoll() }
+  if (state === 'failed') { showToast('Call disconnected.'); endCall() }
+}
+
+peerConn.oniceconnectionstatechange = () => {
+  const ice = peerConn?.iceConnectionState
+  console.log('[CALL] Web iceConnectionState:', ice)
+  if (ice === 'connected' || ice === 'completed') { hideConnecting(); stopConnectingPoll() }
+}
 
   iceCandidateQueue = []
 }
 
-// ── FLUSH BUFFERED ICE CANDIDATES ──
+// ── FLUSH INBOUND ICE (arrived before remote desc) ───────────
 async function flushIceCandidates() {
   for (const c of iceCandidateQueue) {
     try { await peerConn.addIceCandidate(new RTCIceCandidate(c)) } catch(e) {}
@@ -97,33 +154,82 @@ async function flushIceCandidates() {
   iceCandidateQueue = []
 }
 
-// ── CLEANUP WebRTC ──
+// ── FLUSH OUTBOUND ICE (arrived before channel ready) ────────
+async function flushOutboundIce() {
+  const buf = outboundIceBuf.splice(0)
+  console.log('[CALL] Flushing', buf.length, 'buffered outbound ICE candidates')
+  for (const c of buf) {
+    if (partnerCallChannel) {
+      await partnerCallChannel.send({
+        type: 'broadcast', event: 'ice_candidate', payload: { candidate: c }
+      }).catch(e => console.warn('[CALL] buffered ICE warn:', e))
+    }
+  }
+}
+
+// ── SHARED HELPER: set remote desc + create + send answer ─────
+async function processOfferAndAnswer(offer) {
+  if (!peerConn)                  { console.log('[CALL] processOfferAndAnswer: no peerConn'); return }
+  if (peerConn.remoteDescription) { console.log('[CALL] processOfferAndAnswer: remote already set, skip'); return }
+  try {
+    await peerConn.setRemoteDescription(new RTCSessionDescription(offer))
+    await flushIceCandidates()
+    const answer = await peerConn.createAnswer()
+    await peerConn.setLocalDescription(answer)
+    // FIX: flush outbound ICE after setLocalDescription so mobile gets all candidates
+    await flushOutboundIce()
+    if (partnerCallChannel) {
+      await partnerCallChannel.send({
+        type: 'broadcast', event: 'call_answer', payload: { answer }
+      }).catch(e => console.warn('[CALL] answer send warn:', e))
+      console.log('[CALL] Web SENT call_answer')
+    }
+  } catch(e) {
+    console.error('[CALL] processOfferAndAnswer error:', e)
+    throw e
+  }
+}
+
+// ── CLEANUP ───────────────────────────────────────────────────
 function cleanupWebRTC() {
   if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null }
   if (peerConn) { peerConn.close(); peerConn = null }
-  const rv = document.getElementById('remoteVideo'), lv = document.getElementById('localVideo')
-  if (rv) rv.srcObject = null
+  if (partnerCallChannel) { supabase.removeChannel(partnerCallChannel); partnerCallChannel = null }
+  const rv = document.getElementById('remoteVideo')
+  const lv = document.getElementById('localVideo')
+  if (rv) { rv.srcObject = null; rv.style.display = 'block' }
   if (lv) lv.srcObject = null
-  pendingOffer = null; micMuted = false; camOff = false; iceCandidateQueue = []
+  const camOffEl = document.getElementById('vcPartnerCamOff')
+  if (camOffEl) camOffEl.style.display = 'none'
+  pendingOffer = null; micMuted = false; camOff = false
+  iceCandidateQueue = []
+  outboundIceBuf = []
+  answerApplied = false; processingAnswer = false
   document.getElementById('muteMicBtn')?.classList.remove('muted')
   document.getElementById('muteVidBtn')?.classList.remove('muted')
+  stopConnectingPoll()
 }
 
-// ── MIC / CAMERA TOGGLES ──
+// ── MIC / CAM TOGGLES ─────────────────────────────────────────
 window.toggleMic = function() {
   if (!localStream) return
   micMuted = !micMuted
   localStream.getAudioTracks().forEach(t => t.enabled = !micMuted)
   document.getElementById('muteMicBtn').classList.toggle('muted', micMuted)
 }
-window.toggleCam = function() {
+
+window.toggleCam = async function() {
   if (!localStream) return
   camOff = !camOff
   localStream.getVideoTracks().forEach(t => t.enabled = !camOff)
   document.getElementById('muteVidBtn').classList.toggle('muted', camOff)
+  if (partnerCallChannel) {
+    await partnerCallChannel.send({ type: 'broadcast', event: 'cam_state', payload: { camOff } })
+      .catch(e => console.warn('[CALL] cam_state send failed:', e))
+  }
 }
 
-// ── RING TONE ──
+// ── RING ──────────────────────────────────────────────────────
 function startRinging() {
   stopRinging()
   function playRing() {
@@ -146,7 +252,7 @@ function startRinging() {
 }
 function stopRinging() { if(ringInterval){clearInterval(ringInterval);ringInterval=null} }
 
-// ── CALL TIMER ──
+// ── CALL TIMER ────────────────────────────────────────────────
 function startCallTimer() {
   callSeconds=0; callTimerInt=setInterval(()=>{
     callSeconds++
@@ -154,97 +260,144 @@ function startCallTimer() {
     document.getElementById('callTimer').textContent=`${m}:${s}`
   },1000)
 }
-function stopCallTimer() { if(callTimerInt){clearInterval(callTimerInt);callTimerInt=null}; callSeconds=0; document.getElementById('callTimer').textContent='00:00' }
+function stopCallTimer() {
+  if(callTimerInt){clearInterval(callTimerInt);callTimerInt=null}
+  callSeconds=0
+  const ct = document.getElementById('callTimer'); if(ct) ct.textContent='00:00'
+}
 
-// ── START CALL (caller) ──
+// ── START CALL (web → mobile) ─────────────────────────────────
 window.startVideoCall = async function() {
   if (!pid) { showToast('Open a conversation first.'); return }
 
   const gotMedia = await getLocalStream()
   if (!gotMedia) return
 
-  const ids = [me.id, pid].sort().join('-')
-  currentCallRoom = `suot-${ids.substring(0,28)}`
-  currentCallPid  = pid
-
+  currentCallPid   = pid
+  processingAnswer = false
+  answerApplied    = false
+  outboundIceBuf   = []
   setupPeerConnection()
-  const offer = await peerConn.createOffer({ offerToReceiveVideo:true, offerToReceiveAudio:true })
-  await peerConn.setLocalDescription(offer)
 
-  // Show caller overlay
-  document.getElementById('callerTargetAv').src = document.querySelector('.ch-hdr-av img')?.src || av('U')
+  const offer = await peerConn.createOffer({ offerToReceiveVideo: true, offerToReceiveAudio: true })
+  await peerConn.setLocalDescription(offer)
+  // ICE gathering starts here — candidates buffer in outboundIceBuf
+
+  document.getElementById('callerTargetAv').src           = document.querySelector('.ch-hdr-av img')?.src || av('U')
   document.getElementById('callerTargetName').textContent = document.querySelector('.ch-hdr-name')?.textContent || 'Swapper'
   document.getElementById('callerOverlay').classList.add('open')
   startRinging()
 
-  // Send incoming_call with the WebRTC offer embedded
-  supabase.channel(`vc-${pid}`).subscribe(status => {
-    if (status === 'SUBSCRIBED') {
-      supabase.channel(`vc-${pid}`).send({
-        type:'broadcast', event:'incoming_call',
-        payload:{
-          callerId:   me.id,
-          callerName: myP.display_name||myP.username||'Someone',
-          callerAv:   myP.avatar_url||av(myP.display_name||'U'),
-          roomName:   currentCallRoom,
-          offer:      offer          // ← WebRTC SDP offer
-        }
-      })
-    }
+  partnerCallChannel = supabase.channel(`call-${pid}`, { config: { broadcast: { ack: true } } })
+  await new Promise(resolve => {
+    partnerCallChannel.subscribe(status => {
+      console.log('[CALL] Web partner channel:', status)
+      if (status === 'SUBSCRIBED') resolve()
+    })
   })
+  // Channel ready — flush any ICE that buffered during setup
+  await flushOutboundIce()
 
-  callTimeout = setTimeout(()=>{ if(document.getElementById('callerOverlay').classList.contains('open')){cancelCall();showToast('No answer.')} },30000)
+  await partnerCallChannel.send({
+    type: 'broadcast', event: 'incoming_call',
+    payload: { callerId: me.id, callerName: myP.display_name || myP.username || 'Someone', callerAvatar: myP.avatar_url || av(myP.display_name || 'U'), ts: Date.now() }
+  }).catch(e => console.warn('[CALL] incoming_call warn:', e))
+  console.log('[CALL] Web SENT incoming_call to:', pid)
+
+  // FIX: Reduced from 1500ms → 500ms. Mobile's call channel is subscribed at boot
+  // so it's already listening. 500ms is enough for incoming_call to be processed.
+  await new Promise(r => setTimeout(r, 500))
+
+  await partnerCallChannel.send({
+    type: 'broadcast', event: 'call_offer', payload: { offer }
+  }).catch(e => console.warn('[CALL] call_offer warn:', e))
+  console.log('[CALL] Web SENT call_offer to:', pid)
+
+  callTimeout = setTimeout(() => {
+    if (document.getElementById('callerOverlay').classList.contains('open')) {
+      cancelCall(); showToast('No answer.')
+    }
+  }, 30000)
 }
 
-// ── CANCEL CALL (caller hangs up before answered) ──
+// ── CANCEL CALL ───────────────────────────────────────────────
 window.cancelCall = function() {
   stopRinging()
-  if(callTimeout){clearTimeout(callTimeout);callTimeout=null}
+  if (callTimeout) { clearTimeout(callTimeout); callTimeout = null }
   document.getElementById('callerOverlay').classList.remove('open')
+  const savedPid = currentCallPid
   cleanupWebRTC()
-  if(currentCallPid) supabase.channel(`vc-${currentCallPid}`).send({type:'broadcast',event:'call_cancelled',payload:{}})
-  currentCallRoom=null; currentCallPid=null
+  if (savedPid) {
+    const ch = supabase.channel(`call-${savedPid}`, { config: { broadcast: { ack: true } } })
+    ch.subscribe(s => { if (s === 'SUBSCRIBED') ch.send({ type: 'broadcast', event: 'call_cancelled', payload: {} }).catch(()=>{}) })
+  }
+  currentCallPid = null
 }
 
-// ── ACCEPT CALL (callee) ──
+// ── ACCEPT CALL (web callee ← mobile caller) ──────────────────
 window.acceptCall = async function() {
   stopRinging()
-  if(callTimeout){clearTimeout(callTimeout);callTimeout=null}
+  if (callTimeout) { clearTimeout(callTimeout); callTimeout = null }
   document.getElementById('incomingOverlay').classList.remove('open')
 
   const gotMedia = await getLocalStream()
-  if (!gotMedia) { declineCall(); return }
+  if (!gotMedia) { window.declineCall(); return }
 
+  // Set lock BEFORE setupPeerConnection — call_offer handler defers to us
+  processingAnswer = true
+  answerApplied    = false
+  outboundIceBuf   = []
+
+  // setupPeerConnection does NOT reset processingAnswer
   setupPeerConnection()
 
-  // Apply the stored offer
-  if (pendingOffer) {
-    await peerConn.setRemoteDescription(pendingOffer)
-    await flushIceCandidates()
-    const answer = await peerConn.createAnswer()
-    await peerConn.setLocalDescription(answer)
-
-    // Send answer back to caller
-    supabase.channel(`vc-${currentCallPid}`).send({
-      type:'broadcast', event:'call_accepted',
-      payload:{ roomName:currentCallRoom, answer:answer }  // ← WebRTC SDP answer
+  partnerCallChannel = supabase.channel(`call-${currentCallPid}`, { config: { broadcast: { ack: true } } })
+  await new Promise(resolve => {
+    partnerCallChannel.subscribe(s => {
+      console.log('[CALL] Web accept channel:', s)
+      if (s === 'SUBSCRIBED') resolve()
     })
+  })
+  // Channel ready — flush any ICE that buffered during setup
+  await flushOutboundIce()
+
+  const offer = pendingOffer
+  if (offer) {
+    console.log('[CALL] Web acceptCall: processing buffered offer')
+    pendingOffer = null
+    try {
+      await processOfferAndAnswer(offer)
+    } catch(e) {
+      console.error('[CALL] Web acceptCall failed:', e)
+      processingAnswer = false
+      cleanupWebRTC()
+      document.getElementById('activeCallOverlay').classList.remove('open')
+      return
+    }
+  } else {
+    console.log('[CALL] Web acceptCall: no offer yet, releasing lock for call_offer handler')
+    processingAnswer = false
   }
 
+  processingAnswer = false
   openActiveCall()
 }
 
-// ── DECLINE CALL (callee) ──
+// ── DECLINE CALL ──────────────────────────────────────────────
 window.declineCall = function() {
   stopRinging()
-  if(callTimeout){clearTimeout(callTimeout);callTimeout=null}
+  if (callTimeout) { clearTimeout(callTimeout); callTimeout = null }
   document.getElementById('incomingOverlay').classList.remove('open')
+  const savedPid = currentCallPid
   cleanupWebRTC()
-  if(currentCallPid) supabase.channel(`vc-${currentCallPid}`).send({type:'broadcast',event:'call_declined',payload:{}})
-  currentCallRoom=null; currentCallPid=null; pendingOffer=null
+  if (savedPid) {
+    const ch = supabase.channel(`call-${savedPid}`, { config: { broadcast: { ack: true } } })
+    ch.subscribe(s => { if (s === 'SUBSCRIBED') ch.send({ type: 'broadcast', event: 'call_declined', payload: {} }).catch(()=>{}) })
+  }
+  currentCallPid = null; pendingOffer = null
 }
 
-// ── OPEN ACTIVE CALL SCREEN ──
+// ── OPEN ACTIVE CALL SCREEN ───────────────────────────────────
 function openActiveCall() {
   const partnerName = document.getElementById('incomingCallerName')?.textContent
     || document.getElementById('callerTargetName')?.textContent
@@ -253,28 +406,46 @@ function openActiveCall() {
     || document.getElementById('callerTargetAv')?.src
     || document.querySelector('.ch-hdr-av img')?.src || av('U')
 
-  document.getElementById('activeCallName').textContent    = partnerName
-  document.getElementById('activeCallAv').src              = partnerAv
-  document.getElementById('vcConnectingName').textContent  = partnerName
-  document.getElementById('vcConnectingAv').src            = partnerAv
-  document.getElementById('vcConnecting').style.display    = 'flex'  // shown until video arrives
+  document.getElementById('activeCallName').textContent   = partnerName
+  document.getElementById('activeCallAv').src             = partnerAv
+  document.getElementById('vcConnectingName').textContent = partnerName
+  document.getElementById('vcConnectingAv').src           = partnerAv
+  document.getElementById('vcConnecting').style.display   = 'flex'
   document.getElementById('activeCallOverlay').classList.add('open')
   document.getElementById('callerOverlay').classList.remove('open')
+
+  const camOffEl = document.getElementById('vcPartnerCamOff')
+  if (camOffEl) {
+    camOffEl.style.display = 'none'
+    const avEl = document.getElementById('vcPartnerCamAvatar'); const nmEl = document.getElementById('vcPartnerCamName')
+    if (avEl) avEl.src = partnerAv; if (nmEl) nmEl.textContent = partnerName
+  }
+  const rv = document.getElementById('remoteVideo')
+  if (rv) { rv.style.display = 'block'; rv.style.objectFit = 'contain' }
+
   startCallTimer()
+  startConnectingPoll()
+setTimeout(() => { hideConnecting(); stopConnectingPoll() }, 15000)
 }
 
-// ── END CALL ──
+// ── END CALL ──────────────────────────────────────────────────
 window.endCall = function() {
   stopRinging(); stopCallTimer()
-  if(callTimeout){clearTimeout(callTimeout);callTimeout=null}
+  if (callTimeout) { clearTimeout(callTimeout); callTimeout = null }
   document.getElementById('activeCallOverlay').classList.remove('open')
+  const savedPid = currentCallPid
   cleanupWebRTC()
-  if(currentCallPid) supabase.channel(`vc-${currentCallPid}`).send({type:'broadcast',event:'call_ended',payload:{}})
-  currentCallRoom=null; currentCallPid=null
+  if (savedPid) {
+    const ch = supabase.channel(`call-${savedPid}`, { config: { broadcast: { ack: true } } })
+    ch.subscribe(s => { if (s === 'SUBSCRIBED') ch.send({ type: 'broadcast', event: 'call_ended', payload: {} }).catch(()=>{}) })
+  }
+  currentCallPid = null
   showToast('Call ended.')
 }
 
-// ── BOOT ──
+// ══════════════════════════════════════════════════════════════
+//  BOOT
+// ══════════════════════════════════════════════════════════════
 const {data:{session}} = await supabase.auth.getSession()
 if (!session) { location.href='../auth/login.html' }
 me = session.user
@@ -286,66 +457,129 @@ document.getElementById('navName').textContent=myName
 document.getElementById('navAv').src=myAv
 document.getElementById('eqBar').innerHTML = EMOJIS.map(e=>`<span class="eq-e" onclick="insE('${e}')">${e}</span>`).join('')
 
-// ── SUBSCRIBE TO CALLS & SIGNALS FOR THIS USER ──
-callChannel = supabase.channel(`vc-${me.id}`)
-  .on('broadcast', { event:'incoming_call' }, ({ payload }) => {
+// ── SUBSCRIBE TO CALL SIGNALS ─────────────────────────────────
+callChannel = supabase.channel(`call-${me.id}`, { config: { broadcast: { ack: true } } })
+
+  .on('broadcast', { event: 'incoming_call' }, ({ payload }) => {
+    // Ignore stale replayed signals (older than 30s)
+    if (payload.ts && Date.now() - payload.ts > 30000) {
+      console.log('[CALL] Ignoring stale incoming_call signal')
+      return
+    }
     if (document.getElementById('activeCallOverlay').classList.contains('open')) return
-    currentCallRoom  = payload.roomName
+    if (document.getElementById('callerOverlay').classList.contains('open')) return
     currentCallPid   = payload.callerId
-    pendingOffer     = payload.offer   // store WebRTC offer for when user accepts
-    document.getElementById('incomingCallerAv').src           = payload.callerAv||av(payload.callerName)
-    document.getElementById('incomingCallerName').textContent = payload.callerName||'Someone'
+    pendingOffer     = null
+    answerApplied    = false
+    processingAnswer = false
+    outboundIceBuf   = []
+    document.getElementById('incomingCallerAv').src           = payload.callerAvatar || av(payload.callerName)
+    document.getElementById('incomingCallerName').textContent = payload.callerName || 'Someone'
     document.getElementById('incomingOverlay').classList.add('open')
     startRinging()
-    callTimeout = setTimeout(()=>{ if(document.getElementById('incomingOverlay').classList.contains('open'))declineCall() },30000)
+    callTimeout = setTimeout(() => {
+      if (document.getElementById('incomingOverlay').classList.contains('open')) declineCall()
+    }, 30000)
   })
-  .on('broadcast', { event:'call_accepted' }, async ({ payload }) => {
-    // Caller receives this — apply the answer and open the call screen
+
+  .on('broadcast', { event: 'call_offer' }, async ({ payload }) => {
+    console.log('[CALL] Web received call_offer — peerConn:', !!peerConn, 'processingAnswer:', processingAnswer, 'answerApplied:', answerApplied)
+    pendingOffer = payload.offer
+
+    if (processingAnswer) { console.log('[CALL] acceptCall in progress — buffered'); return }
+    if (answerApplied)    { console.log('[CALL] answer already applied, skip'); return }
+    if (!peerConn)        { console.log('[CALL] No peer yet — buffered for acceptCall'); return }
+
+    if (!peerConn.remoteDescription) {
+      console.log('[CALL] Processing offer in call_offer handler')
+      processingAnswer = true
+      try {
+        await processOfferAndAnswer(payload.offer)
+        answerApplied = true
+      } catch(e) {
+        console.error('[CALL] call_offer handler error:', e)
+      } finally {
+        processingAnswer = false
+      }
+    }
+  })
+
+  .on('broadcast', { event: 'call_answer' }, async ({ payload }) => {
+    // Web is the caller — mobile accepted
+    console.log('[CALL] Web received call_answer, answerApplied:', answerApplied)
     stopRinging()
-    if(callTimeout){clearTimeout(callTimeout);callTimeout=null}
-    currentCallRoom = payload.roomName
+    if (callTimeout) { clearTimeout(callTimeout); callTimeout = null }
     document.getElementById('callerOverlay').classList.remove('open')
-    // Set remote description (the callee's answer)
-    if (peerConn && payload.answer) {
-      await peerConn.setRemoteDescription(payload.answer)
+
+    if (answerApplied || !peerConn || peerConn.remoteDescription) {
+      console.log('[CALL] Web: already applied or no peer, opening active call')
+      openActiveCall()
+      return
+    }
+
+    try {
+      answerApplied = true
+      await peerConn.setRemoteDescription(new RTCSessionDescription(payload.answer))
       await flushIceCandidates()
+      // FIX: flush outbound ICE after remote desc set so mobile gets all candidates
+      await flushOutboundIce()
+      console.log('[CALL] Web caller: remote answer applied')
+    } catch(e) {
+      answerApplied = false
+      console.error('[CALL] Web error applying answer:', e)
     }
     openActiveCall()
   })
-  .on('broadcast', { event:'ice_candidate' }, async ({ payload }) => {
-    // Both sides receive each other's ICE candidates
+
+  .on('broadcast', { event: 'ice_candidate' }, async ({ payload }) => {
     if (!payload.candidate) return
     if (peerConn && peerConn.remoteDescription) {
-      try { await peerConn.addIceCandidate(new RTCIceCandidate(payload.candidate)) } catch(e){}
+      try { await peerConn.addIceCandidate(new RTCIceCandidate(payload.candidate)) } catch(e) {}
     } else {
-      // Buffer until remote description is set
       iceCandidateQueue.push(payload.candidate)
     }
   })
-  .on('broadcast', { event:'call_declined' }, () => {
+
+  .on('broadcast', { event: 'cam_state' }, ({ payload }) => {
+    const remVid = document.getElementById('remoteVideo')
+    const camOffEl = document.getElementById('vcPartnerCamOff')
+    if (payload.camOff) {
+      if (remVid) remVid.style.display = 'none'
+      if (camOffEl) camOffEl.style.display = 'flex'
+    } else {
+      if (remVid) remVid.style.display = 'block'
+      if (camOffEl) camOffEl.style.display = 'none'
+    }
+  })
+
+  .on('broadcast', { event: 'call_declined' }, () => {
     stopRinging()
-    if(callTimeout){clearTimeout(callTimeout);callTimeout=null}
+    if (callTimeout) { clearTimeout(callTimeout); callTimeout = null }
     document.getElementById('callerOverlay').classList.remove('open')
-    cleanupWebRTC()
+    cleanupWebRTC(); currentCallPid = null
     showToast('Call declined.')
-    currentCallRoom=null; currentCallPid=null
   })
-  .on('broadcast', { event:'call_cancelled' }, () => {
+
+  .on('broadcast', { event: 'call_cancelled' }, () => {
     stopRinging()
-    if(callTimeout){clearTimeout(callTimeout);callTimeout=null}
+    if (callTimeout) { clearTimeout(callTimeout); callTimeout = null }
     document.getElementById('incomingOverlay').classList.remove('open')
-    cleanupWebRTC()
-    currentCallRoom=null; currentCallPid=null
+    cleanupWebRTC(); currentCallPid = null
   })
-  .on('broadcast', { event:'call_ended' }, () => {
+
+  .on('broadcast', { event: 'call_ended' }, () => {
     stopCallTimer()
     document.getElementById('activeCallOverlay').classList.remove('open')
-    cleanupWebRTC()
-    currentCallRoom=null; currentCallPid=null
+    cleanupWebRTC(); currentCallPid = null
     showToast('Call ended.')
   })
-  .subscribe()
 
+  // .subscribe() MUST be LAST — after all .on() handlers
+  .subscribe((status) => { console.log('[CALL] Web call channel status:', status) })
+
+// ══════════════════════════════════════════════════════════════
+//  INBOX / MESSAGES
+// ══════════════════════════════════════════════════════════════
 const params = new URLSearchParams(location.search)
 await loadIb()
 await loadAllSwaps()
@@ -356,7 +590,6 @@ supabase.channel('new-messages-global')
     await loadIb(); updBadge(); updMsgTabBadge()
   }).subscribe()
 
-// ── TAB SWITCH ──
 window.switchTab = function(tab) {
   activeTab = tab
   document.getElementById('tabMsgs').classList.toggle('active', tab==='msgs')
@@ -367,7 +600,6 @@ window.switchTab = function(tab) {
   if (tab==='swaps') renderSwapList()
 }
 
-// ── INBOX ──
 async function loadIb() {
   const { data: msgs } = await supabase.from('messages')
     .select('id,from_user_id,to_user_id,body,read,created_at,msg_type,swap_id,item_id')
@@ -552,8 +784,7 @@ function renderItemContextBar(itm,swapData){
   const chk=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:1.05em;height:1.05em;display:inline-block;vertical-align:-0.15em;margin-right:.35em;"><polyline points="20 6 9 17 4 12"/></svg>`
   const lck=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="width:1.05em;height:1.05em;display:inline-block;vertical-align:-0.15em;margin-right:.35em;"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>`
   const dn=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:1.05em;height:1.05em;display:inline-block;vertical-align:-0.15em;margin-right:.35em;"><path d="M7.5 13.5c1.5 1.5 3.2 2.3 4.5 2.3 1.4 0 3.2-.8 4.5-2.3"/><path d="M7 12c-1.2-1.2-2-2.3-2-3.6 0-1.4 1.1-2.4 2.4-2.4 1 0 1.8.6 2.6 1.4"/><path d="M17 12c1.2-1.2 2-2.3 2-3.6 0-1.4-1.1-2.4-2.4-2.4-1 0-1.8.6-2.6 1.4"/></svg>`
-  const statLbl={pending:'⏳ Pending swap',accepted:`${chk}Accepted`,declined:'❌ Declined',cancelled:'🚫 Cancelled',swapped:`${dn}Swapped`,otp_pending:`${lck}OTP Required`}
-  const badgeCls=status||'no_swap',badgeTxt=status?(statLbl[status]||status):`<img src="swap.png" style="width:1.05em;height:1.05em;object-fit:contain;display:inline-block;vertical-align:-0.15em;margin-right:.35em;">Available`
+  const badgeCls=status||'no_swap',badgeTxt=status?(({pending:'⏳ Pending',accepted:`${chk}Accepted`,declined:'❌ Declined',cancelled:'🚫 Cancelled',swapped:`${dn}Swapped`,otp_pending:`${lck}OTP Required`})[status]||status):`<img src="swap.png" style="width:1.05em;height:1.05em;object-fit:contain;display:inline-block;vertical-align:-0.15em;margin-right:.35em;">Available`
   const ptsNote=swapData?.offered_pts>0?`<span style="font-size:10.5px;color:#16a34a;font-weight:700;margin-left:6px;">+${swapData.offered_pts.toLocaleString()} pts</span>`:''
   bar.innerHTML=`<img class="icb-img" src="${img}" alt="${esc(itm.name)}" onclick="location.href='../personal/item-detail.html?id=${itm.id}'" title="View item"/>
     <div class="icb-info"><div class="icb-name">${esc(itm.name)}</div><div class="icb-pts">${(itm.pts||0).toLocaleString()} pts · ${esc(itm.category||'')}${ptsNote}</div></div>
