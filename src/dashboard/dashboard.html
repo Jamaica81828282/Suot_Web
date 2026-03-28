@@ -297,11 +297,21 @@
             localStorage.setItem('suotUserId', session.user.id)
 
             const { data: profile } = await supabase
-                .from('profiles').select('username, display_name, avatar_url, pts')
-                .eq('id', session.user.id).single()
+    .from('profiles').select('username, display_name, avatar_url, pts, role')
+    .eq('id', session.user.id).single()
 
-            if (profile) {
-                const displayName = profile.display_name || profile.username || 'Swapper'
+// Block banned users
+if (profile?.role === 'banned') {
+    await supabase.auth.signOut()
+    localStorage.removeItem('suotUserId')
+    localStorage.removeItem('suotUser')
+    localStorage.removeItem('suotEmail')
+    window.location.href = '../auth/login.html?banned=true'
+    return
+}
+
+if (profile) {
+    const displayName = profile.display_name || profile.username || 'Swapper'
                 document.getElementById('profileName').textContent = displayName
                 document.getElementById('welcomeGreeting').innerHTML = `Welcome back, <em>${displayName}!</em>`
                 document.getElementById('userAvatar').src = profile.avatar_url ||

@@ -1007,3 +1007,118 @@ export async function fetchWalletEvents(limit = 30) {
   if (error) console.error('fetchWalletEvents:', error)
   return data || []
 }
+// ══════════════════════════════════════════════════════════════
+// ── BADGE HELPERS — paste at the bottom of src/db/supabase.js ──
+// ══════════════════════════════════════════════════════════════
+
+/**
+ * Fetch all badge definitions (created by admin).
+ */
+export async function fetchBadges() {
+    const { data, error } = await supabase
+        .from('badges')
+        .select('*')
+        .order('created_at', { ascending: false })
+    if (error) console.error('fetchBadges:', error)
+    return data || []
+}
+
+/**
+ * Fetch all badges WITH the current user's progress for each one.
+ * Returns an array of:
+ * {
+ *   badge:    { id, name, icon, description, criteria_type, threshold },
+ *   progress: number,   // how many the user has (e.g. 7 swaps)
+ *   earned:   boolean,  // progress >= threshold
+ *   claimed:  boolean,  // user has claimed the badge
+ *   earnedAt: string|null,
+ * }
+ */
+export async function fetchUserBadgeProgress(userId) {
+    if (!userId) return []
+
+    // 1. Get all badge definitions
+    const { data: badges, error: bErr } = await supabase
+        .from('badges')
+        .select('*')
+        .order('created_at', { ascending: false })
+    if (bErr || !badges?.length) return []
+
+    // 2. Get this user's already-earned badges
+    const { data: earned } = await supabase
+        .from('user_badges')
+        .select('badge_id, claimed, earned_at')
+        .eq('user_id', userId)
+    const earnedMap = {}
+    ;(earned || []).forEach(e => { earnedMap[e.badge_id] = e })
+
+    // 3. Get raw counts for each criteria type in one go
+    const [
+        { count: swapsDone },
+        { count: itemsPosted },
+        { count: wishlisted },
+    ] = await Promise.all([
+        supabase.from('swaps').select('*', { count:'exact', head:true })
+            .eq('status','swapped')
+            .or(`requester_id.eq.${userId},owner_id.eq.${userId}`),
+        supabase.from('items').select('*', { count:'exact', head:true })
+            .eq('user_id', userId),
+        supabase.from('wishlist').select('*', { count:'exact', head:true })
+            .eq('user_id', userId),
+    ])
+
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('followers_count')
+        .eq('id', userId)
+        .single()
+
+    const countsMap = {
+        swaps_completed:  swapsDone   || 0,
+        items_posted:     itemsPosted || 0,
+        items_wishlisted: wishlisted  || 0,
+        followers:        profile?.followers_count || 0,
+    }
+
+    // 4. Build result array
+    const results = []
+    for (const badge of badges) {
+        const progress  = countsMap[badge.criteria_type] || 0
+        const isEarned  = progress >= badge.threshold
+        const earnedRow = earnedMap[badge.id]
+
+        // Auto-insert into user_badges if earned but not yet recorded
+        if (isEarned && !earnedRow) {
+            await supabase.from('user_badges').upsert(
+                { user_id: userId, badge_id: badge.id, claimed: false },
+                { onConflict: 'user_id,badge_id' }
+            )
+        }
+
+        results.push({
+            badge,
+            progress,
+            earned:   isEarned,
+            claimed:  earnedRow?.claimed || false,
+            earnedAt: earnedRow?.earned_at || null,
+        })
+    }
+
+    return results
+}
+
+/**
+ * Claim a badge that the user has earned.
+ * Returns true on success, false on failure.
+ */
+export async function claimBadge(badgeId) {
+    const user = await getUser()
+    if (!user) return false
+    const { error } = await supabase
+        .from('user_badges')
+        .update({ claimed: true, claimed_at: new Date().toISOString() })
+        .eq('user_id', user.id)
+        .eq('badge_id', badgeId)
+    if (error) { console.error('claimBadge:', error); return false }
+    return true
+}

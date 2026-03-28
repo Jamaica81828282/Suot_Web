@@ -194,16 +194,11 @@
         .lb-cmt-input::placeholder { color: #ccc; }
         .lb-cmt-post { background: none; border: none; padding: 0; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; color: #C994A7; cursor: pointer; opacity: 0.3; transition: opacity 0.15s; }
         .lb-cmt-post.ready { opacity: 1; }
-
-        /* ── Comment actions (like + reply buttons) ── */
-        .lb-cmt-actions {
-            display: flex; align-items: center; gap: 12px; margin-top: 4px;
-        }
+        .lb-cmt-actions { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
         .lb-cmt-like-btn, .lb-cmt-reply-btn {
             background: none; border: none; cursor: pointer; padding: 0;
             font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700;
-            color: #bbb; display: flex; align-items: center; gap: 4px;
-            transition: color 0.15s;
+            color: #bbb; display: flex; align-items: center; gap: 4px; transition: color 0.15s;
         }
         .lb-cmt-like-btn:hover { color: #ed4956; }
         .lb-cmt-reply-btn:hover { color: #4A635D; }
@@ -211,27 +206,16 @@
         .lb-cmt-like-btn.liked { color: #ed4956; }
         .lb-cmt-like-btn.liked svg { fill: #ed4956; }
         .lb-cmt-likes-count { font-size: 11px; color: #bbb; }
-
-        /* ── Inline reply form ── */
         .lb-reply-form {
             display: none; align-items: center; gap: 8px;
             margin-top: 6px; padding: 7px 10px;
             background: #faf4f6; border-radius: 10px;
         }
         .lb-reply-form.open { display: flex; }
-        .lb-reply-input {
-            flex: 1; background: none; border: none; outline: none;
-            font-family: 'Inter', sans-serif; font-size: 12px; color: #333;
-        }
+        .lb-reply-input { flex: 1; background: none; border: none; outline: none; font-family: 'Inter', sans-serif; font-size: 12px; color: #333; }
         .lb-reply-input::placeholder { color: #ccc; }
-        .lb-reply-post {
-            background: none; border: none; font-family: 'Inter', sans-serif;
-            font-size: 12px; font-weight: 700; color: #C994A7; cursor: pointer;
-            opacity: 0.35; transition: opacity 0.15s; padding: 0;
-        }
+        .lb-reply-post { background: none; border: none; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700; color: #C994A7; cursor: pointer; opacity: 0.35; transition: opacity 0.15s; padding: 0; }
         .lb-reply-post.ready { opacity: 1; }
-
-        /* ── Nested replies ── */
         .lb-replies-list { margin-top: 6px; display: flex; flex-direction: column; gap: 8px; }
         .lb-reply-row { display: flex; gap: 8px; padding-left: 4px; border-left: 2px solid #f0dfe5; margin-left: 4px; }
         .lb-reply-avatar { width: 22px; height: 22px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 1px solid #f0dfe5; }
@@ -239,57 +223,26 @@
         .lb-reply-body { font-size: 12px; line-height: 1.5; color: #444; flex: 1; }
         .lb-reply-body strong { font-weight: 700; margin-right: 3px; }
         .lb-reply-time { font-size: 10px; color: #bbb; display: block; margin-top: 1px; }
-
-        /* ── Story owner: viewers panel ── */
-        .story-viewers-panel {
-            display: none; flex-direction: column; gap: 0;
-            max-height: 220px; overflow-y: auto; padding: 0 16px;
-        }
+        .story-viewers-panel { display: none; flex-direction: column; gap: 0; max-height: 220px; overflow-y: auto; padding: 0 16px; }
         .story-viewers-panel::-webkit-scrollbar { width: 3px; }
         .story-viewers-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,.2); border-radius: 3px; }
-        .story-viewers-label {
-            font-size: 10px; font-weight: 700; text-transform: uppercase;
-            letter-spacing: 1px; color: rgba(255,255,255,.45);
-            padding: 12px 0 8px; display: flex; align-items: center; gap: 6px;
-        }
+        .story-viewers-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,.45); padding: 12px 0 8px; display: flex; align-items: center; gap: 6px; }
         .story-viewers-label svg { width: 12px; height: 12px; }
-        .story-viewer-row {
-            display: flex; align-items: center; gap: 10px;
-            padding: 7px 0; border-top: 1px solid rgba(255,255,255,.08);
-        }
+        .story-viewer-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-top: 1px solid rgba(255,255,255,.08); }
         .story-viewer-av { width: 30px; height: 30px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 1.5px solid rgba(255,255,255,.2); }
         .story-viewer-av img { width: 100%; height: 100%; object-fit: cover; }
         .story-viewer-name { font-size: 12px; font-weight: 600; color: rgba(255,255,255,.85); }
         .story-viewer-time { font-size: 10px; color: rgba(255,255,255,.4); margin-top: 1px; }
         .story-no-viewers { font-size: 12px; color: rgba(255,255,255,.35); text-align: center; padding: 14px 0; }
-
-        /* ── Story three-dot menu ── */
-        .story-dots-btn {
-            background: none; border: none; cursor: pointer; padding: 4px 6px;
-            color: rgba(255,255,255,.7); display: flex; align-items: center;
-            border-radius: 6px; transition: background .15s; position: relative;
-        }
+        .story-dots-btn { background: none; border: none; cursor: pointer; padding: 4px 6px; color: rgba(255,255,255,.7); display: flex; align-items: center; border-radius: 6px; transition: background .15s; position: relative; }
         .story-dots-btn:hover { background: rgba(255,255,255,.12); color: #fff; }
         .story-dots-btn svg { width: 18px; height: 18px; }
-        .story-dots-menu {
-            position: absolute; top: calc(100% + 4px); right: 0;
-            background: rgba(30,30,30,.96); border-radius: 10px;
-            padding: 4px; min-width: 140px; z-index: 100;
-            box-shadow: 0 8px 24px rgba(0,0,0,.4);
-            display: none; flex-direction: column;
-        }
+        .story-dots-menu { position: absolute; top: calc(100% + 4px); right: 0; background: rgba(30,30,30,.96); border-radius: 10px; padding: 4px; min-width: 140px; z-index: 100; box-shadow: 0 8px 24px rgba(0,0,0,.4); display: none; flex-direction: column; }
         .story-dots-menu.open { display: flex; }
-        .story-dots-menu button {
-            background: none; border: none; cursor: pointer; padding: 9px 13px;
-            text-align: left; font-family: 'Inter', sans-serif; font-size: 13px;
-            font-weight: 600; border-radius: 7px; transition: background .15s;
-            display: flex; align-items: center; gap: 8px;
-        }
+        .story-dots-menu button { background: none; border: none; cursor: pointer; padding: 9px 13px; text-align: left; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; border-radius: 7px; transition: background .15s; display: flex; align-items: center; gap: 8px; }
         .story-dots-menu button svg { width: 14px; height: 14px; }
         .story-dots-menu .menu-delete { color: #ff6b6b; }
         .story-dots-menu .menu-delete:hover { background: rgba(255,107,107,.15); }
-
-        /* Edit panel */
         .lb-edit-panel { display: none; flex-direction: column; flex: 1; overflow-y: auto; padding: 14px 16px; gap: 10px; }
         .lb-edit-panel::-webkit-scrollbar { width: 3px; }
         .lb-edit-panel::-webkit-scrollbar-thumb { background: #f0dfe5; }
@@ -317,23 +270,52 @@
         .lb-edit-back:hover { border-color: #ccc; color: #444; }
         .lb-edit-save { flex: 1; padding: 11px; background: linear-gradient(135deg, #4A635D, #37504A); border: none; border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; color: #fff; cursor: pointer; }
         .lb-edit-save:hover { opacity: 0.9; }
-
         #postCountDisplay { font-weight: 700; }
+        .loader-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .loader-spinner { width: 60px; height: 60px; border: 6px solid #f0dfe5; border-top-color: var(--deep-forest); border-radius: 50%; animation: spin 0.8s linear infinite; }
 
-        /* loader styles */
-        .loader-overlay {
-            position: fixed; inset: 0; background: rgba(255,255,255,0.85);
-            display: none; align-items: center; justify-content: center; z-index: 1000;
+        /* ══ BADGES TAB ══ */
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 14px; padding: 20px 0; width: 100%;
         }
-        .loader-spinner {
-            width: 60px; height: 60px; border: 6px solid #f0dfe5;
-            border-top-color: var(--deep-forest); border-radius: 50%; animation: spin 0.8s linear infinite;
+        .badge-card {
+            background: #fff; border: 1.5px solid #ede8ea; border-radius: 18px;
+            padding: 20px 16px; display: flex; flex-direction: column;
+            align-items: center; gap: 10px; text-align: center;
+            transition: box-shadow .2s, transform .2s; position: relative; overflow: hidden;
         }
+        .badge-card:hover { box-shadow: 0 8px 24px rgba(201,148,167,.15); transform: translateY(-2px); }
+        .badge-card.earned { border-color: #C994A7; background: linear-gradient(135deg, #fff8fa, #fff); }
+        .badge-card.locked { opacity: .6; }
+        .badge-icon { font-size: 38px; line-height: 1; }
+        .badge-name { font-size: 13px; font-weight: 700; color: #1a1a1a; }
+        .badge-desc { font-size: 11px; color: #888; line-height: 1.5; }
+        .badge-progress-wrap { width: 100%; }
+        .badge-progress-bar { height: 6px; background: #f0dfe5; border-radius: 6px; overflow: hidden; margin-bottom: 4px; }
+        .badge-progress-fill { height: 100%; background: linear-gradient(90deg, #C994A7, #b07f92); border-radius: 6px; transition: width .4s ease; }
+        .badge-progress-fill.complete { background: linear-gradient(90deg, #4A635D, #5d7a73); }
+        .badge-progress-label { font-size: 10.5px; font-weight: 700; color: #888; }
+        .badge-claim-btn {
+            width: 100%; padding: 9px; border-radius: 50px;
+            background: linear-gradient(135deg, #4A635D, #5d7a73);
+            border: none; color: #fff; font-family: 'Inter', sans-serif;
+            font-size: 12px; font-weight: 700; cursor: pointer;
+            transition: opacity .2s, transform .15s;
+        }
+        .badge-claim-btn:hover { opacity: .9; transform: translateY(-1px); }
+        .badge-claim-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+        .badge-claimed-pill { padding: 5px 14px; border-radius: 50px; background: #edf7f4; color: #16a34a; font-size: 11.5px; font-weight: 700; }
+        .badge-locked-icon { font-size: 11px; color: #bbb; font-weight: 600; }
+        .badge-earned-glow { position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #C994A7, #b07f92); border-radius: 18px 18px 0 0; }
+        .badges-loading { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 60px 20px; color: #bbb; font-size: 13px; }
+        .badges-empty { text-align: center; padding: 60px 20px; color: #bbb; font-size: 13px; }
+        .badges-empty span { font-size: 2.5rem; display: block; margin-bottom: 12px; }
     </style>
 </head>
 <body class="dash-body">
 
-<!-- loading overlay -->
 <div id="profileLoader" class="loader-overlay">
     <div class="loader-spinner"></div>
 </div>
@@ -347,7 +329,6 @@
 </aside>
 
 <main class="main-content">
-
     <header class="profile-header" id="profileHeader">
         <div class="profile-loading">
             <div class="loading-spin"></div> Loading profile…
@@ -366,10 +347,10 @@
             <button class="tab-btn active" onclick="switchTab(this,'posted')">Posted Items</button>
             <button class="tab-btn"        onclick="switchTab(this,'saved')">Saved</button>
             <button class="tab-btn"        onclick="switchTab(this,'tagged')">Tagged</button>
+            <button class="tab-btn"        onclick="switchTab(this,'badges')">🏅 Badges</button>
         </nav>
         <section id="profileGrid"></section>
     </div>
-
 </main>
 
 <!-- ══ LIGHTBOX ══ -->
@@ -553,7 +534,6 @@
                 <img id="viewerAvatar" src="" alt="">
                 <div><strong id="viewerUsername"></strong><span id="viewerLabel"></span></div>
             </div>
-            <!-- Three-dot menu and close button — grouped so they sit side by side -->
             <div style="display:flex;align-items:center;gap:2px;flex-shrink:0;">
                 <div style="position:relative;" id="storyDotsWrap" style="display:none;">
                     <button class="story-dots-btn" id="storyDotsBtn" onclick="toggleStoryMenu(event)" title="Options">
@@ -573,14 +553,12 @@
         <div class="story-tap-right" onclick="nextStory()"></div>
         <img id="storyViewerImg" src="" alt="" class="story-viewer-img">
         <div class="story-viewer-footer">
-            <!-- Visitor sees: reply input -->
             <div class="story-reply-bar" id="storyReplyBar">
                 <input type="text" id="storyReplyInput" placeholder="Reply to story…" onclick="event.stopPropagation()" oninput="this.parentElement.querySelector('.story-reply-send').style.opacity=this.value.trim()?'1':'.4'"/>
                 <button class="story-reply-send" onclick="sendStoryReply(event)" style="background:none;border:none;cursor:pointer;opacity:.4;transition:opacity .15s;padding:0 2px;">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                 </button>
             </div>
-            <!-- Owner sees: viewers list -->
             <div class="story-viewers-panel" id="storyViewersPanel">
                 <div class="story-viewers-label">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -593,17 +571,9 @@
 </div>
 
 <script type="module">
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// FIX: removed isFollowing / followUser / unfollowUser
-//      — these helpers were unreliable / possibly missing.
-//      All follow logic now uses direct supabase calls.
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-import { supabase, fetchFollowers, fetchFollowing, fetchStories, postStory as dbSaveStory, pruneExpiredStories, fetchComments, addComment, addReply, toggleCommentLike, fetchCommentLikes, recordStoryView, fetchStoryViewers, deleteStory, createNotification } from '../db/supabase.js'
+import { supabase, fetchFollowers, fetchFollowing, fetchStories, postStory as dbSaveStory, pruneExpiredStories, fetchComments, addComment, addReply, toggleCommentLike, fetchCommentLikes, recordStoryView, fetchStoryViewers, deleteStory, createNotification, fetchUserBadgeProgress, claimBadge } from '../db/supabase.js'
 import { lsGet, lsSet } from '../db/ls.js'
 
-// ══════════════════════════════════════════
-//  STATE
-// ══════════════════════════════════════════
 const CONDITIONS   = ['Well Loved','Good','Very Good','Like New','Brand New']
 const FALLBACK     = 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800'
 const STORY_EXPIRY = 24 * 60 * 60 * 1000
@@ -611,7 +581,7 @@ const STORY_DUR    = 5000
 
 let currentUser    = null
 let currentProfile = null
-let myProfile      = null   // always the logged-in user's own profile (for notification sender name)
+let myProfile      = null
 let activeTab      = 'posted'
 let lbId           = null
 let lbIdx          = 0
@@ -626,26 +596,19 @@ const __suot_uid   = localStorage.getItem('suotUserId') || 'anon'
 // ══════════════════════════════════════════
 async function boot() {
     document.getElementById('profileLoader').style.display = 'flex'
-
     const { data: { session } } = await supabase.auth.getSession()
     if (!session) { window.location.href = '../auth/login.html'; return }
     currentUser = session.user
 
-    try {
-        const cached = lsGet('profile')
-        if (cached) { currentProfile = cached; renderHeader(true, false) }
-    } catch(e) {}
+    try { const cached = lsGet('profile'); if (cached) { currentProfile = cached; renderHeader(true, false) } } catch(e) {}
 
-    // migrate legacy localStorage keys
     try {
         const legacy = ['suot_posted_items','suot_wishlist','suotCollection']
         for (const k of legacy) {
             const val = localStorage.getItem(k); if (!val) continue
             const nk  = `suot_${k.replace(/^suot_/, '')}_${currentUser.id}`
             const existing = localStorage.getItem(nk)
-            if (!existing) {
-                localStorage.setItem(nk, val)
-            } else {
+            if (!existing) { localStorage.setItem(nk, val) } else {
                 try {
                     const a = JSON.parse(existing), b = JSON.parse(val)
                     const merged = Array.isArray(a) ? [...a] : []
@@ -660,20 +623,10 @@ async function boot() {
     const params    = new URLSearchParams(window.location.search)
     const otherName = params.get('user')
     const otherId   = params.get('userId')
-
     let profile
-    if (otherId) {
-        const { data: p } = await supabase.from('profiles').select('*').eq('id', otherId).maybeSingle()
-        if (p) profile = p
-    }
-    if (!profile && otherName) {
-        const { data: p } = await supabase.from('profiles').select('*').eq('username', otherName).maybeSingle()
-        if (p) profile = p
-    }
-    if (!profile) {
-        const { data: p } = await supabase.from('profiles').select('*').eq('id', currentUser.id).single()
-        profile = p
-    }
+    if (otherId) { const { data: p } = await supabase.from('profiles').select('*').eq('id', otherId).maybeSingle(); if (p) profile = p }
+    if (!profile && otherName) { const { data: p } = await supabase.from('profiles').select('*').eq('username', otherName).maybeSingle(); if (p) profile = p }
+    if (!profile) { const { data: p } = await supabase.from('profiles').select('*').eq('id', currentUser.id).single(); profile = p }
     if (!profile) {
         const fallbackName = currentUser.user_metadata?.full_name || currentUser.email.split('@')[0]
         const { data: newProfile } = await supabase.from('profiles')
@@ -681,39 +634,21 @@ async function boot() {
             .select().single()
         profile = newProfile
     }
-
     currentProfile = profile
     try { lsSet('profile', profile) } catch(e) {}
 
-    // Load the logged-in user's own profile so we know the sender name for notifications.
-    // If viewing own profile this is the same object; if visiting someone else's we fetch separately.
-    if (currentUser.id === currentProfile.id) {
-        myProfile = currentProfile
-    } else {
-        const { data: mp } = await supabase.from('profiles')
-            .select('id, display_name, username, avatar_url')
-            .eq('id', currentUser.id).single()
+    if (currentUser.id === currentProfile.id) { myProfile = currentProfile } else {
+        const { data: mp } = await supabase.from('profiles').select('id, display_name, username, avatar_url').eq('id', currentUser.id).single()
         myProfile = mp || { id: currentUser.id, display_name: currentUser.email?.split('@')[0] || 'Someone' }
     }
 
     const isOwner = currentUser && currentProfile && currentUser.id === currentProfile.id
-
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    // FIX: check follow status with a direct DB query
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     let amFollowing = false
     if (!isOwner) {
-        const { data: fRow } = await supabase
-            .from('follows')
-            .select('id')
-            .eq('follower_id', currentUser.id)
-            .eq('following_id', currentProfile.id)
-            .maybeSingle()
+        const { data: fRow } = await supabase.from('follows').select('id').eq('follower_id', currentUser.id).eq('following_id', currentProfile.id).maybeSingle()
         amFollowing = !!fRow
     }
 
-    // Get accurate counts directly from the follows table (the
-    // cached followers_count / following_count columns can be stale)
     const [{ count: followerCount }, { count: followingCount }] = await Promise.all([
         supabase.from('follows').select('*', { count: 'exact', head: true }).eq('following_id', profile.id),
         supabase.from('follows').select('*', { count: 'exact', head: true }).eq('follower_id',  profile.id)
@@ -722,24 +657,15 @@ async function boot() {
     profile.following_count = followingCount || 0
 
     renderHeader(isOwner, amFollowing)
+    loadProfileBadgeIcons()
     renderSidebar(isOwner)
 
     function renderSidebar(isOwner) {
-        const nav = document.getElementById('sideNavLinks')
-        if (!nav) return
+        const nav = document.getElementById('sideNavLinks'); if (!nav) return
         if (isOwner) {
-            nav.innerHTML = `
-                <button class="cat-link" onclick="location.href='../dashboard/dashboard.html'">← Back to Shop</button>
-                <p class="category-label" style="margin-top:20px">Personal</p>
-                <button class="cat-link active">My Profile</button>
-                <button class="cat-link" onclick="location.href='../personal/collection.html'">My Collection</button>
-                <button class="cat-link" onclick="location.href='../personal/settings.html'">Settings</button>`
+            nav.innerHTML = `<button class="cat-link" onclick="location.href='../dashboard/dashboard.html'">← Back to Shop</button><p class="category-label" style="margin-top:20px">Personal</p><button class="cat-link active">My Profile</button><button class="cat-link" onclick="location.href='../personal/collection.html'">My Collection</button><button class="cat-link" onclick="location.href='../personal/settings.html'">Settings</button>`
         } else {
-            nav.innerHTML = `
-                <button class="cat-link" onclick="location.href='../dashboard/dashboard.html'">← Back to Shop</button>
-                <p class="category-label" style="margin-top:20px">Viewing</p>
-                <button class="cat-link active">@${currentProfile.username || 'Profile'}</button>
-                <button class="cat-link" onclick="location.href='../dashboard/dashboard.html'">Browse Catalog</button>`
+            nav.innerHTML = `<button class="cat-link" onclick="location.href='../dashboard/dashboard.html'">← Back to Shop</button><p class="category-label" style="margin-top:20px">Viewing</p><button class="cat-link active">@${currentProfile.username || 'Profile'}</button><button class="cat-link" onclick="location.href='../dashboard/dashboard.html'">Browse Catalog</button>`
         }
     }
 
@@ -747,11 +673,7 @@ async function boot() {
     if (addItem) addItem.style.display = isOwner ? 'flex' : 'none'
 
     if (isOwner) {
-        try {
-            const legacy = JSON.parse(localStorage.getItem('suotStories') || '[]')
-            for (const s of legacy) { if (s.img) await dbSaveStory({ imageUrl: s.img, label: s.label || '' }) }
-            localStorage.removeItem('suotStories')
-        } catch(e) {}
+        try { const legacy = JSON.parse(localStorage.getItem('suotStories') || '[]'); for (const s of legacy) { if (s.img) await dbSaveStory({ imageUrl: s.img, label: s.label || '' }) } localStorage.removeItem('suotStories') } catch(e) {}
     }
 
     loadStories(currentProfile.id, isOwner)
@@ -766,27 +688,22 @@ async function boot() {
 //  RENDER HEADER
 // ══════════════════════════════════════════
 function renderHeader(isOwner = true, amFollowing = false) {
-    const p      = currentProfile
+    const p = currentProfile
     const name   = p.display_name || p.username || 'Swapper'
     const bio    = p.bio || ''
     const posted = getPosted().length
-    const avatar = p.avatar_url
-        ? p.avatar_url
-        : `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=EBE0E3&color=C994A7&size=150`
+    const avatar = p.avatar_url ? p.avatar_url : `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=EBE0E3&color=C994A7&size=150`
 
     document.getElementById('profileHeader').innerHTML = `
         <div class="profile-pic-section" id="profilePicSection">
             <img id="mainAvatar" src="${avatar}" alt="Profile">
-            ${isOwner ? `<div class="avatar-upload-overlay">
-                <span class="avatar-edit-icon" onclick="openEditModal(event)">✎</span>
-            </div>` : ''}
+            ${isOwner ? `<div class="avatar-upload-overlay"><span class="avatar-edit-icon" onclick="openEditModal(event)">✎</span></div>` : ''}
         </div>
         <div class="profile-info-section">
             <div class="username-row">
                 <h2 id="userNameDisplay">${name}</h2>
-                ${isOwner
-                    ? `<button class="btn-edit-profile" onclick="openEditModal()">Edit Profile</button>`
-                    : `<button id="followBtn" class="btn-edit-profile ${amFollowing ? 'btn-following' : ''}">${amFollowing ? 'Following ✓' : 'Follow'}</button>`}
+                <div id="profileBadgeIcons" style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;"></div>
+                ${isOwner ? `<button class="btn-edit-profile" onclick="openEditModal()">Edit Profile</button>` : `<button id="followBtn" class="btn-edit-profile ${amFollowing ? 'btn-following' : ''}">${amFollowing ? 'Following ✓' : 'Follow'}</button>`}
             </div>
             <div class="stats-row">
                 <span><strong id="postCountDisplay">${posted}</strong> posts</span>
@@ -798,72 +715,31 @@ function renderHeader(isOwner = true, amFollowing = false) {
             </div>
         </div>`
 
-    document.getElementById('profilePicSection').addEventListener('click', e => {
-        if (e.target.closest('.avatar-edit-icon')) return
-        if (stories.length) openStoryViewer(0)
-    })
-
-    const fStat = document.getElementById('followersStat')
-    if (fStat) fStat.addEventListener('click', () => openFollowersModal(p.id))
-    const gStat = document.getElementById('followingStat')
-    if (gStat) gStat.addEventListener('click', () => openFollowingModal(p.id))
+    document.getElementById('profilePicSection').addEventListener('click', e => { if (e.target.closest('.avatar-edit-icon')) return; if (stories.length) openStoryViewer(0) })
+    const fStat = document.getElementById('followersStat'); if (fStat) fStat.addEventListener('click', () => openFollowersModal(p.id))
+    const gStat = document.getElementById('followingStat'); if (gStat) gStat.addEventListener('click', () => openFollowingModal(p.id))
 
     if (!isOwner) {
         const btn = document.getElementById('followBtn')
-
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // FIX: use direct supabase insert/delete instead of helpers
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         btn.addEventListener('click', async () => {
-            btn.disabled = true
-            btn.textContent = '...'
-
+            btn.disabled = true; btn.textContent = '...'
             if (amFollowing) {
-                // UNFOLLOW
-                const { error } = await supabase
-                    .from('follows')
-                    .delete()
-                    .eq('follower_id', currentUser.id)
-                    .eq('following_id', p.id)
-
+                const { error } = await supabase.from('follows').delete().eq('follower_id', currentUser.id).eq('following_id', p.id)
                 if (!error) {
-                    amFollowing = false
-                    p.followers_count = Math.max(0, (p.followers_count || 0) - 1)
-                    // update follower count in DB
-                    await supabase.from('profiles')
-                        .update({ followers_count: p.followers_count })
-                        .eq('id', p.id)
-                    // update following count for current user
+                    amFollowing = false; p.followers_count = Math.max(0, (p.followers_count || 0) - 1)
+                    await supabase.from('profiles').update({ followers_count: p.followers_count }).eq('id', p.id)
                     const { data: myP } = await supabase.from('profiles').select('following_count').eq('id', currentUser.id).single()
-                    if (myP) {
-                        await supabase.from('profiles')
-                            .update({ following_count: Math.max(0, (myP.following_count || 0) - 1) })
-                            .eq('id', currentUser.id)
-                    }
+                    if (myP) await supabase.from('profiles').update({ following_count: Math.max(0, (myP.following_count || 0) - 1) }).eq('id', currentUser.id)
                 }
             } else {
-                // FOLLOW
-                const { error } = await supabase
-                    .from('follows')
-                    .insert({ follower_id: currentUser.id, following_id: p.id })
-
+                const { error } = await supabase.from('follows').insert({ follower_id: currentUser.id, following_id: p.id })
                 if (!error) {
-                    amFollowing = true
-                    p.followers_count = (p.followers_count || 0) + 1
-                    // update follower count in DB
-                    await supabase.from('profiles')
-                        .update({ followers_count: p.followers_count })
-                        .eq('id', p.id)
-                    // update following count for current user
+                    amFollowing = true; p.followers_count = (p.followers_count || 0) + 1
+                    await supabase.from('profiles').update({ followers_count: p.followers_count }).eq('id', p.id)
                     const { data: myP } = await supabase.from('profiles').select('following_count').eq('id', currentUser.id).single()
-                    if (myP) {
-                        await supabase.from('profiles')
-                            .update({ following_count: (myP.following_count || 0) + 1 })
-                            .eq('id', currentUser.id)
-                    }
+                    if (myP) await supabase.from('profiles').update({ following_count: (myP.following_count || 0) + 1 }).eq('id', currentUser.id)
                 }
             }
-
             btn.textContent = amFollowing ? 'Following ✓' : 'Follow'
             btn.className   = `btn-edit-profile ${amFollowing ? 'btn-following' : ''}`
             document.querySelector('#followersStat strong').textContent = p.followers_count || 0
@@ -872,59 +748,34 @@ function renderHeader(isOwner = true, amFollowing = false) {
     }
 }
 
-function updatePostCount(n) {
-    const el = document.getElementById('postCountDisplay')
-    if (el) el.textContent = n !== undefined ? n : (dbPostedItems.length || getPosted().length)
-}
-function updateFollowerCount(delta) {
-    currentProfile.followers_count = (currentProfile.followers_count||0) + delta
-    const el = document.querySelector('#followersStat strong')
-    if (el) el.textContent = currentProfile.followers_count || 0
-}
-function updateFollowingCount(delta) {
-    currentProfile.following_count = (currentProfile.following_count||0) + delta
-    const el = document.querySelector('#followingStat strong')
-    if (el) el.textContent = currentProfile.following_count || 0
-}
+function updatePostCount(n) { const el = document.getElementById('postCountDisplay'); if (el) el.textContent = n !== undefined ? n : (dbPostedItems.length || getPosted().length) }
 
-// ── Follow modals ──
 function openFollowersModal(userId) {
     document.getElementById('followersModalTitle').textContent = userId === currentUser.id ? 'Your Followers' : 'Followers'
     const list = document.getElementById('followersList')
     list.innerHTML = '<div class="profile-loading"><div class="loading-spin"></div>Loading…</div>'
     fetchFollowers(userId).then(arr => {
         if (!arr.length) { list.innerHTML = '<p style="text-align:center;color:#777;">No followers yet.</p>'; return }
-        list.innerHTML = arr.map(p => `<div class="follow-row" onclick="viewProfile('${p.username}')" style="display:flex;align-items:center;gap:10px;cursor:pointer;">
-            <img src="${p.avatar_url||`https://ui-avatars.com/api/?name=${encodeURIComponent(p.display_name||p.username)}&background=EBE0E3&color=C994A7&size=40`}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;"/>
-            <div><strong>${p.display_name||p.username}</strong><br><small>@${p.username}</small></div>
-        </div>`).join('')
+        list.innerHTML = arr.map(p => `<div class="follow-row" onclick="viewProfile('${p.username}')" style="display:flex;align-items:center;gap:10px;cursor:pointer;"><img src="${p.avatar_url||`https://ui-avatars.com/api/?name=${encodeURIComponent(p.display_name||p.username)}&background=EBE0E3&color=C994A7&size=40`}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;"/><div><strong>${p.display_name||p.username}</strong><br><small>@${p.username}</small></div></div>`).join('')
     })
     document.getElementById('followersModal').style.display = 'flex'
 }
 function closeFollowersModal() { document.getElementById('followersModal').style.display = 'none' }
-
 function openFollowingModal(userId) {
     document.getElementById('followingModalTitle').textContent = userId === currentUser.id ? 'People You Follow' : 'Following'
     const list = document.getElementById('followingList')
     list.innerHTML = '<div class="profile-loading"><div class="loading-spin"></div>Loading…</div>'
     fetchFollowing(userId).then(arr => {
         if (!arr.length) { list.innerHTML = '<p style="text-align:center;color:#777;">Not following anyone yet.</p>'; return }
-        list.innerHTML = arr.map(p => `<div class="follow-row" onclick="viewProfile('${p.username}')" style="display:flex;align-items:center;gap:10px;cursor:pointer;">
-            <img src="${p.avatar_url||`https://ui-avatars.com/api/?name=${encodeURIComponent(p.display_name||p.username)}&background=EBE0E3&color=C994A7&size=40`}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;"/>
-            <div><strong>${p.display_name||p.username}</strong><br><small>@${p.username}</small></div>
-        </div>`).join('')
+        list.innerHTML = arr.map(p => `<div class="follow-row" onclick="viewProfile('${p.username}')" style="display:flex;align-items:center;gap:10px;cursor:pointer;"><img src="${p.avatar_url||`https://ui-avatars.com/api/?name=${encodeURIComponent(p.display_name||p.username)}&background=EBE0E3&color=C994A7&size=40`}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;"/><div><strong>${p.display_name||p.username}</strong><br><small>@${p.username}</small></div></div>`).join('')
     })
     document.getElementById('followingModal').style.display = 'flex'
 }
 function closeFollowingModal() { document.getElementById('followingModal').style.display = 'none' }
-
 function viewProfile(username) { window.location.href = `profile.html?user=${encodeURIComponent(username)}` }
-
-window.openFollowersModal  = openFollowersModal
-window.closeFollowersModal = closeFollowersModal
-window.openFollowingModal  = openFollowingModal
-window.closeFollowingModal = closeFollowingModal
-window.viewProfile         = viewProfile
+window.openFollowersModal = openFollowersModal; window.closeFollowersModal = closeFollowersModal
+window.openFollowingModal = openFollowingModal; window.closeFollowingModal = closeFollowingModal
+window.viewProfile = viewProfile
 
 // ══════════════════════════════════════════
 //  EDIT PROFILE
@@ -932,9 +783,7 @@ window.viewProfile         = viewProfile
 window.openEditModal = function(e) {
     if (e && e.stopPropagation) e.stopPropagation()
     const p = currentProfile
-    const avatar = p.avatar_url
-        ? p.avatar_url
-        : `https://ui-avatars.com/api/?name=${encodeURIComponent(p.display_name||'U')}&background=EBE0E3&color=C994A7&size=150`
+    const avatar = p.avatar_url ? p.avatar_url : `https://ui-avatars.com/api/?name=${encodeURIComponent(p.display_name||'U')}&background=EBE0E3&color=C994A7&size=150`
     document.getElementById('editAvatarPreview').src      = avatar
     document.getElementById('editUsername').value         = p.username     || ''
     document.getElementById('editDisplayName').value      = p.display_name || ''
@@ -943,74 +792,47 @@ window.openEditModal = function(e) {
     document.getElementById('editModal').style.display    = 'flex'
 }
 window.closeEditModal = function() { document.getElementById('editModal').style.display = 'none' }
-
 window.saveProfile = async function() {
-    const btn      = document.getElementById('editSaveBtn')
-    const status   = document.getElementById('editSaveStatus')
+    const btn = document.getElementById('editSaveBtn'), status = document.getElementById('editSaveStatus')
     const username = document.getElementById('editUsername').value.trim()
     const dispName = document.getElementById('editDisplayName').value.trim()
     const bio      = document.getElementById('editBio').value.trim()
-
     if (!username)                          { status.style.color='#c0392b'; status.textContent='Username is required.'; return }
     if (username.length < 3)               { status.style.color='#c0392b'; status.textContent='Username must be at least 3 characters.'; return }
     if (!/^[a-zA-Z0-9_]+$/.test(username)) { status.style.color='#c0392b'; status.textContent='Username can only contain letters, numbers, and underscores.'; return }
-
     btn.disabled = true; btn.textContent = 'Saving…'
     const updates = { username, display_name: dispName, bio }
-
     const file = document.getElementById('avatarFileInput').files[0]
     if (file) {
         try {
-            const ext  = file.name.split('.').pop()
-            const path = `avatars/${currentUser.id}.${ext}`
-            const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true })
-            if (upErr) throw upErr
-            const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(path)
-            updates.avatar_url = publicUrl
-        } catch(e) {
-            status.style.color = '#c0392b'; status.textContent = 'Failed to upload photo: ' + (e.message || 'Unknown error')
-            btn.disabled = false; btn.textContent = 'Save Changes'; return
-        }
+            const ext = file.name.split('.').pop(), path = `avatars/${currentUser.id}.${ext}`
+            const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true }); if (upErr) throw upErr
+            const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(path); updates.avatar_url = publicUrl
+        } catch(e) { status.style.color='#c0392b'; status.textContent='Failed to upload photo: '+(e.message||'Unknown error'); btn.disabled=false; btn.textContent='Save Changes'; return }
     }
-
     const { error } = await supabase.from('profiles').update(updates).eq('id', currentUser.id)
     btn.disabled = false; btn.textContent = 'Save Changes'
-
-    if (error) {
-        status.style.color = '#c0392b'
-        status.textContent = error.message.includes('unique') ? 'That username is already taken.' : error.message
-        return
-    }
-
+    if (error) { status.style.color='#c0392b'; status.textContent=error.message.includes('unique')?'That username is already taken.':error.message; return }
     currentProfile = { ...currentProfile, ...updates }
     document.getElementById('avatarFileInput').value = ''
-    renderHeader(true, false)
-    closeEditModal()
-    showToast('Profile updated! ✦')
+    renderHeader(true, false); closeEditModal(); showToast('Profile updated! ✦')
 }
-
 document.getElementById('avatarFileInput').addEventListener('change', function() {
     if (!this.files[0]) return
-    const r = new FileReader()
-    r.onload = e => { document.getElementById('editAvatarPreview').src = e.target.result }
-    r.readAsDataURL(this.files[0])
+    const r = new FileReader(); r.onload = e => { document.getElementById('editAvatarPreview').src = e.target.result }; r.readAsDataURL(this.files[0])
 })
 
 // ══════════════════════════════════════════
 //  STORAGE
 // ══════════════════════════════════════════
-const getPosted = ()  => lsGet('posted_items', [])
-const setPosted = d   => lsSet('posted_items', d)
-const getWL     = ()  => lsGet('wishlist', [])
-const setWL     = d   => lsSet('wishlist', d)
-let dbPostedItems = []
-let dbLoadedFor   = null
-const getLikes  = ()  => lsGet('likes', {})
-const setLikes  = d   => lsSet('likes', d)
-const getCmts   = ()  => lsGet('comments', {})
-const setCmts   = d   => lsSet('comments', d)
-// In-memory cache: item_id → comment count (updated on fetch/post)
-// Used by the grid so it shows accurate DB counts without extra queries
+const getPosted = () => lsGet('posted_items', [])
+const setPosted = d  => lsSet('posted_items', d)
+const getWL     = () => lsGet('wishlist', [])
+const setWL     = d  => lsSet('wishlist', d)
+let dbPostedItems = [], dbLoadedFor = null
+const getLikes  = () => lsGet('likes', {})
+const setLikes  = d  => lsSet('likes', d)
+const getCmts   = () => lsGet('comments', {})
 const cmtCountCache = {}
 
 function tabItems() {
@@ -1020,34 +842,93 @@ function tabItems() {
 }
 
 // ══════════════════════════════════════════
+//  BADGES TAB
+// ══════════════════════════════════════════
+async function renderBadgesTab() {
+    const grid = document.getElementById('profileGrid')
+    grid.style.display = 'block'
+    grid.innerHTML = '<div class="badges-loading"><div class="loading-spin" style="width:20px;height:20px;border-width:2.5px;"></div> Loading badges…</div>'
+
+    try {
+        const results = await fetchUserBadgeProgress(currentProfile.id)
+        if (!results.length) {
+            grid.innerHTML = '<div class="badges-empty"><span>🏅</span>No badges available yet.<br>Check back soon!</div>'
+            return
+        }
+        const isOwner = currentUser && currentProfile && currentUser.id === currentProfile.id
+        grid.innerHTML = `<div class="badges-grid">${results.map(r => badgeCardHtml(r, isOwner)).join('')}</div>`
+    } catch(e) {
+        console.error('renderBadgesTab:', e)
+        grid.innerHTML = '<div class="badges-empty"><span>😕</span>Could not load badges. Try refreshing.</div>'
+    }
+}
+
+function badgeCardHtml(r, isOwner) {
+    function renderBadgeIcon(icon) {
+    if (!icon) return '<span style="font-size:38px;line-height:1;">🏅</span>'
+    if (icon.startsWith('http') || icon.startsWith('/') || icon.startsWith('data:')) {
+        return `<img src="${icon}" style="width:56px;height:56px;border-radius:14px;object-fit:cover;border:1.5px solid #ede8ea;">`
+    }
+    return `<span style="font-size:38px;line-height:1;">${icon}</span>`
+}
+    const { badge, progress, earned, claimed } = r
+    const pct = Math.min(100, Math.round((progress / badge.threshold) * 100))
+    const criteriaLabels = { swaps_completed:'Swaps', items_posted:'Items Posted', items_wishlisted:'Wishlisted', followers:'Followers' }
+    const unit = criteriaLabels[badge.criteria_type] || badge.criteria_type
+
+    const progressHtml = `<div class="badge-progress-wrap">
+        <div class="badge-progress-bar"><div class="badge-progress-fill ${earned ? 'complete' : ''}" style="width:${pct}%;"></div></div>
+        <div class="badge-progress-label">${progress} / ${badge.threshold} ${unit}</div>
+    </div>`
+
+    let actionHtml = ''
+    if (claimed)                    actionHtml = '<div class="badge-claimed-pill">✓ Claimed</div>'
+    else if (earned && isOwner)     actionHtml = `<button class="badge-claim-btn" onclick="doClaim('${badge.id}', this)">🎉 Claim Badge</button>`
+    else if (earned && !isOwner)    actionHtml = '<div class="badge-claimed-pill" style="background:#fff8ec;color:#d97706;">✓ Earned</div>'
+    else                            actionHtml = '<div class="badge-locked-icon">🔒 Keep going!</div>'
+
+    return `<div class="badge-card ${(earned || claimed) ? 'earned' : 'locked'}">
+        ${(earned || claimed) ? '<div class="badge-earned-glow"></div>' : ''}
+        <div class="badge-icon">${renderBadgeIcon(badge.icon)}</div>
+        <div class="badge-name">${esc(badge.name)}</div>
+        <div class="badge-desc">${esc(badge.description || '')}</div>
+        ${progressHtml}
+        ${actionHtml}
+    </div>`
+}
+
+window.doClaim = async function(badgeId, btn) {
+    btn.disabled = true; btn.textContent = 'Claiming…'
+    try {
+        const ok = await claimBadge(badgeId)
+        if (ok) {
+            const card = btn.closest('.badge-card')
+            btn.replaceWith(Object.assign(document.createElement('div'), { className:'badge-claimed-pill', textContent:'✓ Claimed' }))
+            card.classList.add('earned')
+            showToast('🏅 Badge claimed!')
+        } else {
+            showToast('Could not claim badge. Try again.')
+            btn.disabled = false; btn.textContent = '🎉 Claim Badge'
+        }
+    } catch(e) {
+        showToast('Error claiming badge.')
+        btn.disabled = false; btn.textContent = '🎉 Claim Badge'
+    }
+}
+
+// ══════════════════════════════════════════
 //  GRID
 // ══════════════════════════════════════════
 window.renderGrid = async function() {
     const grid = document.getElementById('profileGrid')
+    // Reset grid to 3-col layout for non-badge tabs
+    grid.style.display = ''
     grid.innerHTML = '<div class="pg-empty"><div class="loading-spin" style="width:24px;height:24px;border-width:3px;"></div></div>'
 
     if (activeTab === 'posted' && dbLoadedFor !== currentProfile?.id) {
-        const { data, error } = await supabase
-            .from('items')
-            .select('*')
-            .eq('user_id', currentProfile.id)
-            .eq('is_available', true)
-            .order('created_at', { ascending: false })
+        const { data, error } = await supabase.from('items').select('*').eq('user_id', currentProfile.id).eq('is_available', true).order('created_at', { ascending: false })
         if (!error) {
-            dbPostedItems = (data || []).map(i => ({
-                id:        i.id,
-                name:      i.name,
-                category:  i.category,
-                brand:     i.brand || '',
-                desc:      i.description || '',
-                size:      i.size || '',
-                condition: i.condition || '',
-                pts:       i.pts || 0,
-                tags:      i.tags || [],
-                image:     (i.images && i.images[0]) || null,
-                images:    i.images || [],
-                postedAt:  i.created_at
-            }))
+            dbPostedItems = (data || []).map(i => ({ id:i.id, name:i.name, category:i.category, brand:i.brand||'', desc:i.description||'', size:i.size||'', condition:i.condition||'', pts:i.pts||0, tags:i.tags||[], image:(i.images&&i.images[0])||null, images:i.images||[], postedAt:i.created_at }))
             dbLoadedFor = currentProfile.id
         }
     }
@@ -1061,36 +942,36 @@ window.renderGrid = async function() {
         const isOwner = currentUser && currentProfile && currentUser.id === currentProfile.id
         const cfg = {
             posted: { i:'👗', h: isOwner ? 'No items posted yet' : 'No items listed', p: isOwner ? 'Head to "Post an Item" and list your first piece.' : 'This user hasn\'t posted anything yet.', b: isOwner ? '+ Post an Item' : null, url:'../personal/post-item.html' },
-            saved:  { i:'🌟', h:'No saved items yet',   p:'Browse the catalog and save items you love.', b:'Browse Catalog', url:'../dashboard/dashboard.html' },
+            saved:  { i:'🌟', h:'No saved items yet', p:'Browse the catalog and save items you love.', b:'Browse Catalog', url:'../dashboard/dashboard.html' },
             tagged: { i:'🏷️', h:'No tagged items yet', p:'Items others tag you in will appear here.', b: null }
         }
         const c = cfg[activeTab] || cfg.tagged
-        grid.innerHTML = `<div class="pg-empty">
-            <div class="pg-empty-icon">${c.i}</div>
-            <h3>${c.h}</h3><p>${c.p}</p>
-            ${c.b ? `<button class="pg-empty-btn" onclick="location.href='${c.url}'">${c.b}</button>` : ''}
-        </div>`
+        grid.innerHTML = `<div class="pg-empty"><div class="pg-empty-icon">${c.i}</div><h3>${c.h}</h3><p>${c.p}</p>${c.b ? `<button class="pg-empty-btn" onclick="location.href='${c.url}'">${c.b}</button>` : ''}</div>`
         return
     }
 
     items.forEach((item, idx) => {
         const likeCount = likes[item.id] || 0
         const cmtCount  = cmtCountCache[item.id] ?? (getCmts()[item.id] || []).length
-        const card = document.createElement('div')
-        card.className = 'pg-card'
-        card.innerHTML = `
-            <img src="${item.image || FALLBACK}" alt="${item.name}" loading="lazy"/>
-            <div class="pg-card-hover">
-                <div class="pg-hover-stat">
-                    <svg viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>${likeCount}
-                </div>
-                <div class="pg-hover-stat">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>${cmtCount}
-                </div>
-            </div>`
+        const card = document.createElement('div'); card.className = 'pg-card'
+        card.innerHTML = `<img src="${item.image || FALLBACK}" alt="${item.name}" loading="lazy"/><div class="pg-card-hover"><div class="pg-hover-stat"><svg viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>${likeCount}</div><div class="pg-hover-stat"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>${cmtCount}</div></div>`
         card.onclick = () => openLb(idx)
         grid.appendChild(card)
     })
+}
+
+// ══════════════════════════════════════════
+//  TABS — handles 'badges' too
+// ══════════════════════════════════════════
+window.switchTab = function(btn, tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'))
+    btn.classList.add('active')
+    activeTab = tab
+    if (tab === 'badges') {
+        renderBadgesTab()
+    } else {
+        renderGrid()
+    }
 }
 
 // ══════════════════════════════════════════
@@ -1098,16 +979,10 @@ window.renderGrid = async function() {
 // ══════════════════════════════════════════
 function openLb(idx) {
     const items = tabItems(); if (!items[idx]) return
-    lbIdx = idx; lbId = items[idx].id
-    fillLb(items[idx]); closeEdit()
-    document.getElementById('lbOverlay').classList.add('open')
-    document.body.style.overflow = 'hidden'
+    lbIdx = idx; lbId = items[idx].id; fillLb(items[idx]); closeEdit()
+    document.getElementById('lbOverlay').classList.add('open'); document.body.style.overflow = 'hidden'
 }
-window.closeLb = function() {
-    document.getElementById('lbOverlay').classList.remove('open')
-    document.body.style.overflow = ''
-    lbId = null
-}
+window.closeLb = function() { document.getElementById('lbOverlay').classList.remove('open'); document.body.style.overflow = ''; lbId = null }
 window.lbNav = function(dir) {
     const items = tabItems(), next = lbIdx + dir
     if (next < 0 || next >= items.length) return
@@ -1115,777 +990,276 @@ window.lbNav = function(dir) {
 }
 
 function fillLb(item) {
-    const p      = currentProfile
-    const name   = p.display_name || p.username || 'Swapper'
+    const p = currentProfile, name = p.display_name || p.username || 'Swapper'
     const avatar = p.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=EBE0E3&color=C994A7&size=100`
-    const cap    = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : '—'
-
+    const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : '—'
     const imgEl = document.getElementById('lbImg'), phEl = document.getElementById('lbImgPh')
-    if (item.image) { imgEl.src = item.image; imgEl.style.display='block'; phEl.style.display='none' }
-    else            { imgEl.style.display='none'; phEl.style.display='flex' }
-
+    if (item.image) { imgEl.src = item.image; imgEl.style.display='block'; phEl.style.display='none' } else { imgEl.style.display='none'; phEl.style.display='flex' }
     const items = tabItems()
     document.getElementById('lbPrev').style.display = lbIdx > 0 ? 'flex' : 'none'
     document.getElementById('lbNext').style.display = lbIdx < items.length - 1 ? 'flex' : 'none'
-
-    document.getElementById('lbAvatar').src          = avatar
-    document.getElementById('lbHdrName').textContent = p.username || name
-    document.getElementById('lbName').textContent    = item.name
-    document.getElementById('lbPrice').innerHTML     = `${(item.pts||0).toLocaleString()} <small>pts</small>`
-    document.getElementById('lbSize').textContent    = item.size      || '—'
-    document.getElementById('lbCond').textContent    = item.condition || '—'
-    document.getElementById('lbCat').textContent     = cap(item.category)
-    document.getElementById('lbBrand').textContent   = item.brand     || 'Unbranded'
-    document.getElementById('lbTags').innerHTML      =
-        (item.tags || []).map(t=>`<span class="lb-tag">${t}</span>`).join('') ||
-        '<span style="font-size:11px;color:#ddd;">No tags</span>'
-
-    renderCmts(item)  // async — loads from DB, shows real avatars
-
-    const likes    = getLikes()
-    const count    = likes[item.id] || 0
-    const likedArr = likes['__liked__'] || []
-    const isLiked  = likedArr.includes(String(item.id))
+    document.getElementById('lbAvatar').src = avatar; document.getElementById('lbHdrName').textContent = p.username || name
+    document.getElementById('lbName').textContent = item.name; document.getElementById('lbPrice').innerHTML = `${(item.pts||0).toLocaleString()} <small>pts</small>`
+    document.getElementById('lbSize').textContent = item.size || '—'; document.getElementById('lbCond').textContent = item.condition || '—'
+    document.getElementById('lbCat').textContent = cap(item.category); document.getElementById('lbBrand').textContent = item.brand || 'Unbranded'
+    document.getElementById('lbTags').innerHTML = (item.tags || []).map(t=>`<span class="lb-tag">${t}</span>`).join('') || '<span style="font-size:11px;color:#ddd;">No tags</span>'
+    renderCmts(item)
+    const likes = getLikes(), count = likes[item.id] || 0, likedArr = likes['__liked__'] || [], isLiked = likedArr.includes(String(item.id))
     document.getElementById('lbLikeCount').textContent = count === 1 ? '1 like' : `${count} likes`
-    const hBtn = document.getElementById('lbHeartBtn')
-    hBtn.classList.toggle('liked', isLiked)
-    hBtn.querySelector('svg').style.fill  = isLiked ? '#ed4956' : 'none'
-    hBtn.querySelector('svg').style.color = isLiked ? '#ed4956' : '#bbb'
-
-    const isSaved = getWL().some(w => String(w.id) === String(item.id))
-    const sBtn = document.getElementById('lbSaveBtn')
-    sBtn.classList.toggle('saved', isSaved)
-    sBtn.querySelector('svg').style.fill  = isSaved ? '#4A635D' : 'none'
-    sBtn.querySelector('svg').style.color = isSaved ? '#4A635D' : '#bbb'
-
-    document.getElementById('lbDate').textContent = item.postedAt
-        ? new Date(item.postedAt).toLocaleDateString('en-PH',{month:'long',day:'numeric',year:'numeric'}) : ''
-
+    const hBtn = document.getElementById('lbHeartBtn'); hBtn.classList.toggle('liked', isLiked); hBtn.querySelector('svg').style.fill = isLiked ? '#ed4956' : 'none'; hBtn.querySelector('svg').style.color = isLiked ? '#ed4956' : '#bbb'
+    const isSaved = getWL().some(w => String(w.id) === String(item.id)); const sBtn = document.getElementById('lbSaveBtn'); sBtn.classList.toggle('saved', isSaved); sBtn.querySelector('svg').style.fill = isSaved ? '#4A635D' : 'none'; sBtn.querySelector('svg').style.color = isSaved ? '#4A635D' : '#bbb'
+    document.getElementById('lbDate').textContent = item.postedAt ? new Date(item.postedAt).toLocaleDateString('en-PH',{month:'long',day:'numeric',year:'numeric'}) : ''
     const isOwn = activeTab === 'posted' && currentUser && currentProfile && currentUser.id === currentProfile.id
-    document.getElementById('lbOwnerRow').style.display = isOwn ? 'flex' : 'none'
-    document.getElementById('lbSwapBtn').style.display  = isOwn ? 'none' : 'flex'
+    document.getElementById('lbOwnerRow').style.display = isOwn ? 'flex' : 'none'; document.getElementById('lbSwapBtn').style.display = isOwn ? 'none' : 'flex'
 }
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// renderCmts: loads comments + likes from DB, renders Instagram-
-// style comment rows with like button, reply button, and nested
-// replies indented under each top-level comment.
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 async function renderCmts(item) {
-    const p           = currentProfile
-    const ownerName   = p.display_name || p.username || 'Swapper'
-    const ownerAvatar = p.avatar_url ||
-        `https://ui-avatars.com/api/?name=${encodeURIComponent(ownerName)}&background=EBE0E3&color=C994A7&size=60`
+    const p = currentProfile, ownerName = p.display_name || p.username || 'Swapper'
+    const ownerAvatar = p.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(ownerName)}&background=EBE0E3&color=C994A7&size=60`
     const list = document.getElementById('lbCmtList')
     list.innerHTML = '<div style="padding:10px 0;text-align:center;"><div class="loading-spin" style="width:16px;height:16px;border-width:2px;margin:0 auto;"></div></div>'
-
     let allCmts = [], likesData = { counts: {}, likedByMe: new Set() }
-    try {
-        [allCmts, likesData] = await Promise.all([
-            fetchComments(item.id),
-            fetchCommentLikes(item.id)
-        ])
-        // top-level count = only non-replies
-        cmtCountCache[item.id] = allCmts.filter(c => !c.parent_comment_id).length
-    } catch(e) { console.error('renderCmts failed:', e) }
-
+    try { [allCmts, likesData] = await Promise.all([fetchComments(item.id), fetchCommentLikes(item.id)]); cmtCountCache[item.id] = allCmts.filter(c => !c.parent_comment_id).length } catch(e) { console.error('renderCmts failed:', e) }
     list.innerHTML = ''
-
-    // Item description as owner caption (not a DB comment)
     if (item.desc) list.innerHTML += cmtHtml(ownerAvatar, ownerName, item.desc, item.postedAt, null, false, false, 0, currentProfile.id)
-
-    // Separate top-level comments from replies
-    const topLevel = allCmts.filter(c => !c.parent_comment_id)
-    const repliesMap = {}
-    allCmts.filter(c => c.parent_comment_id).forEach(r => {
-        if (!repliesMap[r.parent_comment_id]) repliesMap[r.parent_comment_id] = []
-        repliesMap[r.parent_comment_id].push(r)
-    })
-
-    if (topLevel.length === 0 && !item.desc) {
-        list.innerHTML = '<div class="lb-no-cmt">No comments yet. Be the first!</div>'
-        return
-    }
-
+    const topLevel = allCmts.filter(c => !c.parent_comment_id), repliesMap = {}
+    allCmts.filter(c => c.parent_comment_id).forEach(r => { if (!repliesMap[r.parent_comment_id]) repliesMap[r.parent_comment_id] = []; repliesMap[r.parent_comment_id].push(r) })
+    if (topLevel.length === 0 && !item.desc) { list.innerHTML = '<div class="lb-no-cmt">No comments yet. Be the first!</div>'; return }
     topLevel.forEach(c => {
-        const prof    = c.profiles || {}
-        const cName   = prof.display_name || prof.username || 'Swapper'
-        const cAvatar = prof.avatar_url ||
-            `https://ui-avatars.com/api/?name=${encodeURIComponent(cName)}&background=EBE0E3&color=C994A7&size=60`
-        const likeCount = likesData.counts[c.id] || 0
-        const isLiked   = likesData.likedByMe.has(c.id)
-        list.innerHTML += cmtHtml(cAvatar, cName, c.text, c.created_at, c.id, true, isLiked, likeCount, c.profiles?.id)
-
-        // Nested replies under this comment — each reply also gets like + reply buttons
+        const prof = c.profiles || {}, cName = prof.display_name || prof.username || 'Swapper'
+        const cAvatar = prof.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(cName)}&background=EBE0E3&color=C994A7&size=60`
+        list.innerHTML += cmtHtml(cAvatar, cName, c.text, c.created_at, c.id, true, likesData.likedByMe.has(c.id), likesData.counts[c.id]||0, c.profiles?.id)
         const replies = repliesMap[c.id] || []
         if (replies.length) {
-            const repliesWrap = document.createElement('div')
-            repliesWrap.className = 'lb-replies-list'
-            repliesWrap.id = `replies-${c.id}`
-            replies.forEach(r => {
-                const rp      = r.profiles || {}
-                const rName   = rp.display_name || rp.username || 'Swapper'
-                const rAv     = rp.avatar_url ||
-                    `https://ui-avatars.com/api/?name=${encodeURIComponent(rName)}&background=EBE0E3&color=C994A7&size=40`
-                const rLikeCount = likesData.counts[r.id] || 0
-                const rIsLiked   = likesData.likedByMe.has(r.id)
-                // Pass rootCommentId = c.id so reply-to-reply still nests under this thread
-                repliesWrap.innerHTML += replyHtml(rAv, rName, r.text, r.created_at, r.id, c.id, rIsLiked, rLikeCount, r.profiles?.id)
-            })
-            const lastRow = list.querySelector(`[data-cmt-id="${c.id}"]`)
-            if (lastRow) lastRow.after(repliesWrap)
+            const rw = document.createElement('div'); rw.className = 'lb-replies-list'; rw.id = `replies-${c.id}`
+            replies.forEach(r => { const rp = r.profiles||{}, rName = rp.display_name||rp.username||'Swapper', rAv = rp.avatar_url||`https://ui-avatars.com/api/?name=${encodeURIComponent(rName)}&background=EBE0E3&color=C994A7&size=40`; rw.innerHTML += replyHtml(rAv, rName, r.text, r.created_at, r.id, c.id, likesData.likedByMe.has(r.id), likesData.counts[r.id]||0, r.profiles?.id) })
+            const lastRow = list.querySelector(`[data-cmt-id="${c.id}"]`); if (lastRow) lastRow.after(rw)
         }
     })
-
     list.scrollTop = list.scrollHeight
 }
 
 function cmtHtml(avatar, user, text, ts, cmtId, showActions, isLiked, likeCount, authorId) {
-    const actionsHtml = showActions && cmtId ? `
-        <div class="lb-cmt-actions">
-            <button class="lb-cmt-like-btn ${isLiked ? 'liked' : ''}" onclick="handleCmtLike('${cmtId}', this)" title="Like">
-                <svg viewBox="0 0 24 24" fill="${isLiked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-                ${likeCount > 0 ? `<span class="lb-cmt-likes-count">${likeCount}</span>` : ''}
-            </button>
-            <button class="lb-cmt-reply-btn" onclick="openReplyForm('${cmtId}', '')" title="Reply">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-                Reply
-            </button>
-        </div>
-        <div class="lb-reply-form" id="reply-form-${cmtId}">
-            <input class="lb-reply-input" type="text" placeholder="Reply to ${esc(user)}…"
-                   oninput="this.nextElementSibling.classList.toggle('ready', this.value.trim().length>0)"
-                   onkeydown="if(event.key==='Enter') submitReply('${cmtId}', this)"/>
-            <button class="lb-reply-post" onclick="submitReply('${cmtId}', this.previousElementSibling)">Post</button>
-        </div>` : ''
-    return `<div class="lb-comment-row" data-cmt-id="${cmtId || ''}" data-author-id="${authorId || ''}">
-        <div class="lb-cmt-avatar"><img src="${avatar}" alt=""/></div>
-        <div class="lb-cmt-body">
-            <strong>${esc(user)}</strong> ${esc(text)}
-            <span class="lb-cmt-time">${timeAgo(ts)}</span>
-            ${actionsHtml}
-        </div>
-    </div>`
+    const actionsHtml = showActions && cmtId ? `<div class="lb-cmt-actions"><button class="lb-cmt-like-btn ${isLiked?'liked':''}" onclick="handleCmtLike('${cmtId}',this)"><svg viewBox="0 0 24 24" fill="${isLiked?'currentColor':'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>${likeCount>0?`<span class="lb-cmt-likes-count">${likeCount}</span>`:''}</button><button class="lb-cmt-reply-btn" onclick="openReplyForm('${cmtId}','')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Reply</button></div><div class="lb-reply-form" id="reply-form-${cmtId}"><input class="lb-reply-input" type="text" placeholder="Reply to ${esc(user)}…" oninput="this.nextElementSibling.classList.toggle('ready',this.value.trim().length>0)" onkeydown="if(event.key==='Enter')submitReply('${cmtId}',this)"/><button class="lb-reply-post" onclick="submitReply('${cmtId}',this.previousElementSibling)">Post</button></div>` : ''
+    return `<div class="lb-comment-row" data-cmt-id="${cmtId||''}" data-author-id="${authorId||''}"><div class="lb-cmt-avatar"><img src="${avatar}" alt=""/></div><div class="lb-cmt-body"><strong>${esc(user)}</strong> ${esc(text)}<span class="lb-cmt-time">${timeAgo(ts)}</span>${actionsHtml}</div></div>`
 }
 
-function esc(s) {
-    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
-}
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
 
-// Renders a single reply row with its own like + reply buttons.
-// replyId        = this reply's DB id (for liking it)
-// rootCommentId  = the top-level comment id (so reply-to-reply
-//                  still threads under the same root, flat like Instagram)
 function replyHtml(avatar, user, text, ts, replyId, rootCommentId, isLiked, likeCount, authorId) {
-    return `<div class="lb-reply-row" data-reply-id="${replyId}" data-author-id="${authorId || ''}">
-        <div class="lb-reply-avatar"><img src="${avatar}" alt=""/></div>
-        <div class="lb-reply-body">
-            <strong>${esc(user)}</strong> ${esc(text)}
-            <span class="lb-reply-time">${timeAgo(ts)}</span>
-            <div class="lb-cmt-actions">
-                <button class="lb-cmt-like-btn ${isLiked ? 'liked' : ''}" onclick="handleCmtLike('${replyId}', this)" title="Like">
-                    <svg viewBox="0 0 24 24" fill="${isLiked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-                    ${likeCount > 0 ? `<span class="lb-cmt-likes-count">${likeCount}</span>` : ''}
-                </button>
-                <button class="lb-cmt-reply-btn" onclick="openReplyForm('${rootCommentId}', '${esc(user)}')" title="Reply">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-                    Reply
-                </button>
-            </div>
-        </div>
-    </div>`
+    return `<div class="lb-reply-row" data-reply-id="${replyId}" data-author-id="${authorId||''}"><div class="lb-reply-avatar"><img src="${avatar}" alt=""/></div><div class="lb-reply-body"><strong>${esc(user)}</strong> ${esc(text)}<span class="lb-reply-time">${timeAgo(ts)}</span><div class="lb-cmt-actions"><button class="lb-cmt-like-btn ${isLiked?'liked':''}" onclick="handleCmtLike('${replyId}',this)"><svg viewBox="0 0 24 24" fill="${isLiked?'currentColor':'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>${likeCount>0?`<span class="lb-cmt-likes-count">${likeCount}</span>`:''}</button><button class="lb-cmt-reply-btn" onclick="openReplyForm('${rootCommentId}','${esc(user)}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Reply</button></div></div></div>`
 }
 
-// ══════════════════════════════════════════
-//  LIKES / COMMENTS / SAVE
-// ══════════════════════════════════════════
 window.toggleLike = function() {
     if (!lbId) return
     const likes=getLikes(), arr=likes['__liked__']||[], id=String(lbId), had=arr.includes(id)
-    likes[id]=Math.max(0,(likes[id]||0)+(had?-1:1)); likes['__liked__']=had?arr.filter(x=>x!==id):[...arr,id]
-    setLikes(likes)
+    likes[id]=Math.max(0,(likes[id]||0)+(had?-1:1)); likes['__liked__']=had?arr.filter(x=>x!==id):[...arr,id]; setLikes(likes)
     const count=likes[id]; document.getElementById('lbLikeCount').textContent=count===1?'1 like':`${count} likes`
-    const btn=document.getElementById('lbHeartBtn'); btn.classList.toggle('liked',!had)
-    btn.querySelector('svg').style.fill=!had?'#ed4956':'none'; btn.querySelector('svg').style.color=!had?'#ed4956':'#bbb'
+    const btn=document.getElementById('lbHeartBtn'); btn.classList.toggle('liked',!had); btn.querySelector('svg').style.fill=!had?'#ed4956':'none'; btn.querySelector('svg').style.color=!had?'#ed4956':'#bbb'
     renderGrid()
-    // Notify item owner when liked (not when unliked, don't notify yourself)
     if (!had && currentProfile && myProfile && currentProfile.id !== myProfile.id) {
-        const item = tabItems()[lbIdx]
-        const senderName = myProfile.display_name || myProfile.username || 'Someone'
-        createNotification({
-            userId:       currentProfile.id,
-            type:         'like',
-            message:      `<strong>${senderName}</strong> liked your item "${item?.name || ''}"`,
-            link:         `../personal/item-detail.html?id=${lbId}`,
-            thumbnailUrl: item?.image || null
-        }).catch(() => {})
+        const item = tabItems()[lbIdx], senderName = myProfile.display_name || myProfile.username || 'Someone'
+        createNotification({ userId: currentProfile.id, type:'like', message:`<strong>${senderName}</strong> liked your item "${item?.name||''}"`, link:`../personal/item-detail.html?id=${lbId}`, thumbnailUrl: item?.image||null }).catch(()=>{})
     }
 }
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// FIX: postComment now saves to the item_comments table in
-// Supabase so comments persist across sessions, are visible to
-// all users, and show the commenter's real profile picture.
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 window.postComment = async function() {
-    const input = document.getElementById('lbCmtInput')
-    const text  = input.value.trim()
-    if (!text || !lbId) return
-
-    // Optimistically clear the input and disable the button
-    input.value = ''
-    const postBtn = document.getElementById('lbCmtPost')
-    postBtn.classList.remove('ready')
-    postBtn.disabled = true
-
+    const input = document.getElementById('lbCmtInput'), text = input.value.trim(); if (!text || !lbId) return
+    input.value = ''; const postBtn = document.getElementById('lbCmtPost'); postBtn.classList.remove('ready'); postBtn.disabled = true
     try {
-        const saved = await addComment({ itemId: lbId, text })
-
-        // Update in-memory count cache and re-render the grid badge
-        cmtCountCache[lbId] = (cmtCountCache[lbId] || 0) + 1
-
-        // Append the new comment directly (avoids a full re-fetch)
-        const prof    = saved.profiles || {}
-        const cName   = prof.display_name || prof.username || 'Swapper'
-        const cAvatar = prof.avatar_url ||
-            `https://ui-avatars.com/api/?name=${encodeURIComponent(cName)}&background=EBE0E3&color=C994A7&size=60`
-        const list = document.getElementById('lbCmtList')
-        // Remove "no comments" placeholder if present
-        const placeholder = list.querySelector('.lb-no-cmt')
-        if (placeholder) placeholder.remove()
-        list.innerHTML += cmtHtml(cAvatar, cName, saved.text, saved.created_at, saved.id, true, false, 0, saved.profiles?.id)
-        list.scrollTop = list.scrollHeight
-
-        // Notify item owner (don't notify yourself)
+        const saved = await addComment({ itemId: lbId, text }); cmtCountCache[lbId] = (cmtCountCache[lbId]||0)+1
+        const prof = saved.profiles||{}, cName = prof.display_name||prof.username||'Swapper'
+        const cAvatar = prof.avatar_url||`https://ui-avatars.com/api/?name=${encodeURIComponent(cName)}&background=EBE0E3&color=C994A7&size=60`
+        const list = document.getElementById('lbCmtList'); const placeholder = list.querySelector('.lb-no-cmt'); if (placeholder) placeholder.remove()
+        list.innerHTML += cmtHtml(cAvatar, cName, saved.text, saved.created_at, saved.id, true, false, 0, saved.profiles?.id); list.scrollTop = list.scrollHeight
         if (currentProfile && myProfile && currentProfile.id !== myProfile.id) {
-            const item = tabItems()[lbIdx]
-            const senderName = myProfile.display_name || myProfile.username || 'Someone'
-            createNotification({
-                userId:       currentProfile.id,
-                type:         'comment',
-                message:      `<strong>${senderName}</strong> commented on your item "${item?.name || ''}"`,
-                link:         `../personal/item-detail.html?id=${lbId}`,
-                thumbnailUrl: item?.image || null
-            }).catch(() => {})
+            const item = tabItems()[lbIdx], senderName = myProfile.display_name||myProfile.username||'Someone'
+            createNotification({ userId:currentProfile.id, type:'comment', message:`<strong>${senderName}</strong> commented on your item "${item?.name||''}"`, link:`../personal/item-detail.html?id=${lbId}`, thumbnailUrl:item?.image||null }).catch(()=>{})
         }
-
         renderGrid()
-    } catch(e) {
-        console.error('postComment failed:', e)
-        showToast('Could not post comment. Try again.', 'error')
-        // Restore input so user doesn't lose their text
-        input.value = text
-        postBtn.classList.add('ready')
-    } finally {
-        postBtn.disabled = false
-    }
+    } catch(e) { console.error('postComment failed:', e); showToast('Could not post comment. Try again.', 'error'); input.value = text; postBtn.classList.add('ready') }
+    finally { postBtn.disabled = false }
 }
-// ── Comment like handler ──────────────────────────────────────
+
 window.handleCmtLike = async function(commentId, btn) {
     btn.disabled = true
     try {
-        const nowLiked = await toggleCommentLike(commentId)
-        btn.classList.toggle('liked', nowLiked)
-        btn.querySelector('svg').setAttribute('fill', nowLiked ? 'currentColor' : 'none')
-        // Update count display
-        let countEl = btn.querySelector('.lb-cmt-likes-count')
-        const prev = parseInt(countEl?.textContent || '0') || 0
-        const newCount = nowLiked ? prev + 1 : Math.max(0, prev - 1)
-        if (newCount > 0) {
-            if (!countEl) {
-                countEl = document.createElement('span')
-                countEl.className = 'lb-cmt-likes-count'
-                btn.appendChild(countEl)
-            }
-            countEl.textContent = newCount
-        } else if (countEl) {
-            countEl.remove()
-        }
-        // Notify comment author when liked (not when unliked, not yourself)
-        if (nowLiked && myProfile) {
-            const row = btn.closest('[data-author-id]')
-            const authorId = row?.dataset.authorId
-            if (authorId && authorId !== myProfile.id) {
-                const senderName = myProfile.display_name || myProfile.username || 'Someone'
-                createNotification({
-                    userId:  authorId,
-                    type:    'like',
-                    message: `<strong>${senderName}</strong> liked your comment`
-                }).catch(() => {})
-            }
-        }
+        const nowLiked = await toggleCommentLike(commentId); btn.classList.toggle('liked', nowLiked); btn.querySelector('svg').setAttribute('fill', nowLiked ? 'currentColor' : 'none')
+        let countEl = btn.querySelector('.lb-cmt-likes-count'); const prev = parseInt(countEl?.textContent||'0')||0, newCount = nowLiked ? prev+1 : Math.max(0,prev-1)
+        if (newCount > 0) { if (!countEl) { countEl = document.createElement('span'); countEl.className='lb-cmt-likes-count'; btn.appendChild(countEl) } countEl.textContent = newCount } else if (countEl) countEl.remove()
+        if (nowLiked && myProfile) { const row = btn.closest('[data-author-id]'), authorId = row?.dataset.authorId; if (authorId && authorId !== myProfile.id) createNotification({ userId:authorId, type:'like', message:`<strong>${myProfile.display_name||myProfile.username||'Someone'}</strong> liked your comment` }).catch(()=>{}) }
     } catch(e) { console.error('handleCmtLike failed:', e) }
     btn.disabled = false
 }
 
-// ── Open / close reply form ───────────────────────────────────
-// rootCommentId  = top-level comment to reply under
-// mentionUser    = optional username to @-mention (when replying to a reply)
 window.openReplyForm = function(rootCommentId, mentionUser) {
-    // Close any other open reply forms first
     document.querySelectorAll('.lb-reply-form.open').forEach(f => f.classList.remove('open'))
-    const form = document.getElementById(`reply-form-${rootCommentId}`)
-    if (!form) return
-    form.classList.add('open')
-    const input = form.querySelector('.lb-reply-input')
-    if (input) {
-        // Pre-fill @username when replying to a reply
-        if (mentionUser) {
-            input.value = `@${mentionUser} `
-            input.nextElementSibling?.classList.add('ready')
-        } else {
-            input.value = ''
-            input.nextElementSibling?.classList.remove('ready')
-        }
-        input.focus()
-        // Move cursor to end
-        const len = input.value.length
-        input.setSelectionRange(len, len)
-    }
+    const form = document.getElementById(`reply-form-${rootCommentId}`); if (!form) return
+    form.classList.add('open'); const input = form.querySelector('.lb-reply-input'); if (input) { if (mentionUser) { input.value=`@${mentionUser} `; input.nextElementSibling?.classList.add('ready') } else { input.value=''; input.nextElementSibling?.classList.remove('ready') } input.focus(); const len=input.value.length; input.setSelectionRange(len,len) }
 }
 
-// ── Submit a reply ────────────────────────────────────────────
-// parentCommentId = always the ROOT top-level comment id
-// (reply-to-reply still threads flat under the same root)
 window.submitReply = async function(parentCommentId, inputEl) {
-    const text = inputEl.value.trim(); if (!text || !lbId) return
-    inputEl.disabled = true
+    const text = inputEl.value.trim(); if (!text || !lbId) return; inputEl.disabled = true
     try {
-        const saved   = await addReply({ itemId: lbId, parentCommentId, text })
-        const prof    = saved.profiles || {}
-        const rName   = prof.display_name || prof.username || 'Swapper'
-        const rAvatar = prof.avatar_url ||
-            `https://ui-avatars.com/api/?name=${encodeURIComponent(rName)}&background=EBE0E3&color=C994A7&size=40`
-
-        // Find or create the replies list under the root comment
-        let repliesWrap = document.getElementById(`replies-${parentCommentId}`)
-        if (!repliesWrap) {
-            repliesWrap = document.createElement('div')
-            repliesWrap.className = 'lb-replies-list'
-            repliesWrap.id = `replies-${parentCommentId}`
-            // Insert after the reply form of the root comment
-            const form = document.getElementById(`reply-form-${parentCommentId}`)
-            if (form) form.after(repliesWrap)
-        }
-
-        // Render with full like + reply buttons so reply-to-reply works immediately
-        const tempDiv = document.createElement('div')
-        tempDiv.innerHTML = replyHtml(rAvatar, rName, saved.text, saved.created_at, saved.id, parentCommentId, false, 0, saved.profiles?.id)
-        repliesWrap.appendChild(tempDiv.firstElementChild)
-
-        inputEl.value = ''
-        inputEl.nextElementSibling?.classList.remove('ready')
-        document.getElementById(`reply-form-${parentCommentId}`)?.classList.remove('open')
-        document.getElementById('lbCmtList').scrollTop = document.getElementById('lbCmtList').scrollHeight
-
-        // Notify the parent comment's author (don't notify yourself)
-        if (myProfile) {
-            const parentRow = document.querySelector(`.lb-comment-row[data-cmt-id="${parentCommentId}"]`)
-            const parentAuthorId = parentRow?.dataset.authorId
-            if (parentAuthorId && parentAuthorId !== myProfile.id) {
-                const senderName = myProfile.display_name || myProfile.username || 'Someone'
-                createNotification({
-                    userId:  parentAuthorId,
-                    type:    'reply',
-                    message: `<strong>${senderName}</strong> replied to your comment`
-                }).catch(() => {})
-            }
-        }
-    } catch(e) {
-        console.error('submitReply failed:', e)
-        showToast('Could not post reply. Try again.', 'error')
-    }
+        const saved = await addReply({ itemId: lbId, parentCommentId, text }); const prof = saved.profiles||{}, rName = prof.display_name||prof.username||'Swapper'
+        const rAvatar = prof.avatar_url||`https://ui-avatars.com/api/?name=${encodeURIComponent(rName)}&background=EBE0E3&color=C994A7&size=40`
+        let rw = document.getElementById(`replies-${parentCommentId}`)
+        if (!rw) { rw=document.createElement('div'); rw.className='lb-replies-list'; rw.id=`replies-${parentCommentId}`; const form=document.getElementById(`reply-form-${parentCommentId}`); if (form) form.after(rw) }
+        const tempDiv = document.createElement('div'); tempDiv.innerHTML = replyHtml(rAvatar, rName, saved.text, saved.created_at, saved.id, parentCommentId, false, 0, saved.profiles?.id); rw.appendChild(tempDiv.firstElementChild)
+        inputEl.value=''; inputEl.nextElementSibling?.classList.remove('ready'); document.getElementById(`reply-form-${parentCommentId}`)?.classList.remove('open'); document.getElementById('lbCmtList').scrollTop = document.getElementById('lbCmtList').scrollHeight
+        if (myProfile) { const parentRow = document.querySelector(`.lb-comment-row[data-cmt-id="${parentCommentId}"]`), parentAuthorId = parentRow?.dataset.authorId; if (parentAuthorId && parentAuthorId !== myProfile.id) createNotification({ userId:parentAuthorId, type:'reply', message:`<strong>${myProfile.display_name||myProfile.username||'Someone'}</strong> replied to your comment` }).catch(()=>{}) }
+    } catch(e) { console.error('submitReply failed:', e); showToast('Could not post reply. Try again.', 'error') }
     inputEl.disabled = false
 }
 
-// ── Story three-dot menu ──────────────────────────────────────
-window.toggleStoryMenu = function(e) {
-    e.stopPropagation()
-    document.getElementById('storyDotsMenu').classList.toggle('open')
-}
-
-// ── Delete current story ──────────────────────────────────────
+window.toggleStoryMenu = function(e) { e.stopPropagation(); document.getElementById('storyDotsMenu').classList.toggle('open') }
 window.deleteCurrentStory = async function() {
-    const s = stories[curStory]; if (!s || !s.id) return
-    if (!confirm('Delete this story?')) return
+    const s = stories[curStory]; if (!s || !s.id) return; if (!confirm('Delete this story?')) return
     document.getElementById('storyDotsMenu').classList.remove('open')
-    try {
-        await deleteStory(s.id)
-        stories.splice(curStory, 1)
-        renderStories(); refreshRing()
-        if (stories.length === 0) {
-            closeStoryViewer()
-        } else {
-            curStory = Math.min(curStory, stories.length - 1)
-            showStory(curStory)
-        }
-        showToast('Story deleted.')
-    } catch(e) { showToast('Could not delete story. Try again.', 'error') }
+    try { await deleteStory(s.id); stories.splice(curStory, 1); renderStories(); refreshRing(); if (stories.length === 0) { closeStoryViewer() } else { curStory = Math.min(curStory, stories.length-1); showStory(curStory) } showToast('Story deleted.') } catch(e) { showToast('Could not delete story. Try again.', 'error') }
 }
-
-// ── Send story reply (visitor) ────────────────────────────────
 window.sendStoryReply = function(e) {
-    e.stopPropagation()
-    const input = document.getElementById('storyReplyInput')
-    const text  = input.value.trim(); if (!text) return
-    // Story replies go to messages — send as a message to the story owner
-    const ownerId = currentProfile.id
-    supabase.from('messages').insert({
-        from_user_id: currentUser.id,
-        to_user_id:   ownerId,
-        body:         `Replied to your story "${stories[curStory]?.label || 'story'}": ${text}`
-    }).then(({ error }) => {
-        if (error) { showToast('Could not send reply.', 'error'); return }
-        input.value = ''
-        input.parentElement.querySelector('.story-reply-send').style.opacity = '.4'
-        showToast('Reply sent!')
-    })
+    e.stopPropagation(); const input = document.getElementById('storyReplyInput'), text = input.value.trim(); if (!text) return
+    supabase.from('messages').insert({ from_user_id:currentUser.id, to_user_id:currentProfile.id, body:`Replied to your story "${stories[curStory]?.label||'story'}": ${text}` }).then(({ error }) => { if (error) { showToast('Could not send reply.', 'error'); return } input.value=''; input.parentElement.querySelector('.story-reply-send').style.opacity='.4'; showToast('Reply sent!') })
 }
 
 window.toggleSave = function() {
-    if(!lbId) return
-    const items=tabItems(), item=items[lbIdx]; let wl=getWL(); const i=wl.findIndex(w=>String(w.id)===String(lbId))
-    if(i===-1){wl.unshift({id:item.id,name:item.name,category:item.category,pts:item.pts,image:item.image||'',condition:item.condition||'',size:item.size||'',brand:item.brand||'',swapper:{},savedAt:new Date().toISOString()});showToast('★ Saved!')}
-    else{wl.splice(i,1);showToast('Removed from wishlist.')}
-    setWL(wl)
-    const isSaved=wl.some(w=>String(w.id)===String(lbId)), btn=document.getElementById('lbSaveBtn')
-    btn.classList.toggle('saved',isSaved); btn.querySelector('svg').style.fill=isSaved?'#4A635D':'none'; btn.querySelector('svg').style.color=isSaved?'#4A635D':'#bbb'
+    if(!lbId) return; const items=tabItems(), item=items[lbIdx]; let wl=getWL(); const i=wl.findIndex(w=>String(w.id)===String(lbId))
+    if(i===-1){wl.unshift({id:item.id,name:item.name,category:item.category,pts:item.pts,image:item.image||'',condition:item.condition||'',size:item.size||'',brand:item.brand||'',swapper:{},savedAt:new Date().toISOString()});showToast('★ Saved!')} else{wl.splice(i,1);showToast('Removed from wishlist.')}
+    setWL(wl); const isSaved=wl.some(w=>String(w.id)===String(lbId)), btn=document.getElementById('lbSaveBtn'); btn.classList.toggle('saved',isSaved); btn.querySelector('svg').style.fill=isSaved?'#4A635D':'none'; btn.querySelector('svg').style.color=isSaved?'#4A635D':'#bbb'
 }
 window.goSwap    = function() { if(lbId) location.href=`../personal/item-detail.html?id=${lbId}` }
 window.deleteItem = async function() {
     if(!confirm('Delete this item?')) return
     await supabase.from('items').delete().eq('id', lbId).eq('user_id', currentUser.id)
-    dbPostedItems = dbPostedItems.filter(i => String(i.id) !== String(lbId))
-    setPosted(getPosted().filter(i=>String(i.id)!==String(lbId)))
-    let col=JSON.parse(localStorage.getItem(`suotCollection_${__suot_uid}`)||'[]').filter(c=>c.id!=='p'+lbId)
-    localStorage.setItem(`suotCollection_${__suot_uid}`,JSON.stringify(col))
-    setWL(getWL().filter(w=>String(w.id)!==String(lbId)))
-    closeLb(); renderGrid(); showToast('Item deleted.')
+    dbPostedItems = dbPostedItems.filter(i => String(i.id) !== String(lbId)); setPosted(getPosted().filter(i=>String(i.id)!==String(lbId)))
+    let col=JSON.parse(localStorage.getItem(`suotCollection_${__suot_uid}`)||'[]').filter(c=>c.id!=='p'+lbId); localStorage.setItem(`suotCollection_${__suot_uid}`,JSON.stringify(col))
+    setWL(getWL().filter(w=>String(w.id)!==String(lbId))); closeLb(); renderGrid(); showToast('Item deleted.')
 }
 window.openEdit = function() {
     const item=getPosted().find(i=>String(i.id)===String(lbId)); if(!item) return
-    document.getElementById('efName').value=item.name||''; document.getElementById('efBrand').value=item.brand||''
-    document.getElementById('efDesc').value=item.desc||''; document.getElementById('efPrice').value=item.pts||500
+    document.getElementById('efName').value=item.name||''; document.getElementById('efBrand').value=item.brand||''; document.getElementById('efDesc').value=item.desc||''; document.getElementById('efPrice').value=item.pts||500
     for(let o of document.getElementById('efCat').options) o.selected=o.text.toLowerCase()===(item.category||'').toLowerCase()
     document.querySelectorAll('.ef-sz').forEach(b=>b.classList.toggle('selected',b.textContent===item.size))
     editCondIdx=CONDITIONS.indexOf(item.condition); if(editCondIdx<0) editCondIdx=3; updCond()
-    document.getElementById('lbScrollBody').style.display='none'; document.getElementById('lbBottom').style.display='none'
-    document.getElementById('lbEditPanel').classList.add('open')
+    document.getElementById('lbScrollBody').style.display='none'; document.getElementById('lbBottom').style.display='none'; document.getElementById('lbEditPanel').classList.add('open')
 }
-window.closeEdit = function() {
-    document.getElementById('lbScrollBody').style.display=''
-    document.getElementById('lbBottom').style.display=''
-    document.getElementById('lbEditPanel').classList.remove('open')
-}
+window.closeEdit = function() { document.getElementById('lbScrollBody').style.display=''; document.getElementById('lbBottom').style.display=''; document.getElementById('lbEditPanel').classList.remove('open') }
 window.efSz = function(btn) { document.querySelectorAll('.ef-sz').forEach(b=>b.classList.remove('selected')); btn.classList.add('selected') }
-function updCond() {
-    document.getElementById('efCondFill').style.width = Math.max(10,(editCondIdx/4)*100)+'%'
-    document.getElementById('efCondLbl').textContent  = CONDITIONS[editCondIdx]
-}
+function updCond() { document.getElementById('efCondFill').style.width=Math.max(10,(editCondIdx/4)*100)+'%'; document.getElementById('efCondLbl').textContent=CONDITIONS[editCondIdx] }
 window.saveEdit = function() {
     const name=document.getElementById('efName').value.trim(); if(!name){showToast('Name required','error');return}
-    const category=document.getElementById('efCat').value, brand=document.getElementById('efBrand').value.trim()
-    const desc=document.getElementById('efDesc').value.trim(), pts=parseInt(document.getElementById('efPrice').value)||500
+    const category=document.getElementById('efCat').value, brand=document.getElementById('efBrand').value.trim(), desc=document.getElementById('efDesc').value.trim(), pts=parseInt(document.getElementById('efPrice').value)||500
     const size=document.querySelector('.ef-sz.selected')?.textContent||'', condition=CONDITIONS[editCondIdx]
     let posted=getPosted(); const i=posted.findIndex(p=>String(p.id)===String(lbId)); if(i===-1) return
     posted[i]={...posted[i],name,category:category.toLowerCase(),brand,desc,pts,size,condition}; setPosted(posted)
     let col=JSON.parse(localStorage.getItem(`suotCollection_${__suot_uid}`)||'[]'); const ci=col.findIndex(c=>c.id==='p'+lbId)
     if(ci!==-1) col[ci]={...col[ci],name,category,size:size||'—',condition}; localStorage.setItem(`suotCollection_${__suot_uid}`,JSON.stringify(col))
-    let wl=getWL(); const wi=wl.findIndex(w=>String(w.id)===String(lbId))
-    if(wi!==-1) wl[wi]={...wl[wi],name,category:category.toLowerCase(),pts,size,condition,brand}; setWL(wl)
+    let wl=getWL(); const wi=wl.findIndex(w=>String(w.id)===String(lbId)); if(wi!==-1) wl[wi]={...wl[wi],name,category:category.toLowerCase(),pts,size,condition,brand}; setWL(wl)
     closeEdit(); fillLb(posted[i]); renderGrid(); showToast('Item updated! ✦')
 }
-document.getElementById('efCondTrack').addEventListener('click', e => {
-    const r=(e.clientX-document.getElementById('efCondTrack').getBoundingClientRect().left)/document.getElementById('efCondTrack').offsetWidth
-    editCondIdx=Math.max(0,Math.min(4,Math.round(r*4))); updCond()
-})
-
-// ══════════════════════════════════════════
-//  TABS
-// ══════════════════════════════════════════
-window.switchTab = function(btn, tab) {
-    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'))
-    btn.classList.add('active'); activeTab=tab; renderGrid()
-}
+document.getElementById('efCondTrack').addEventListener('click', e => { const r=(e.clientX-document.getElementById('efCondTrack').getBoundingClientRect().left)/document.getElementById('efCondTrack').offsetWidth; editCondIdx=Math.max(0,Math.min(4,Math.round(r*4))); updCond() })
 
 // ══════════════════════════════════════════
 //  STORIES
 // ══════════════════════════════════════════
 async function loadStories(userId, isOwner = false) {
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    // FIX 1: proactively delete expired stories from DB on load.
-    //   Old code only ran cleanup when some stories happened to
-    //   expire during the load — so stale rows piled up in DB
-    //   and could reappear after a refresh.
-    //   Now: owner always pruneExpiredStories() on every page load.
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    if (isOwner) {
-        try { await pruneExpiredStories(userId) } catch(_) {}
-    }
-
-    try {
-        // FIX 2: fetchStories now filters created_at > now-24hrs in the
-        // DB query itself, so expired stories are never loaded at all.
-        // The client-side filter below is just a safety net.
-        const db = await fetchStories(userId)
-        stories = (db || []).map(s => ({
-            img:           s.image_url,
-            label:         s.label || '',
-            ts:            s.created_at ? new Date(s.created_at).getTime() : Date.now(),
-            id:            s.id,
-            viewedByOwner: false
-        }))
-        // Safety net: filter anything that slipped through
-        stories = stories.filter(s => Date.now() - s.ts < STORY_EXPIRY)
-    } catch(e) {
-        console.error('loadStories failed', e)
-        stories = []
-    }
-
-    renderStories()
-    refreshRing()
-
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    // FIX 3: interval now only runs ONCE (not re-registered on
-    // re-renders). It removes stories from the frontend when they
-    // cross 24hrs while the page is still open. For the owner it
-    // also cleans the DB. For viewers, frontend-only is fine since
-    // the owner's next load will clean the DB.
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    if (isOwner) { try { await pruneExpiredStories(userId) } catch(_) {} }
+    try { const db = await fetchStories(userId); stories = (db||[]).map(s => ({ img:s.image_url, label:s.label||'', ts:s.created_at?new Date(s.created_at).getTime():Date.now(), id:s.id, viewedByOwner:false })); stories = stories.filter(s => Date.now()-s.ts < STORY_EXPIRY) } catch(e) { console.error('loadStories failed', e); stories = [] }
+    renderStories(); refreshRing()
     if (window.__storyExpiryInterval) clearInterval(window.__storyExpiryInterval)
-    window.__storyExpiryInterval = setInterval(async () => {
-        const before = stories.length
-        stories = stories.filter(s => Date.now() - s.ts < STORY_EXPIRY)
-        if (stories.length !== before) {
-            renderStories()
-            refreshRing()
-            // Only prune DB when the owner is viewing — RLS blocks others
-            if (isOwner) {
-                try { await pruneExpiredStories(userId) } catch(_) {}
-            }
-        }
-    }, 60_000) // check every 60 seconds
+    window.__storyExpiryInterval = setInterval(async () => { const before=stories.length; stories=stories.filter(s=>Date.now()-s.ts<STORY_EXPIRY); if(stories.length!==before){renderStories();refreshRing();if(isOwner){try{await pruneExpiredStories(userId)}catch(_){}}}} , 60_000)
 }
 
-function refreshRing() {
-    const el = document.querySelector('.profile-pic-section'); if (!el) return
-    el.classList.remove('ring-active','ring-viewed')
-    if (!stories.length) return
-    el.classList.add(stories.some(s => !s.viewedByOwner) ? 'ring-active' : 'ring-viewed')
-}
-
+function refreshRing() { const el=document.querySelector('.profile-pic-section'); if(!el) return; el.classList.remove('ring-active','ring-viewed'); if(!stories.length) return; el.classList.add(stories.some(s=>!s.viewedByOwner)?'ring-active':'ring-viewed') }
 function renderStories() {
-    const c = document.getElementById('storiesContainer')
-    c.querySelectorAll('.story-item:not(.add-story)').forEach(e => e.remove())
-    stories.forEach((s, i) => {
-        const d = document.createElement('div'); d.className = 'story-item'
-        d.innerHTML = `<div class="story-circle ${s.viewedByOwner ? 'ring-viewed' : 'ring-active'}"><img src="${s.img}" alt="${s.label}"></div><span>${s.label}</span>`
-        d.onclick = () => openStoryViewer(i)
-        c.appendChild(d)
-    })
+    const c=document.getElementById('storiesContainer'); c.querySelectorAll('.story-item:not(.add-story)').forEach(e=>e.remove())
+    stories.forEach((s,i) => { const d=document.createElement('div'); d.className='story-item'; d.innerHTML=`<div class="story-circle ${s.viewedByOwner?'ring-viewed':'ring-active'}"><img src="${s.img}" alt="${s.label}"></div><span>${s.label}</span>`; d.onclick=()=>openStoryViewer(i); c.appendChild(d) })
 }
 
-window.openAddStoryModal = function() {
-    document.getElementById('storyPreviewWrap').style.display  = 'none'
-    document.getElementById('storyUploadPrompt').style.display = 'block'
-    document.getElementById('storyPreviewImg').src  = ''
-    document.getElementById('storyLabel').value     = ''
-    document.getElementById('storyFileInput').value = ''
-    document.getElementById('addStoryModal').style.display = 'flex'
-}
+window.openAddStoryModal = function() { document.getElementById('storyPreviewWrap').style.display='none'; document.getElementById('storyUploadPrompt').style.display='block'; document.getElementById('storyPreviewImg').src=''; document.getElementById('storyLabel').value=''; document.getElementById('storyFileInput').value=''; document.getElementById('addStoryModal').style.display='flex' }
 window.closeAddStoryModal = function() { document.getElementById('addStoryModal').style.display = 'none' }
-
 window.postStory = async function() {
-    const fileInput = document.getElementById('storyFileInput')
-    const file      = fileInput.files[0]
-    if (!file) { showToast('Please choose a photo first.','error'); return }
-    const label = document.getElementById('storyLabel').value.trim() || 'My Story'
-
-    // Show a loading state on the Post Story button
-    const postBtn = document.querySelector('#addStoryModal .btn-save')
-    if (postBtn) { postBtn.disabled = true; postBtn.textContent = 'Posting…' }
-
+    const fileInput=document.getElementById('storyFileInput'), file=fileInput.files[0]; if(!file){showToast('Please choose a photo first.','error');return}
+    const label=document.getElementById('storyLabel').value.trim()||'My Story', postBtn=document.querySelector('#addStoryModal .btn-save')
+    if(postBtn){postBtn.disabled=true;postBtn.textContent='Posting…'}
     try {
-        // 1. Upload image to Supabase Storage
-        const ext  = file.name.split('.').pop()
-        const path = `stories/${currentProfile.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-        const { error: upErr } = await supabase.storage.from('stories').upload(path, file, { upsert: true })
-        if (upErr) throw upErr
-        const { data: { publicUrl } } = supabase.storage.from('stories').getPublicUrl(path)
-
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // FIX: was calling postStory(...) which shadowed the import
-        // and caused a silent recursive call. Now uses dbSaveStory
-        // which is the renamed import from supabase.js.
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        // 2. Save story record to DB (stories table)
-        const newStory = await dbSaveStory({ imageUrl: publicUrl, label })
-
-        // 3. Add to local array so it shows immediately
-        stories.unshift({
-            img:           newStory.image_url,
-            label:         newStory.label || '',
-            ts:            newStory.created_at ? new Date(newStory.created_at).getTime() : Date.now(),
-            id:            newStory.id,
-            viewedByOwner: false
-        })
-        renderStories()
-        refreshRing()
-        closeAddStoryModal()
-        showToast('Story posted!')
-    } catch(e) {
-        console.error('story upload failed', e)
-        const errMsg = e?.message || e?.error || 'unknown error'
-        showToast(`Could not post story: ${errMsg}`, 'error')
-        // Reset button so user can retry
-        if (postBtn) { postBtn.disabled = false; postBtn.textContent = 'Post Story' }
-    }
+        const ext=file.name.split('.').pop(), path=`stories/${currentProfile.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+        const{error:upErr}=await supabase.storage.from('stories').upload(path,file,{upsert:true}); if(upErr) throw upErr
+        const{data:{publicUrl}}=supabase.storage.from('stories').getPublicUrl(path)
+        const newStory=await dbSaveStory({imageUrl:publicUrl,label})
+        stories.unshift({img:newStory.image_url,label:newStory.label||'',ts:newStory.created_at?new Date(newStory.created_at).getTime():Date.now(),id:newStory.id,viewedByOwner:false})
+        renderStories(); refreshRing(); closeAddStoryModal(); showToast('Story posted!')
+    } catch(e) { console.error('story upload failed',e); showToast(`Could not post story: ${e?.message||'unknown error'}`,'error'); if(postBtn){postBtn.disabled=false;postBtn.textContent='Post Story'} }
 }
 
-function openStoryViewer(i) {
-    curStory = i
-    document.getElementById('storyViewer').style.display = 'flex'
-    document.body.style.overflow = 'hidden'
-    showStory(i)
-}
-window.closeStoryViewer = function() {
-    clearInterval(storyTimer)
-    document.getElementById('storyViewer').style.display = 'none'
-    document.body.style.overflow = ''
-}
-
+function openStoryViewer(i) { curStory=i; document.getElementById('storyViewer').style.display='flex'; document.body.style.overflow='hidden'; showStory(i) }
+window.closeStoryViewer = function() { clearInterval(storyTimer); document.getElementById('storyViewer').style.display='none'; document.body.style.overflow='' }
 function showStory(i) {
-    clearInterval(storyTimer)
-    const s = stories[i]; if (!s) { closeStoryViewer(); return }
-    const p    = currentProfile
-    const name = p.display_name || p.username || 'Swapper'
-    const av   = p.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=EBE0E3&color=C994A7&size=150`
-    const isOwner = currentUser && currentProfile && currentUser.id === currentProfile.id
-
-    document.getElementById('storyViewerImg').src       = s.img
-    document.getElementById('viewerAvatar').src         = av
-    document.getElementById('viewerUsername').innerText = name
-    document.getElementById('viewerLabel').innerText    = s.label
-
-    // Three-dot menu — only for owner
-    const dotsWrap = document.getElementById('storyDotsWrap')
-    if (dotsWrap) dotsWrap.style.display = isOwner ? 'block' : 'none'
-    document.getElementById('storyDotsMenu')?.classList.remove('open')
-
-    // Footer: owner sees viewers, visitor sees reply bar
-    const replyBar     = document.getElementById('storyReplyBar')
-    const viewersPanel = document.getElementById('storyViewersPanel')
-    if (isOwner) {
-        if (replyBar)     replyBar.style.display     = 'none'
-        if (viewersPanel) viewersPanel.style.display = 'flex'
-        // Load viewers for this story
-        if (s.id) {
-            document.getElementById('storyViewersList').innerHTML =
-                '<div class="story-no-viewers"><div class="loading-spin" style="width:14px;height:14px;border-width:2px;margin:0 auto;border-color:rgba(255,255,255,.2);border-top-color:rgba(255,255,255,.6);"></div></div>'
-            fetchStoryViewers(s.id).then(viewers => {
-                const el = document.getElementById('storyViewersList')
-                if (!el) return
-                if (!viewers.length) { el.innerHTML = '<div class="story-no-viewers">No views yet</div>'; return }
-                el.innerHTML = viewers.map(v => {
-                    const vName = v.display_name || v.username || 'User'
-                    const vAv   = v.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(vName)}&background=4A635D&color=fff&size=60`
-                    return `<div class="story-viewer-row">
-                        <div class="story-viewer-av"><img src="${vAv}" alt=""/></div>
-                        <div><div class="story-viewer-name">${esc(vName)}</div><div class="story-viewer-time">${timeAgo(v.viewed_at)}</div></div>
-                    </div>`
-                }).join('')
-            }).catch(() => {})
-        }
-    } else {
-        if (replyBar)     replyBar.style.display     = ''
-        if (viewersPanel) viewersPanel.style.display = 'none'
-        // Record that this user viewed the story
-        if (s.id) recordStoryView(s.id).catch(() => {})
-    }
-
-    if (!s.viewedByOwner) { stories[i].viewedByOwner = true; renderStories(); refreshRing() }
-
-    const w = document.getElementById('storyProgressBars'); w.innerHTML = ''
-    stories.forEach((_,j) => {
-        const b = document.createElement('div'); b.className = 'sp-bar'
-        const f = document.createElement('div'); f.className = 'sp-fill'
-        if (j < i) f.style.width = '100%'
-        b.appendChild(f); w.appendChild(b)
-    })
-
-    const fill = document.querySelectorAll('.sp-fill')[i]; if (!fill) return
-    let elapsed = 0; fill.style.width = '0%'
-    storyTimer = setInterval(() => {
-        elapsed += 50
-        fill.style.width = Math.min((elapsed / STORY_DUR) * 100, 100) + '%'
-        if (elapsed >= STORY_DUR) nextStory()
-    }, 50)
+    clearInterval(storyTimer); const s=stories[i]; if(!s){closeStoryViewer();return}
+    const p=currentProfile, name=p.display_name||p.username||'Swapper', av=p.avatar_url||`https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=EBE0E3&color=C994A7&size=150`
+    const isOwner=currentUser&&currentProfile&&currentUser.id===currentProfile.id
+    document.getElementById('storyViewerImg').src=s.img; document.getElementById('viewerAvatar').src=av; document.getElementById('viewerUsername').innerText=name; document.getElementById('viewerLabel').innerText=s.label
+    const dotsWrap=document.getElementById('storyDotsWrap'); if(dotsWrap) dotsWrap.style.display=isOwner?'block':'none'; document.getElementById('storyDotsMenu')?.classList.remove('open')
+    const replyBar=document.getElementById('storyReplyBar'), viewersPanel=document.getElementById('storyViewersPanel')
+    if(isOwner){if(replyBar)replyBar.style.display='none';if(viewersPanel)viewersPanel.style.display='flex';if(s.id){document.getElementById('storyViewersList').innerHTML='<div class="story-no-viewers"><div class="loading-spin" style="width:14px;height:14px;border-width:2px;margin:0 auto;border-color:rgba(255,255,255,.2);border-top-color:rgba(255,255,255,.6);"></div></div>';fetchStoryViewers(s.id).then(viewers=>{const el=document.getElementById('storyViewersList');if(!el)return;if(!viewers.length){el.innerHTML='<div class="story-no-viewers">No views yet</div>';return}el.innerHTML=viewers.map(v=>{const vName=v.display_name||v.username||'User',vAv=v.avatar_url||`https://ui-avatars.com/api/?name=${encodeURIComponent(vName)}&background=4A635D&color=fff&size=60`;return`<div class="story-viewer-row"><div class="story-viewer-av"><img src="${vAv}" alt=""/></div><div><div class="story-viewer-name">${esc(vName)}</div><div class="story-viewer-time">${timeAgo(v.viewed_at)}</div></div></div>`}).join('')}).catch(()=>{})}} else{if(replyBar)replyBar.style.display='';if(viewersPanel)viewersPanel.style.display='none';if(s.id)recordStoryView(s.id).catch(()=>{})}
+    if(!s.viewedByOwner){stories[i].viewedByOwner=true;renderStories();refreshRing()}
+    const w=document.getElementById('storyProgressBars');w.innerHTML=''
+    stories.forEach((_,j)=>{const b=document.createElement('div');b.className='sp-bar';const f=document.createElement('div');f.className='sp-fill';if(j<i)f.style.width='100%';b.appendChild(f);w.appendChild(b)})
+    const fill=document.querySelectorAll('.sp-fill')[i];if(!fill)return
+    let elapsed=0;fill.style.width='0%';storyTimer=setInterval(()=>{elapsed+=50;fill.style.width=Math.min((elapsed/STORY_DUR)*100,100)+'%';if(elapsed>=STORY_DUR)nextStory()},50)
 }
+window.nextStory=function(){curStory<stories.length-1?showStory(++curStory):closeStoryViewer()}
+window.prevStory=function(){curStory>0?showStory(--curStory):null}
 
-window.nextStory = function() { curStory < stories.length - 1 ? showStory(++curStory) : closeStoryViewer() }
-window.prevStory = function() { curStory > 0 ? showStory(--curStory) : null }
-
-document.getElementById('storyFileInput').addEventListener('change', function() {
-    if (!this.files[0]) return
-    const r = new FileReader()
-    r.onload = e => {
-        document.getElementById('storyPreviewImg').src             = e.target.result
-        document.getElementById('storyPreviewWrap').style.display  = 'block'
-        document.getElementById('storyUploadPrompt').style.display = 'none'
-    }
-    r.readAsDataURL(this.files[0])
-})
+document.getElementById('storyFileInput').addEventListener('change',function(){if(!this.files[0])return;const r=new FileReader();r.onload=e=>{document.getElementById('storyPreviewImg').src=e.target.result;document.getElementById('storyPreviewWrap').style.display='block';document.getElementById('storyUploadPrompt').style.display='none'};r.readAsDataURL(this.files[0])})
 
 // ══════════════════════════════════════════
 //  KEYBOARD + BACKDROP CLOSES
 // ══════════════════════════════════════════
-document.getElementById('lbOverlay').addEventListener('click', e => { if (e.target === document.getElementById('lbOverlay')) closeLb() })
-document.getElementById('storyViewer').addEventListener('click', e => {
-    // Close dots menu on background click
-    document.getElementById('storyDotsMenu')?.classList.remove('open')
-    if (e.target === document.getElementById('storyViewer')) closeStoryViewer()
-})
-;['editModal','addStoryModal'].forEach(id => {
-    document.getElementById(id).addEventListener('click', function(e) { if (e.target === this) this.style.display = 'none' })
-})
+document.getElementById('lbOverlay').addEventListener('click', e => { if(e.target===document.getElementById('lbOverlay'))closeLb() })
+document.getElementById('storyViewer').addEventListener('click', e => { document.getElementById('storyDotsMenu')?.classList.remove('open'); if(e.target===document.getElementById('storyViewer'))closeStoryViewer() })
+;['editModal','addStoryModal'].forEach(id=>{document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.style.display='none'})})
 document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { closeLb(); closeStoryViewer(); closeEditModal(); closeAddStoryModal() }
-    const lbOpen = document.getElementById('lbOverlay').classList.contains('open')
-    if (e.key === 'ArrowRight') { lbOpen ? lbNav(1)  : nextStory() }
-    if (e.key === 'ArrowLeft')  { lbOpen ? lbNav(-1) : prevStory() }
+    if(e.key==='Escape'){closeLb();closeStoryViewer();closeEditModal();closeAddStoryModal()}
+    const lbOpen=document.getElementById('lbOverlay').classList.contains('open')
+    if(e.key==='ArrowRight'){lbOpen?lbNav(1):nextStory()}
+    if(e.key==='ArrowLeft'){lbOpen?lbNav(-1):prevStory()}
 })
 
 // ══════════════════════════════════════════
 //  HELPERS
 // ══════════════════════════════════════════
 function timeAgo(iso) {
-    if (!iso) return ''
-    const d=Date.now()-new Date(iso).getTime(), m=Math.floor(d/60000), h=Math.floor(d/3600000), dy=Math.floor(d/86400000)
-    if (m<1)  return 'just now'
-    if (m<60) return m+'m ago'
-    if (h<24) return h+'h ago'
-    if (dy<7) return dy+'d ago'
+    if(!iso)return''; const d=Date.now()-new Date(iso).getTime(),m=Math.floor(d/60000),h=Math.floor(d/3600000),dy=Math.floor(d/86400000)
+    if(m<1)return'just now'; if(m<60)return m+'m ago'; if(h<24)return h+'h ago'; if(dy<7)return dy+'d ago'
     return new Date(iso).toLocaleDateString('en-PH',{month:'short',day:'numeric'})
 }
 function showToast(msg, type='success') {
-    const t = document.createElement('div'); t.className=`toast toast-${type}`; t.innerText=msg
-    document.body.appendChild(t); setTimeout(()=>t.classList.add('toast-show'),10)
-    setTimeout(()=>{t.classList.remove('toast-show');setTimeout(()=>t.remove(),400)},3000)
+    const t=document.createElement('div'); t.className=`toast toast-${type}`; t.innerText=msg; document.body.appendChild(t)
+    setTimeout(()=>t.classList.add('toast-show'),10); setTimeout(()=>{t.classList.remove('toast-show');setTimeout(()=>t.remove(),400)},3000)
 }
 
-// ══════════════════════════════════════════
-//  KICK OFF
-// ══════════════════════════════════════════
-boot().catch(err => {
-    console.error('Profile boot error:', err)
-    document.getElementById('profileLoader').style.display = 'none'
-})
-setTimeout(() => {
-    const loader = document.getElementById('profileLoader')
-    if (loader && loader.style.display !== 'none') {
-        loader.style.display = 'none'
-        console.warn('Profile loader timeout — force hidden')
-    }
-}, 15000)
+// ── BADGE ICONS NEXT TO NAME ──────────────────────────────────
+async function loadProfileBadgeIcons() {
+    const container = document.getElementById('profileBadgeIcons')
+    if (!container) return
+    try {
+        const results = await fetchUserBadgeProgress(currentProfile.id)
+        const claimed = results.filter(r => r.claimed)
+        if (!claimed.length) { container.innerHTML = ''; return }
+        container.innerHTML = claimed.map(r => {
+    const icon = r.badge.icon || '🏅'
+    const isUrl = icon.startsWith('http') || icon.startsWith('/') || icon.startsWith('data:')
+    return isUrl
+        ? `<img src="${icon}" title="${r.badge.name}" style="width:22px;height:22px;border-radius:6px;object-fit:cover;cursor:default;transition:transform .2s;" onmouseover="this.style.transform='scale(1.35)'" onmouseout="this.style.transform='scale(1)'">`
+        : `<span title="${r.badge.name}" style="font-size:18px;line-height:1;cursor:default;display:inline-block;transition:transform .2s;" onmouseover="this.style.transform='scale(1.35)'" onmouseout="this.style.transform='scale(1)'">${icon}</span>`
+}).join('')
+    } catch(e) { console.error('loadProfileBadgeIcons:', e) }
+}
+
+boot().catch(err => { console.error('Profile boot error:', err); document.getElementById('profileLoader').style.display='none' })
+setTimeout(() => { const loader=document.getElementById('profileLoader'); if(loader&&loader.style.display!=='none'){loader.style.display='none';console.warn('Profile loader timeout — force hidden')} }, 15000)
 </script>
 </body>
 </html>

@@ -11,7 +11,6 @@ function toggleAuth() {
 }
 window.toggleAuth = toggleAuth
 
-
 // ── Helpers ────────────────────────────────────────────────────
 function showError(msg) {
     clearError()
@@ -39,6 +38,34 @@ function setLoading(btn, loading) {
     btn.style.opacity = loading ? '0.7' : '1'
 }
 
+// ── ROLE-BASED REDIRECT ────────────────────────────────────────
+async function redirectByRole(userId) {
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('role, ban_reason')
+        .eq('id', userId)
+        .single()
+
+    if (profile?.role === 'banned') {
+        await supabase.auth.signOut()
+        localStorage.removeItem('suotUserId')
+        localStorage.removeItem('suotUser')
+        localStorage.removeItem('suotEmail')
+        if (profile.ban_reason) {
+            localStorage.setItem('suotBanReason', profile.ban_reason)
+        } else {
+            localStorage.removeItem('suotBanReason')
+        }
+        window.location.href = '../auth/login.html?banned=true'
+        return
+    }
+
+    if (profile?.role === 'super_admin') {
+        window.location.href = '../dashboard/admin-dashboard.html'
+    } else {
+        window.location.href = '../dashboard/dashboard.html'
+    }
+}
 
 // ══════════════════════════════════════════
 //  PASSWORD REQUIREMENTS
@@ -65,16 +92,13 @@ function updatePasswordUI(pw) {
     const fill      = document.getElementById('pwStrengthFill')
     const lbl       = document.getElementById('pwStrengthLabel')
     if (!rules) return
-
     const show = pw.length > 0
     rules.classList.toggle('visible', show)
     strengthW.classList.toggle('visible', show)
-
     RULES.forEach(r => {
         const el = document.getElementById(r.id)
         if (el) el.classList.toggle('met', r.test(pw))
     })
-
     const { score, label, color } = calcStrength(pw)
     fill.style.width      = score + '%'
     fill.style.background = color
@@ -86,7 +110,6 @@ function isPasswordValid(pw) {
     return RULES.every(r => r.test(pw))
 }
 
-// ── Password input listener ──
 const pwInput = document.getElementById('signupPassword')
 if (pwInput) {
     pwInput.addEventListener('input', () => {
@@ -95,7 +118,6 @@ if (pwInput) {
     })
 }
 
-// ── Confirm password match ──
 const confirmInput = document.getElementById('signupConfirm')
 function checkMatch() {
     const msg = document.getElementById('pwMatchMsg')
@@ -116,24 +138,19 @@ if (confirmInput) {
     confirmInput.addEventListener('input', checkMatch)
 }
 
-
 // ── SIGN IN ────────────────────────────────────────────────────
 const loginForm = document.querySelector('#loginSection form')
 if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault()
         clearError()
-
         const email    = loginForm.querySelector('input[type="email"]').value.trim()
-        const password = document.getElementById('loginPassword').value         // ← FIXED
+        const password = document.getElementById('loginPassword').value
         const btn      = loginForm.querySelector('button[type="submit"]')
-
         if (!email || !password) { showError('Please fill in all fields.'); return }
-
         setLoading(btn, true)
         const { data, error } = await supabase.auth.signInWithPassword({ email, password })
         setLoading(btn, false)
-
         if (error) {
             const msgs = {
                 'Invalid login credentials': 'Incorrect email or password.',
@@ -143,17 +160,15 @@ if (loginForm) {
             showError(msgs[error.message] || error.message)
             return
         }
-
         const name = data.user.user_metadata?.full_name
                   || data.user.user_metadata?.name
                   || data.user.email.split('@')[0]
         localStorage.setItem('suotUser',   name)
         localStorage.setItem('suotEmail',  data.user.email)
         localStorage.setItem('suotUserId', data.user.id)
-        window.location.href = '../dashboard/dashboard.html'
+        await redirectByRole(data.user.id)
     })
 }
-
 
 // ── SIGN UP ────────────────────────────────────────────────────
 const signupForm = document.getElementById('signupForm')
@@ -161,18 +176,15 @@ if (signupForm) {
     signupForm.addEventListener('submit', async (e) => {
         e.preventDefault()
         clearError()
-
         const fullName = document.getElementById('signupName').value.trim()
         const email    = document.getElementById('signupEmail').value.trim()
         const password = document.getElementById('signupPassword').value
         const confirm  = document.getElementById('signupConfirm').value
         const btn      = document.getElementById('signupBtn')
-
         if (!fullName || !email || !password || !confirm) {
             showError('Please fill in all fields.')
             return
         }
-
         if (!isPasswordValid(password)) {
             showError('Please meet all password requirements.')
             document.getElementById('pwRules')?.classList.add('visible')
@@ -180,22 +192,17 @@ if (signupForm) {
             updatePasswordUI(password)
             return
         }
-
         if (password !== confirm) {
             showError('Passwords do not match.')
             return
         }
-
         setLoading(btn, true)
-
         const { data, error } = await supabase.auth.signUp({
             email,
             password,
             options: { data: { full_name: fullName } }
         })
-
         setLoading(btn, false)
-
         if (error) {
             const msgs = {
                 'User already registered':                   'An account with this email already exists.',
@@ -204,8 +211,6 @@ if (signupForm) {
             showError(msgs[error.message] || error.message)
             return
         }
-
-        // Email confirmation required
         if (data.user && !data.session) {
             signupForm.innerHTML = `
                 <div style="text-align:center; padding: 20px 0; display:flex; flex-direction:column; gap:12px;">
@@ -225,24 +230,21 @@ if (signupForm) {
                 </div>`
             return
         }
-
-        // Email confirmation OFF — session returned immediately
         if (data.session) {
             localStorage.setItem('suotUser',   fullName)
             localStorage.setItem('suotEmail',  email)
             localStorage.setItem('suotUserId', data.user.id)
-            window.location.href = '../dashboard/dashboard.html'
+            await redirectByRole(data.user.id)
         }
     })
 }
-
 
 // ── GOOGLE SIGN IN / SIGN UP ───────────────────────────────────
 async function signInWithGoogle() {
     const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-            redirectTo: `${window.location.origin}/src/dashboard/dashboard.html`
+            redirectTo: `${window.location.origin}/src/auth/login.html`
         }
     })
     if (error) showError('Google sign-in failed. Please try again.')
@@ -253,19 +255,17 @@ const googleSignUpBtn = document.getElementById('googleSignUpBtn')
 if (googleSignInBtn) googleSignInBtn.addEventListener('click', signInWithGoogle)
 if (googleSignUpBtn) googleSignUpBtn.addEventListener('click', signInWithGoogle)
 
-
 // ── AUTH STATE: redirect if already logged in ──────────────────
-supabase.auth.getSession().then(({ data: { session } }) => {
+supabase.auth.getSession().then(async ({ data: { session } }) => {
     if (session) {
         const name = session.user.user_metadata?.full_name
                   || session.user.email.split('@')[0]
         localStorage.setItem('suotUser',   name)
         localStorage.setItem('suotEmail',  session.user.email)
         localStorage.setItem('suotUserId', session.user.id)
-        window.location.href = '../dashboard/dashboard.html'
+        await redirectByRole(session.user.id)
     }
 })
-
 
 // ── PASSWORD VISIBILITY TOGGLE ─────────────────────────────────
 function togglePw(inputId, btn) {
