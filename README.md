@@ -76,65 +76,17 @@ Suot creates a circular fashion economy, giving clothes a second life through co
 ## Project Structure
 
 ```
-## Project Structure
-```
 Suot_Web/
 ├── README.md
-├── .gitignore
 ├── docs/
-│   ├── diagrams/                    # ERD, system architecture, user flow
-│   └── documents/
-│       ├── architecture.html        # Systems architecture & integration doc
-│       ├── technical-spec.md
-│       ├── super_admin.png
-│       ├── supabase-schema.sql      # Run 1st — core tables
-│       ├── home-feed-v2.sql         # Run 2nd — post reactions, hashtags, linked items
-│       └── wallet-circulation.sql   # Run 3rd — circulation buffer & wallet events
+│   ├── diagrams/          # ERD, system architecture, user flow
+│   └── documents/         # Technical spec, project proposal
 └── src/
-    ├── auth/                        # Login & register
-    │   ├── login.html
-    │   ├── login.js
-    │   ├── register.html
-    │   └── register.js
-    ├── dashboard/                   # Catalog, wallet, top-up, admin
-    │   ├── catalog.html
-    │   ├── catalog.js
-    │   ├── catalog.css
-    │   ├── wallet.html
-    │   ├── wallet.js
-    │   ├── wallet.css
-    │   ├── topup.html
-    │   ├── topup.js
-    │   ├── topup.css
-    │   └── admin-dashboard.html     # Super Admin panel (is_admin = true only)
-    ├── personal/                    # Home, messages, post-item, item-detail, wishlist, friends
-    │   ├── home.html
-    │   ├── home.js
-    │   ├── messages.html
-    │   ├── messages.js
-    │   ├── post-item.html
-    │   ├── post-item.js
-    │   ├── item-detail.html
-    │   ├── item-detail.js
-    │   ├── wishlist.html
-    │   ├── wishlist.js
-    │   ├── friends.html
-    │   ├── friends.js
-    │   └── config.js                # ⚠️ gitignored — Gemini API key (create locally)
-    ├── profile/                     # User profile
-    │   ├── profile.html
-    │   ├── profile.js
-    │   ├── profile.css
-    │   ├── edit-profile.html
-    │   └── edit-profile.js
-    └── db/                          # Supabase client & all DB helpers
-        ├── supabase.js
-        ├── users.js
-        ├── items.js
-        ├── transactions.js
-        ├── messages.js
-        └── points.js
-```
+    ├── auth/              # Login & register
+    ├── dashboard/         # Catalog, wallet, top-up
+    ├── personal/          # Home, messages, post-item, item-detail, wishlist, friends
+    ├── profile/           # User profile
+    └── db/                # Supabase client & all DB helpers
 ```
 
 ---
