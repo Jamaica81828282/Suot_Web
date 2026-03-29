@@ -422,7 +422,31 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
   <h2>Module Structure</h2>
   <p class="section-lead">Suot is organized into five directories under <code>src/</code>, plus a top-level <code>docs/</code> folder at the repository root for SQL schemas and documentation. Each page is a self-contained HTML file with an inline or imported ES module script. All database calls are centralized in <code>db/supabase.js</code>.</p>
 
- 
+  <!-- Folder tree -->
+  <div class="folder-tree">
+    <div class="tree-row" style="color:#4A635D;font-weight:600;">
+      <svg class="tree-icon" style="stroke:#4A635D;" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+      Suot/ <span style="color:#888;font-size:11px;font-weight:400;margin-left:8px;">← repository root</span>
+    </div>
+    <div class="tree-row" style="padding-left:20px;">
+      &nbsp;&nbsp;├──&nbsp;
+      <svg class="tree-icon" style="stroke:#92600a;" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+      <span style="color:#92600a;font-weight:600;">docs/</span>
+      <span style="color:#888;font-size:11px;margin-left:8px;">← SQL schemas &amp; this document (root-level)</span>
+    </div>
+    <div class="tree-row" style="padding-left:20px;">
+      &nbsp;&nbsp;├──&nbsp;
+      <svg class="tree-icon" style="stroke:#3b4fd8;" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+      <span style="color:#3b4fd8;font-weight:600;">src/</span>
+    </div>
+    <div style="padding-left:48px;color:#666;">&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── auth/</div>
+    <div style="padding-left:48px;color:#666;">&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── dashboard/ &nbsp;<span style="font-size:10px;color:#534AB7;background:#EEEDFE;border:1px solid #afa9ec;border-radius:3px;padding:0 5px;font-weight:600;">+ admin-dashboard.html</span></div>
+    <div style="padding-left:48px;color:#666;">&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── personal/</div>
+    <div style="padding-left:48px;color:#666;">&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── profile/</div>
+    <div style="padding-left:48px;color:#666;">&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── db/</div>
+    <div style="padding-left:20px;color:#666;">&nbsp;&nbsp;├── .gitignore</div>
+    <div style="padding-left:20px;color:#666;">&nbsp;&nbsp;└── README.md</div>
+  </div>
 
   <!-- Module cards -->
   <div class="module-grid">
