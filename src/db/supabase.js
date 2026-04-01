@@ -1,7 +1,7 @@
+// ── Supabase credentials are loaded from config.js (never hardcode secrets here)
+// ── Make sure config.js is listed in your .gitignore!
+import { SUPABASE_URL, SUPABASE_ANON } from '../config.js'
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
-
-const SUPABASE_URL  = 'https://ltsgzhgmpkfqlrmuwdbn.supabase.co'
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0c2d6aGdtcGtmcWxybXV3ZGJuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwNjY4OTQsImV4cCI6MjA4NzY0Mjg5NH0.boFXXeyy6pUnEYZpxoUCR7dM8yUndozcGyn1XgeE4Es'
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON)
 
@@ -1007,6 +1007,7 @@ export async function fetchWalletEvents(limit = 30) {
   if (error) console.error('fetchWalletEvents:', error)
   return data || []
 }
+
 // ══════════════════════════════════════════════════════════════
 // ── BADGE HELPERS — paste at the bottom of src/db/supabase.js ──
 // ══════════════════════════════════════════════════════════════
