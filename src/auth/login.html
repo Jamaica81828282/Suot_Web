@@ -9,63 +9,72 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         /* ── PASSWORD REQUIREMENTS ── */
-        .pw-rules {
-            margin-top: 8px;
+        .pw-rules { margin-top:8px; display:flex; flex-direction:column; gap:5px; display:none; }
+        .pw-rules.visible { display:flex; }
+        .pw-rule { display:flex; align-items:center; gap:7px; font-size:11.5px; font-weight:600; color:#bbb; transition:color .2s; }
+        .pw-rule .rule-icon { width:16px; height:16px; border-radius:50%; border:1.5px solid #ddd; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all .2s; }
+        .pw-rule .rule-icon svg { width:8px; height:8px; opacity:0; transition:opacity .15s; }
+        .pw-rule.met { color:#4A635D; }
+        .pw-rule.met .rule-icon { background:#4A635D; border-color:#4A635D; }
+        .pw-rule.met .rule-icon svg { opacity:1; }
+        .pw-strength-wrap { margin-top:10px; display:none; }
+        .pw-strength-wrap.visible { display:block; }
+        .pw-strength-bar { height:4px; border-radius:4px; background:#eee; overflow:hidden; margin-bottom:5px; }
+        .pw-strength-fill { height:100%; border-radius:4px; width:0%; transition:width .3s ease, background .3s ease; }
+        .pw-strength-label { font-size:11px; font-weight:700; color:#bbb; text-align:right; }
+        .pw-match-msg { font-size:11.5px; font-weight:600; margin-top:5px; display:none; }
+        .pw-match-msg.visible { display:block; }
+        .pw-match-msg.ok  { color:#4A635D; }
+        .pw-match-msg.err { color:#c0392b; }
+        .btn-google img { width:20px !important; border-radius:2px; }
+
+        /* ── BAN CARD ── */
+        .ban-card {
             display: flex;
             flex-direction: column;
-            gap: 5px;
-            display: none; /* shown on focus */
-        }
-        .pw-rules.visible { display: flex; }
-        .pw-rule {
-            display: flex;
             align-items: center;
-            gap: 7px;
-            font-size: 11.5px;
-            font-weight: 600;
-            color: #bbb;
-            transition: color .2s;
+            gap: 16px;
+            padding: 8px 0 4px;
+            text-align: center;
         }
-        .pw-rule .rule-icon {
-            width: 16px; height: 16px; border-radius: 50%;
-            border: 1.5px solid #ddd;
+        .ban-icon-wrap {
+            width: 72px; height: 72px; border-radius: 50%;
+            background: linear-gradient(135deg, #fff0f4, #fce8ef);
+            border: 2px solid #f5cdd8;
             display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0; transition: all .2s;
         }
-        .pw-rule .rule-icon svg { width: 8px; height: 8px; opacity: 0; transition: opacity .15s; }
-        .pw-rule.met { color: #4A635D; }
-        .pw-rule.met .rule-icon { background: #4A635D; border-color: #4A635D; }
-        .pw-rule.met .rule-icon svg { opacity: 1; }
-
-        /* ── PASSWORD STRENGTH BAR ── */
-        .pw-strength-wrap {
-            margin-top: 10px;
-            display: none;
+        .ban-icon-wrap svg { width: 34px; height: 34px; color: #e05577; }
+        .ban-card h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.35rem; font-weight: 700;
+            color: #1a1a1a; margin: 0;
         }
-        .pw-strength-wrap.visible { display: block; }
-        .pw-strength-bar {
-            height: 4px; border-radius: 4px;
-            background: #eee; overflow: hidden; margin-bottom: 5px;
+        .ban-card .ban-subtitle {
+            font-size: 13px; color: #888; margin: 0; line-height: 1.6;
         }
-        .pw-strength-fill {
-            height: 100%; border-radius: 4px;
-            width: 0%; transition: width .3s ease, background .3s ease;
+        .ban-reason-block {
+            width: 100%; background: #fff8f9;
+            border: 1.5px solid #f5cdd8; border-radius: 12px;
+            padding: 14px 16px; text-align: left;
         }
-        .pw-strength-label {
-            font-size: 11px; font-weight: 700; color: #bbb; text-align: right;
+        .ban-reason-label {
+            font-size: 10px; font-weight: 800; letter-spacing: .7px;
+            text-transform: uppercase; color: #C994A7; margin-bottom: 6px;
         }
-
-        /* ── CONFIRM PASSWORD MATCH ── */
-        .pw-match-msg {
-            font-size: 11.5px; font-weight: 600;
-            margin-top: 5px; display: none;
+        .ban-reason-text {
+            font-size: 13px; color: #2d2d2d; font-weight: 600; line-height: 1.5;
         }
-        .pw-match-msg.visible { display: block; }
-        .pw-match-msg.ok  { color: #4A635D; }
-        .pw-match-msg.err { color: #c0392b; }
-
-        /* ── GOOGLE BTN ── */
-        .btn-google img { width: 20px !important; border-radius: 2px; }
+        .ban-appeal-note {
+            font-size: 11.5px; color: #bbb; line-height: 1.6; margin: 0;
+        }
+        .ban-back-btn {
+            width: 100%; padding: 12px;
+            background: #4A635D; color: #fff;
+            border: none; border-radius: 50px;
+            font-family: 'Inter', sans-serif; font-size: 13.5px;
+            font-weight: 700; cursor: pointer; transition: background .2s;
+        }
+        .ban-back-btn:hover { background: #5d7a73; }
     </style>
 </head>
 
@@ -92,6 +101,34 @@
                 <div class="glass-card" id="authCard">
                     <img src="Logo/logo.jpg" alt="Suot Logo" class="card-logo">
 
+                    <!-- ── BAN NOTIFICATION (shown when ?banned=true) ── -->
+                    <div id="bannedSection" style="display:none;">
+                        <div class="ban-card">
+                            <div class="ban-icon-wrap">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+                                </svg>
+                            </div>
+                            <h2>Account Suspended</h2>
+                            <p class="ban-subtitle">
+                                Your Suot account has been suspended by an administrator.<br>
+                                You cannot log in at this time.
+                            </p>
+                            <div class="ban-reason-block">
+                                <div class="ban-reason-label">Reason for suspension</div>
+                                <div class="ban-reason-text" id="banReasonDisplay">Violation of community guidelines.</div>
+                            </div>
+                            <p class="ban-appeal-note">
+                                If you believe this is a mistake, please contact<br>
+                                <strong style="color:#4A635D;">support@suot.app</strong> to appeal.
+                            </p>
+                            <button class="ban-back-btn" onclick="window.location.href='../index.html'">
+                                ← Back to Gallery
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- SIGN IN -->
                     <div id="loginSection">
                         <header>
@@ -109,8 +146,7 @@
                                     <input type="password" id="loginPassword" placeholder="••••••••" required>
                                     <button type="button" class="pw-toggle" onclick="togglePw('loginPassword', this)" tabindex="-1" aria-label="Toggle password visibility">
                                         <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                                            <circle cx="12" cy="12" r="3" />
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" />
                                         </svg>
                                         <svg class="eye-closed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
                                             <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
@@ -154,8 +190,7 @@
                                     <input type="password" id="signupPassword" placeholder="Create a strong password" required autocomplete="new-password">
                                     <button type="button" class="pw-toggle" onclick="togglePw('signupPassword', this)" tabindex="-1" aria-label="Toggle password visibility">
                                         <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                                            <circle cx="12" cy="12" r="3" />
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" />
                                         </svg>
                                         <svg class="eye-closed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
                                             <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
@@ -164,49 +199,15 @@
                                         </svg>
                                     </button>
                                 </div>
-
-                                <!-- Strength bar -->
                                 <div class="pw-strength-wrap" id="pwStrengthWrap">
-                                    <div class="pw-strength-bar">
-                                        <div class="pw-strength-fill" id="pwStrengthFill"></div>
-                                    </div>
+                                    <div class="pw-strength-bar"><div class="pw-strength-fill" id="pwStrengthFill"></div></div>
                                     <div class="pw-strength-label" id="pwStrengthLabel">—</div>
                                 </div>
-
-                                <!-- Requirements checklist -->
                                 <div class="pw-rules" id="pwRules">
-                                    <div class="pw-rule" id="rule-length">
-                                        <div class="rule-icon">
-                                            <svg viewBox="0 0 10 8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <polyline points="1 4 3.5 7 9 1" />
-                                            </svg>
-                                        </div>
-                                        At least 8 characters
-                                    </div>
-                                    <div class="pw-rule" id="rule-upper">
-                                        <div class="rule-icon">
-                                            <svg viewBox="0 0 10 8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <polyline points="1 4 3.5 7 9 1" />
-                                            </svg>
-                                        </div>
-                                        One uppercase letter (A–Z)
-                                    </div>
-                                    <div class="pw-rule" id="rule-number">
-                                        <div class="rule-icon">
-                                            <svg viewBox="0 0 10 8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <polyline points="1 4 3.5 7 9 1" />
-                                            </svg>
-                                        </div>
-                                        One number (0–9)
-                                    </div>
-                                    <div class="pw-rule" id="rule-special">
-                                        <div class="rule-icon">
-                                            <svg viewBox="0 0 10 8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <polyline points="1 4 3.5 7 9 1" />
-                                            </svg>
-                                        </div>
-                                        One special character (!@#$…)
-                                    </div>
+                                    <div class="pw-rule" id="rule-length"><div class="rule-icon"><svg viewBox="0 0 10 8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 3.5 7 9 1" /></svg></div>At least 8 characters</div>
+                                    <div class="pw-rule" id="rule-upper"><div class="rule-icon"><svg viewBox="0 0 10 8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 3.5 7 9 1" /></svg></div>One uppercase letter (A–Z)</div>
+                                    <div class="pw-rule" id="rule-number"><div class="rule-icon"><svg viewBox="0 0 10 8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 3.5 7 9 1" /></svg></div>One number (0–9)</div>
+                                    <div class="pw-rule" id="rule-special"><div class="rule-icon"><svg viewBox="0 0 10 8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 3.5 7 9 1" /></svg></div>One special character (!@#$…)</div>
                                 </div>
                             </div>
                             <div class="input-group">
@@ -215,8 +216,7 @@
                                     <input type="password" id="signupConfirm" placeholder="Re-enter your password" required autocomplete="new-password">
                                     <button type="button" class="pw-toggle" onclick="togglePw('signupConfirm', this)" tabindex="-1" aria-label="Toggle password visibility">
                                         <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                                            <circle cx="12" cy="12" r="3" />
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" />
                                         </svg>
                                         <svg class="eye-closed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
                                             <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
@@ -227,16 +227,12 @@
                                 </div>
                                 <div class="pw-match-msg" id="pwMatchMsg"></div>
                             </div>
-
                             <button type="submit" class="btn-primary" id="signupBtn">Create Account</button>
                         </form>
-
                         <div class="divider"><span>or</span></div>
-
                         <button class="btn-google" id="googleSignUpBtn">
                             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G"> Continue with Google
                         </button>
-
                         <p class="toggle-text">Already a member? <a href="#" onclick="toggleAuth()">Sign In</a></p>
                     </div>
 
@@ -244,6 +240,26 @@
             </div>
         </div>
     </div>
+
+    <!-- ── BAN DETECTION: runs before script.js module ── -->
+    <script>
+        (function() {
+            const params = new URLSearchParams(window.location.search)
+            if (params.get('banned') === 'true') {
+                // Hide login/signup, show ban card
+                document.getElementById('loginSection').style.display  = 'none'
+                document.getElementById('signupSection').style.display = 'none'
+                document.getElementById('bannedSection').style.display = 'block'
+                // Show ban reason from localStorage
+                const reason = localStorage.getItem('suotBanReason')
+                if (reason) {
+                    document.getElementById('banReasonDisplay').textContent = reason
+                }
+                // Clean up localStorage
+                localStorage.removeItem('suotBanReason')
+            }
+        })()
+    </script>
 
     <script type="module" src="script.js"></script>
 </body>

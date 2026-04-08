@@ -11,6 +11,9 @@
   --blush: #EBE0E3; --white: #fff; --bg: #f8f7f5; --border: #e8e3e0;
   --text: #1a1a1a; --muted: #888; --mono: 'IBM Plex Mono', monospace;
 }
+.arch-diagram-image { margin-top: 40px; text-align: center; }
+.arch-diagram-image img { width: 100%; max-width: 1200px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+.arch-caption { margin-top: 14px; font-size: 12px; font-weight: 500; color: #065f46; letter-spacing: 0.18em; text-transform: uppercase; font-family: 'Inter', sans-serif; }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
@@ -40,15 +43,18 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 .cover-meta-item .val { font-family: 'Playfair Display', serif; font-size: 28px; color: #fff; font-weight: 700; }
 .cover-meta-item .key { font-size: 10px; color: rgba(255,255,255,.4); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 2px; }
 .cover-grid { position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px); background-size: 40px 40px; }
+
 .toc { position: sticky; top: 0; z-index: 100; background: rgba(248,247,245,.96); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 40px; display: flex; align-items: center; gap: 0; overflow-x: auto; }
 .toc a { display: flex; align-items: center; gap: 6px; padding: 14px 18px; text-decoration: none; font-size: 12px; font-weight: 600; color: var(--muted); white-space: nowrap; border-bottom: 2px solid transparent; transition: all .15s; }
 .toc a:hover { color: var(--forest); border-bottom-color: var(--forest); }
 .toc-brand { font-family: 'Playfair Display', serif; font-size: 15px; color: var(--forest); font-weight: 700; padding-right: 24px; border-right: 1px solid var(--border); margin-right: 8px; white-space: nowrap; }
+
 .section { max-width: 1100px; margin: 0 auto; padding: 72px 40px; }
 .section + .section { border-top: 1px solid var(--border); }
 .section-tag { font-family: var(--mono); font-size: 10px; font-weight: 600; color: var(--rose); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px; }
 .section h2 { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--forest); margin-bottom: 14px; }
 .section-lead { font-size: 15px; color: #555; max-width: 680px; line-height: 1.75; margin-bottom: 48px; }
+
 .arch-diagram { background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 40px; overflow-x: auto; }
 .arch-layer { margin-bottom: 28px; }
 .arch-layer:last-child { margin-bottom: 0; }
@@ -61,9 +67,10 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 .arch-node.db    { background: #f0f4ff; border-color: #c7d2f7; color: #3b4fd8; }
 .arch-node.ext   { background: #fffbef; border-color: #e8d4a0; color: #92600a; }
 .arch-node.rt    { background: #f5f0ff; border-color: #d4c5f7; color: #6b3fc2; }
-.arch-node.store { background: #eef8f0; border-color: #a8d9b4; color: #166534; }
+.arch-node.store { background: #eef8f0; border-color: #a8d9b4; color: #166634; }
 .arch-arrow { display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 18px; margin: 4px 0; gap: 8px; }
 .arch-arrow span { font-family: var(--mono); font-size: 10px; color: #bbb; font-weight: 600; }
+
 .flow-wrap { display: flex; flex-direction: column; gap: 0; max-width: 720px; }
 .flow-step { display: flex; gap: 20px; align-items: flex-start; padding: 20px 0; position: relative; }
 .flow-step:not(:last-child)::after { content: ''; position: absolute; left: 19px; top: 52px; width: 2px; bottom: -4px; background: linear-gradient(to bottom, var(--forest), transparent); }
@@ -71,6 +78,7 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 .flow-body h4 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
 .flow-body p  { font-size: 13px; color: #666; line-height: 1.6; }
 .flow-tag { display: inline-block; margin-top: 6px; font-family: var(--mono); font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 4px; background: var(--rose-pale); color: var(--rose); border: 1px solid #f0dfe5; }
+
 .erd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
 .erd-table { background: #fff; border: 1.5px solid var(--border); border-radius: 14px; overflow: hidden; }
 .erd-table-head { background: var(--forest); color: #fff; padding: 10px 16px; display: flex; align-items: center; gap: 8px; }
@@ -90,13 +98,31 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 .rel-to   { font-family: var(--mono); font-weight: 600; color: #3b4fd8; }
 .rel-type { font-size: 11px; color: var(--muted); background: #f5f5f5; padding: 2px 8px; border-radius: 20px; }
 .rel-arrow { color: #ccc; font-size: 18px; }
-.module-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
-.module-card { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
-.module-card h4 { font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; }
-.module-file { display: flex; align-items: center; gap: 7px; padding: 5px 0; border-bottom: 1px solid #f5f5f5; font-size: 12px; }
+
+/* ── Module section ── */
+.folder-tree { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; font-family: var(--mono); font-size: 12px; line-height: 2; margin-bottom: 24px; color: #444; }
+.tree-row { display: flex; align-items: center; }
+.module-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+.module-card { background: #fff; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.module-card-head { padding: 12px 16px; display: flex; align-items: center; gap: 7px; border-bottom: 1px solid var(--border); }
+.module-card-head .card-label { font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; }
+.module-file { display: flex; align-items: center; gap: 7px; padding: 6px 16px; border-bottom: 1px solid #f5f5f5; font-size: 12px; }
 .module-file:last-child { border-bottom: none; }
-.module-file .fname { font-family: var(--mono); color: var(--forest); }
-.module-file .fdesc { font-size: 11px; color: #aaa; margin-left: auto; }
+.module-file .fname { font-family: var(--mono); color: var(--forest); font-size: 11.5px; }
+.module-file .fdesc { font-size: 10.5px; color: #aaa; margin-left: auto; text-align: right; max-width: 130px; line-height: 1.3; }
+.file-badge { font-size: 9px; font-family: var(--mono); border-radius: 3px; padding: 1px 5px; font-weight: 600; border: 1px solid; flex-shrink: 0; }
+.fb-html { background: #E6F1FB; color: #0C447C; border-color: #b5d4f4; }
+.fb-js   { background: #EAF3DE; color: #27500A; border-color: #c0dd97; }
+.fb-css  { background: #FCE7F3; color: #9D174D; border-color: #f4c0d1; }
+.fb-sql  { background: #FEF3C7; color: #92400e; border-color: #fac775; }
+.fb-new  { background: #EEEDFE; color: #3C3489; border-color: #afa9ec; }
+.fb-img  { background: #f3f4f6; color: #374151; border-color: #d1d5db; }
+
+/* docs card */
+.module-card.docs-card { border: 1.5px dashed #e8d4a0; background: #fffdf8; }
+.module-card.docs-card .module-card-head { background: #fffdf8; border-bottom-color: #e8d4a0; }
+.module-card.docs-card .card-label { color: #92600a; }
+
 .int-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
 .int-table th { background: var(--forest); color: #fff; padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; font-family: var(--mono); }
 .int-table td { padding: 11px 16px; font-size: 12.5px; border-bottom: 1px solid #f5f5f5; vertical-align: top; }
@@ -108,6 +134,7 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 .badge-purple { background: #ede9fe; color: #4c1d95; }
 .badge-amber  { background: #fef3c7; color: #92400e; }
 .badge-rose   { background: #ffe4e6; color: #9f1239; }
+
 .seq-wrap { overflow-x: auto; }
 .seq-diagram { display: inline-flex; flex-direction: column; min-width: 700px; width: 100%; background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 32px; }
 .seq-actors { display: flex; justify-content: space-around; margin-bottom: 28px; }
@@ -118,16 +145,17 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 .seq-actor.rtc      .box { background: #f0f4ff; border-color: #c7d2f7; color: #3b4fd8; }
 .seq-lifeline { width: 2px; height: 20px; background: #ddd; }
 .seq-messages { display: flex; flex-direction: column; gap: 12px; }
+
 .stack-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
 .stack-pill { display: flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 50px; background: #fff; border: 1.5px solid var(--border); font-size: 13px; font-weight: 600; color: var(--text); }
 .stack-pill .dot { width: 8px; height: 8px; border-radius: 50%; }
+
 .doc-footer { background: var(--forest-dark); color: rgba(255,255,255,.45); text-align: center; padding: 28px 40px; font-size: 12px; font-family: var(--mono); }
-.folder-tree { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; font-family: var(--mono); font-size: 12px; line-height: 2; margin-bottom: 24px; color: #444; }
-.tree-row { display: flex; align-items: center; }
 </style>
 </head>
 <body>
 
+<!-- ═══════ COVER ═══════ -->
 <div class="cover">
   <div class="cover-grid"></div>
   <div class="cover-tag">Systems Integration &amp; Architecture — Academic Documentation</div>
@@ -141,9 +169,11 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
   </div>
 </div>
 
+<!-- ═══════ NAV ═══════ -->
 <nav class="toc">
   <div class="toc-brand">Suot</div>
   <a href="#arch">Architecture</a>
+  <a href="#admin">Admin</a>
   <a href="#flow">User Flow</a>
   <a href="#erd">Data Model</a>
   <a href="#modules">Modules</a>
@@ -161,10 +191,8 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
   <p class="section-lead">Suot is a client-side single-page web application. All backend logic — authentication, database, file storage, and real-time communication — is handled by Supabase. The browser communicates directly with Supabase over HTTPS; there is no custom application server.</p>
   <div class="arch-diagram">
 
-    <!-- CLIENT LAYER -->
     <div class="arch-layer">
       <div class="arch-layer-label">
-        <!-- user icon -->
         <svg class="lbl-icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0112 0v2"/></svg>
         Client Layer — Browser (Vanilla JS ES Modules)
       </div>
@@ -175,15 +203,14 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
         <div class="arch-node ui"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>Home Feed</div>
         <div class="arch-node ui"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Wallet / Top-Up</div>
         <div class="arch-node ui"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0112 0v2"/></svg>Profile / Friends</div>
+        <div class="arch-node ui"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Super Admin</div>
       </div>
     </div>
 
     <div class="arch-arrow">↕ <span>supabase-js v2 SDK — HTTPS REST + WebSocket</span></div>
 
-    <!-- BACKEND LAYER -->
     <div class="arch-layer">
       <div class="arch-layer-label">
-        <!-- gear icon -->
         <svg class="lbl-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         Backend Layer — Supabase (BaaS)
       </div>
@@ -198,10 +225,8 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 
     <div class="arch-arrow">↕ <span>Direct API calls (no app server)</span></div>
 
-    <!-- EXTERNAL LAYER -->
     <div class="arch-layer">
       <div class="arch-layer-label">
-        <!-- globe icon -->
         <svg class="lbl-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
         External Services
       </div>
@@ -218,10 +243,27 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 </section>
 
 <!-- ═══════════════════════════════════════════════════════
-     02 — USER FLOW
+     02 — SUPER ADMIN
+═══════════════════════════════════════════════════════ -->
+<section class="section" id="admin">
+  <div class="section-tag">02 — Admin Layer</div>
+  <h2>Super Admin System Flow &amp; Control Layer</h2>
+  <p class="section-lead">
+    The Super Admin module provides centralized control over platform operations, including user management, content moderation, transaction monitoring, and system-level configuration.
+    Unlike standard users, the admin interacts with privileged database operations enforced through Supabase Row Level Security (RLS) and role-based access control.
+    All actions are executed directly via secured API calls to Supabase, ensuring real-time oversight without a dedicated backend server.
+  </p>
+  <div class="arch-diagram-image">
+    <img src="super_admin.png" alt="Super Admin Architecture Diagram">
+    <div class="arch-caption">Super Admin — System Control Architecture</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     03 — USER FLOW
 ═══════════════════════════════════════════════════════ -->
 <section class="section" id="flow">
-  <div class="section-tag">02 — User Journey</div>
+  <div class="section-tag">03 — User Journey</div>
   <h2>Core Swap Flow</h2>
   <p class="section-lead">The primary user journey — from discovering an item to completing a verified swap — involves 8 distinct steps across 5 pages, with the database transaction secured by a dual OTP confirmation.</p>
   <div class="flow-wrap">
@@ -237,20 +279,16 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 </section>
 
 <!-- ═══════════════════════════════════════════════════════
-     03 — ERD
+     04 — ERD
 ═══════════════════════════════════════════════════════ -->
 <section class="section" id="erd">
-  <div class="section-tag">03 — Data Model</div>
+  <div class="section-tag">04 — Data Model</div>
   <h2>Entity Relationship Diagram</h2>
   <p class="section-lead">All data lives in Supabase PostgreSQL. Row Level Security policies ensure users can only read/write their own data. Every table uses UUIDs as primary keys generated by <code>gen_random_uuid()</code>. Required tables: <code>profiles</code>, <code>items</code>, <code>swaps</code>, <code>messages</code>, <code>wishlist</code>, <code>follows</code>, <code>notifications</code>, <code>wallet_events</code>, <code>posts</code>, <code>post_reactions</code>, <code>stories</code>.</p>
   <div class="erd-grid">
 
-    <!-- profiles -->
     <div class="erd-table">
-      <div class="erd-table-head">
-        <svg class="ticon-svg" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0112 0v2"/></svg>
-        <span class="tname">profiles</span>
-      </div>
+      <div class="erd-table-head"><svg class="ticon-svg" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0112 0v2"/></svg><span class="tname">profiles</span></div>
       <div class="erd-col"><span class="cname pk">id</span><span class="ctype">uuid PK</span></div>
       <div class="erd-col"><span class="cname">username</span><span class="ctype">text UNIQUE</span></div>
       <div class="erd-col"><span class="cname">display_name</span><span class="ctype">text</span></div>
@@ -261,13 +299,8 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
       <div class="erd-col"><span class="cname">bio, location</span><span class="ctype">text</span></div>
     </div>
 
-    <!-- items -->
     <div class="erd-table">
-      <div class="erd-table-head">
-        <!-- tag / label icon for clothing items -->
-        <svg class="ticon-svg" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-        <span class="tname">items</span>
-      </div>
+      <div class="erd-table-head"><svg class="ticon-svg" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg><span class="tname">items</span></div>
       <div class="erd-col"><span class="cname pk">id</span><span class="ctype">uuid PK</span></div>
       <div class="erd-col"><span class="cname fk">user_id</span><span class="ctype">uuid FK→profiles</span></div>
       <div class="erd-col"><span class="cname">name, category</span><span class="ctype">text</span></div>
@@ -278,13 +311,8 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
       <div class="erd-col"><span class="cname">status</span><span class="ctype">text DEFAULT 'available'</span></div>
     </div>
 
-    <!-- swaps -->
     <div class="erd-table">
-      <div class="erd-table-head">
-        <!-- refresh/arrows icon -->
-        <svg class="ticon-svg" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
-        <span class="tname">swaps</span>
-      </div>
+      <div class="erd-table-head"><svg class="ticon-svg" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg><span class="tname">swaps</span></div>
       <div class="erd-col"><span class="cname pk">id</span><span class="ctype">uuid PK</span></div>
       <div class="erd-col"><span class="cname fk">requester_id</span><span class="ctype">uuid FK→profiles</span></div>
       <div class="erd-col"><span class="cname fk">owner_id</span><span class="ctype">uuid FK→profiles</span></div>
@@ -295,12 +323,8 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
       <div class="erd-col"><span class="cname">otp_requester, otp_owner</span><span class="ctype">text</span></div>
     </div>
 
-    <!-- messages -->
     <div class="erd-table">
-      <div class="erd-table-head">
-        <svg class="ticon-svg" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-        <span class="tname">messages</span>
-      </div>
+      <div class="erd-table-head"><svg class="ticon-svg" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span class="tname">messages</span></div>
       <div class="erd-col"><span class="cname pk">id</span><span class="ctype">uuid PK</span></div>
       <div class="erd-col"><span class="cname fk">from_user_id</span><span class="ctype">uuid FK→profiles</span></div>
       <div class="erd-col"><span class="cname fk">to_user_id</span><span class="ctype">uuid FK→profiles</span></div>
@@ -311,13 +335,8 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
       <div class="erd-col"><span class="cname">read</span><span class="ctype">bool DEFAULT false</span></div>
     </div>
 
-    <!-- wallet_events -->
     <div class="erd-table">
-      <div class="erd-table-head">
-        <!-- credit card icon -->
-        <svg class="ticon-svg" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-        <span class="tname">wallet_events</span>
-      </div>
+      <div class="erd-table-head"><svg class="ticon-svg" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg><span class="tname">wallet_events</span></div>
       <div class="erd-col"><span class="cname pk">id</span><span class="ctype">uuid PK</span></div>
       <div class="erd-col"><span class="cname fk">user_id</span><span class="ctype">uuid FK→profiles</span></div>
       <div class="erd-col"><span class="cname">event_type</span><span class="ctype">text (CHECK)</span></div>
@@ -327,12 +346,8 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
       <div class="erd-col"><span class="cname">note</span><span class="ctype">text</span></div>
     </div>
 
-    <!-- notifications -->
     <div class="erd-table">
-      <div class="erd-table-head">
-        <svg class="ticon-svg" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        <span class="tname">notifications</span>
-      </div>
+      <div class="erd-table-head"><svg class="ticon-svg" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="tname">notifications</span></div>
       <div class="erd-col"><span class="cname pk">id</span><span class="ctype">uuid PK</span></div>
       <div class="erd-col"><span class="cname fk">user_id</span><span class="ctype">uuid FK→profiles</span></div>
       <div class="erd-col"><span class="cname">type</span><span class="ctype">text</span></div>
@@ -342,39 +357,24 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
       <div class="erd-col"><span class="cname">read</span><span class="ctype">bool DEFAULT false</span></div>
     </div>
 
-    <!-- wishlist -->
     <div class="erd-table">
-      <div class="erd-table-head">
-        <!-- bookmark icon -->
-        <svg class="ticon-svg" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
-        <span class="tname">wishlist</span>
-      </div>
+      <div class="erd-table-head"><svg class="ticon-svg" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg><span class="tname">wishlist</span></div>
       <div class="erd-col"><span class="cname pk">id</span><span class="ctype">uuid PK</span></div>
       <div class="erd-col"><span class="cname fk">user_id</span><span class="ctype">uuid FK→profiles</span></div>
       <div class="erd-col"><span class="cname fk">item_id</span><span class="ctype">uuid FK→items</span></div>
       <div class="erd-col"><span class="cname idx">UNIQUE(user_id, item_id)</span><span class="ctype">constraint</span></div>
     </div>
 
-    <!-- follows -->
     <div class="erd-table">
-      <div class="erd-table-head">
-        <!-- users icon -->
-        <svg class="ticon-svg" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        <span class="tname">follows</span>
-      </div>
+      <div class="erd-table-head"><svg class="ticon-svg" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="tname">follows</span></div>
       <div class="erd-col"><span class="cname pk">id</span><span class="ctype">uuid PK</span></div>
       <div class="erd-col"><span class="cname fk">follower_id</span><span class="ctype">uuid FK→profiles</span></div>
       <div class="erd-col"><span class="cname fk">following_id</span><span class="ctype">uuid FK→profiles</span></div>
       <div class="erd-col"><span class="cname idx">UNIQUE(follower_id, following_id)</span><span class="ctype">constraint</span></div>
     </div>
 
-    <!-- posts -->
     <div class="erd-table">
-      <div class="erd-table-head">
-        <!-- image icon -->
-        <svg class="ticon-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-        <span class="tname">posts</span>
-      </div>
+      <div class="erd-table-head"><svg class="ticon-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span class="tname">posts</span></div>
       <div class="erd-col"><span class="cname pk">id</span><span class="ctype">uuid PK</span></div>
       <div class="erd-col"><span class="cname fk">user_id</span><span class="ctype">uuid FK→profiles</span></div>
       <div class="erd-col"><span class="cname">caption</span><span class="ctype">text</span></div>
@@ -383,12 +383,8 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
       <div class="erd-col"><span class="cname fk">linked_item_id</span><span class="ctype">uuid FK→items NULL</span></div>
     </div>
 
-    <!-- post_reactions -->
     <div class="erd-table">
-      <div class="erd-table-head">
-        <svg class="ticon-svg" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        <span class="tname">post_reactions</span>
-      </div>
+      <div class="erd-table-head"><svg class="ticon-svg" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span class="tname">post_reactions</span></div>
       <div class="erd-col"><span class="cname pk">id</span><span class="ctype">uuid PK</span></div>
       <div class="erd-col"><span class="cname fk">post_id</span><span class="ctype">uuid FK→posts</span></div>
       <div class="erd-col"><span class="cname fk">user_id</span><span class="ctype">uuid FK→profiles</span></div>
@@ -396,13 +392,8 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
       <div class="erd-col"><span class="cname idx">UNIQUE(post_id, user_id)</span><span class="ctype">constraint</span></div>
     </div>
 
-    <!-- stories -->
     <div class="erd-table">
-      <div class="erd-table-head">
-        <!-- book-open icon -->
-        <svg class="ticon-svg" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-        <span class="tname">stories</span>
-      </div>
+      <div class="erd-table-head"><svg class="ticon-svg" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg><span class="tname">stories</span></div>
       <div class="erd-col"><span class="cname pk">id</span><span class="ctype">uuid PK</span></div>
       <div class="erd-col"><span class="cname fk">user_id</span><span class="ctype">uuid FK→profiles</span></div>
       <div class="erd-col"><span class="cname">image_url</span><span class="ctype">text</span></div>
@@ -424,14 +415,14 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 </section>
 
 <!-- ═══════════════════════════════════════════════════════
-     04 — MODULES
+     05 — MODULES  (updated with real GitHub file listing)
 ═══════════════════════════════════════════════════════ -->
 <section class="section" id="modules">
-  <div class="section-tag">04 — Components</div>
+  <div class="section-tag">05 — Components</div>
   <h2>Module Structure</h2>
   <p class="section-lead">Suot is organized into five directories under <code>src/</code>, plus a top-level <code>docs/</code> folder at the repository root for SQL schemas and documentation. Each page is a self-contained HTML file with an inline or imported ES module script. All database calls are centralized in <code>db/supabase.js</code>.</p>
 
-  <!-- Folder tree with SVG icons instead of emojis -->
+  <!-- Folder tree -->
   <div class="folder-tree">
     <div class="tree-row" style="color:#4A635D;font-weight:600;">
       <svg class="tree-icon" style="stroke:#4A635D;" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
@@ -449,7 +440,7 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
       <span style="color:#3b4fd8;font-weight:600;">src/</span>
     </div>
     <div style="padding-left:48px;color:#666;">&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── auth/</div>
-    <div style="padding-left:48px;color:#666;">&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── dashboard/</div>
+    <div style="padding-left:48px;color:#666;">&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── dashboard/ &nbsp;<span style="font-size:10px;color:#534AB7;background:#EEEDFE;border:1px solid #afa9ec;border-radius:3px;padding:0 5px;font-weight:600;">+ admin-dashboard.html</span></div>
     <div style="padding-left:48px;color:#666;">&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── personal/</div>
     <div style="padding-left:48px;color:#666;">&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── profile/</div>
     <div style="padding-left:48px;color:#666;">&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── db/</div>
@@ -457,83 +448,93 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
     <div style="padding-left:20px;color:#666;">&nbsp;&nbsp;└── README.md</div>
   </div>
 
+  <!-- Module cards -->
   <div class="module-grid">
+
     <!-- auth/ -->
     <div class="module-card">
-      <h4>
-        <svg class="mod-icon" viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
-        auth/
-      </h4>
-      <div class="module-file"><span class="fname">login.html</span><span class="fdesc">Sign in / Sign up</span></div>
-      <div class="module-file"><span class="fname">script.js</span><span class="fdesc">Auth logic</span></div>
-      <div class="module-file"><span class="fname">style.css</span><span class="fdesc">Landing styles</span></div>
+      <div class="module-card-head">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="#534AB7"><path d="M1.5 3a1 1 0 011-1H5.7L7.3 4H14a1 1 0 011 1v7.5a1 1 0 01-1 1H2.5a1 1 0 01-1-1V3z"/></svg>
+        <span class="card-label">auth/</span>
+      </div>
+      <div class="module-file"><span class="file-badge fb-html">html</span><span class="fname">login.html</span><span class="fdesc">Sign in / Sign up</span></div>
+      <div class="module-file"><span class="file-badge fb-js">js</span><span class="fname">script.js</span><span class="fdesc">Auth logic, Google OAuth</span></div>
+      <div class="module-file"><span class="file-badge fb-css">css</span><span class="fname">style.css</span><span class="fdesc">Landing page styles</span></div>
     </div>
 
-    <!-- dashboard/ -->
+    <!-- dashboard/ — corrected with real GitHub files -->
     <div class="module-card">
-      <h4>
-        <svg class="mod-icon" viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
-        dashboard/
-      </h4>
-      <div class="module-file"><span class="fname">dashboard.html</span><span class="fdesc">Catalog + filters</span></div>
-      <div class="module-file"><span class="fname">dashboard.js</span><span class="fdesc">Item loading, geo</span></div>
-      <div class="module-file"><span class="fname">dashboard.css</span><span class="fdesc">Shared layout</span></div>
-      <div class="module-file"><span class="fname">wallet.html</span><span class="fdesc">Wallet + history</span></div>
-      <div class="module-file"><span class="fname">topup.html</span><span class="fdesc">3-step top-up</span></div>
+      <div class="module-card-head">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="#185FA5"><path d="M1.5 3a1 1 0 011-1H5.7L7.3 4H14a1 1 0 011 1v7.5a1 1 0 01-1 1H2.5a1 1 0 01-1-1V3z"/></svg>
+        <span class="card-label">dashboard/</span>
+      </div>
+      <div class="module-file"><span class="file-badge fb-new">new</span><span class="fname">admin-dashboard.html</span><span class="fdesc">Super admin panel</span></div>
+      <div class="module-file"><span class="file-badge fb-html">html</span><span class="fname">dashboard.html</span><span class="fdesc">Catalog + filters</span></div>
+      <div class="module-file"><span class="file-badge fb-js">js</span><span class="fname">dashboard.js</span><span class="fdesc">Item loading, geo sort</span></div>
+      <div class="module-file"><span class="file-badge fb-css">css</span><span class="fname">dashboard.css</span><span class="fdesc">Shared layout</span></div>
+      <div class="module-file"><span class="file-badge fb-html">html</span><span class="fname">topup.html</span><span class="fdesc">3-step Pasa-Points top-up</span></div>
+      <div class="module-file"><span class="file-badge fb-js">js</span><span class="fname">topup.js</span><span class="fdesc">Top-up flow logic</span></div>
+      <div class="module-file"><span class="file-badge fb-css">css</span><span class="fname">topup.css</span><span class="fdesc">Top-up stylesheet</span></div>
+      <div class="module-file"><span class="file-badge fb-html">html</span><span class="fname">wallet.html</span><span class="fdesc">Wallet + history</span></div>
+      <div class="module-file"><span class="file-badge fb-js">js</span><span class="fname">wallet.js</span><span class="fdesc">Pasa-Points &amp; buffer logic</span></div>
+      <div class="module-file"><span class="file-badge fb-css">css</span><span class="fname">wallet.css</span><span class="fdesc">Wallet stylesheet</span></div>
     </div>
 
     <!-- personal/ -->
     <div class="module-card">
-      <h4>
-        <svg class="mod-icon" viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
-        personal/
-      </h4>
-      <div class="module-file"><span class="fname">home.html</span><span class="fdesc">Feed + stories</span></div>
-      <div class="module-file"><span class="fname">message.html</span><span class="fdesc">Chat + video call</span></div>
-      <div class="module-file"><span class="fname">post-item.html</span><span class="fdesc">List item + map</span></div>
-      <div class="module-file"><span class="fname">item-detail.html</span><span class="fdesc">Item page + swap</span></div>
-      <div class="module-file"><span class="fname">wishlist.html</span><span class="fdesc">Saved items</span></div>
-      <div class="module-file"><span class="fname">friends.html</span><span class="fdesc">Follow system</span></div>
+      <div class="module-card-head">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="#0F6E56"><path d="M1.5 3a1 1 0 011-1H5.7L7.3 4H14a1 1 0 011 1v7.5a1 1 0 01-1 1H2.5a1 1 0 01-1-1V3z"/></svg>
+        <span class="card-label">personal/</span>
+      </div>
+      <div class="module-file"><span class="file-badge fb-html">html</span><span class="fname">home.html</span><span class="fdesc">Feed + stories</span></div>
+      <div class="module-file"><span class="file-badge fb-html">html</span><span class="fname">message.html</span><span class="fdesc">Chat + video call</span></div>
+      <div class="module-file"><span class="file-badge fb-html">html</span><span class="fname">post-item.html</span><span class="fdesc">List item + map</span></div>
+      <div class="module-file"><span class="file-badge fb-html">html</span><span class="fname">item-detail.html</span><span class="fdesc">Item page + swap</span></div>
+      <div class="module-file"><span class="file-badge fb-html">html</span><span class="fname">wishlist.html</span><span class="fdesc">Saved items</span></div>
+      <div class="module-file"><span class="file-badge fb-html">html</span><span class="fname">friends.html</span><span class="fdesc">Follow system</span></div>
+      <div class="module-file"><span class="file-badge fb-js">js</span><span class="fname">config.js</span><span class="fdesc">Gemini API key (gitignored)</span></div>
     </div>
 
     <!-- profile/ -->
     <div class="module-card">
-      <h4>
-        <svg class="mod-icon" viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
-        profile/
-      </h4>
-      <div class="module-file"><span class="fname">profile.html</span><span class="fdesc">User profile view</span></div>
-      <div class="module-file"><span class="fname">edit-profile.html</span><span class="fdesc">Edit info + avatar</span></div>
+      <div class="module-card-head">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="#993C1D"><path d="M1.5 3a1 1 0 011-1H5.7L7.3 4H14a1 1 0 011 1v7.5a1 1 0 01-1 1H2.5a1 1 0 01-1-1V3z"/></svg>
+        <span class="card-label">profile/</span>
+      </div>
+      <div class="module-file"><span class="file-badge fb-html">html</span><span class="fname">profile.html</span><span class="fdesc">User profile view</span></div>
+      <div class="module-file"><span class="file-badge fb-html">html</span><span class="fname">edit-profile.html</span><span class="fdesc">Edit info + avatar</span></div>
     </div>
 
     <!-- db/ -->
     <div class="module-card">
-      <h4>
-        <svg class="mod-icon" viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
-        db/
-      </h4>
-      <div class="module-file"><span class="fname">supabase.js</span><span class="fdesc">Client + all helpers</span></div>
+      <div class="module-card-head">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="#3B6D11"><path d="M1.5 3a1 1 0 011-1H5.7L7.3 4H14a1 1 0 011 1v7.5a1 1 0 01-1 1H2.5a1 1 0 01-1-1V3z"/></svg>
+        <span class="card-label">db/</span>
+      </div>
+      <div class="module-file"><span class="file-badge fb-js">js</span><span class="fname">supabase.js</span><span class="fdesc">Client init + all DB helper functions</span></div>
     </div>
 
-    <!-- docs/ (root-level, visually distinct) -->
-    <div class="module-card" style="border: 1.5px dashed #e8d4a0; background: #fffdf8;">
-      <h4 style="color:#92600a;">
-        <svg class="mod-icon" style="stroke:#92600a;" viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
-        docs/ <span style="font-size:9px;color:#aaa;font-weight:400;letter-spacing:0;text-transform:none;">(repo root)</span>
-      </h4>
-      <div class="module-file"><span class="fname">supabase-schema.sql</span><span class="fdesc">Core tables</span></div>
-      <div class="module-file"><span class="fname">home-feed-v2.sql</span><span class="fdesc">Feed tables</span></div>
-      <div class="module-file"><span class="fname">wallet-circulation.sql</span><span class="fdesc">Wallet trigger</span></div>
-      <div class="module-file"><span class="fname">architecture.html</span><span class="fdesc">This document</span></div>
+    <!-- docs/ (root-level) -->
+    <div class="module-card docs-card">
+      <div class="module-card-head">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="#BA7517"><path d="M1.5 3a1 1 0 011-1H5.7L7.3 4H14a1 1 0 011 1v7.5a1 1 0 01-1 1H2.5a1 1 0 01-1-1V3z"/></svg>
+        <span class="card-label">docs/ <span style="font-size:9px;color:#aaa;font-weight:400;letter-spacing:0;text-transform:none;">(repo root)</span></span>
+      </div>
+      <div class="module-file"><span class="file-badge fb-sql">sql</span><span class="fname">supabase-schema.sql</span><span class="fdesc">Core tables</span></div>
+      <div class="module-file"><span class="file-badge fb-sql">sql</span><span class="fname">home-feed-v2.sql</span><span class="fdesc">Feed tables</span></div>
+      <div class="module-file"><span class="file-badge fb-sql">sql</span><span class="fname">wallet-circulation.sql</span><span class="fdesc">Wallet trigger</span></div>
+      <div class="module-file"><span class="file-badge fb-html">html</span><span class="fname">architecture.html</span><span class="fdesc">This document</span></div>
+      <div class="module-file"><span class="file-badge fb-img">img</span><span class="fname">super_admin.png</span><span class="fdesc">Admin arch diagram</span></div>
     </div>
+
   </div>
 </section>
 
 <!-- ═══════════════════════════════════════════════════════
-     05 — INTEGRATIONS
+     06 — INTEGRATIONS
 ═══════════════════════════════════════════════════════ -->
 <section class="section" id="integrations">
-  <div class="section-tag">05 — External Systems</div>
+  <div class="section-tag">06 — External Systems</div>
   <h2>Systems Integration</h2>
   <p class="section-lead">Suot integrates with five external services. All calls are made directly from the browser (no proxy server). Sensitive keys are kept in <code>config.js</code> which is excluded from version control.</p>
   <table class="int-table">
@@ -550,10 +551,10 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 </section>
 
 <!-- ═══════════════════════════════════════════════════════
-     06 — WEBRTC
+     07 — WEBRTC
 ═══════════════════════════════════════════════════════ -->
 <section class="section" id="webrtc">
-  <div class="section-tag">06 — Video Calling</div>
+  <div class="section-tag">07 — Video Calling</div>
   <h2>WebRTC Call Sequence</h2>
   <p class="section-lead">Video calls use native browser WebRTC — no third-party video service or meeting codes. Supabase Realtime Broadcast acts as the signaling channel to exchange SDP and ICE candidates between peers.</p>
   <div class="seq-wrap">
@@ -582,10 +583,10 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 </section>
 
 <!-- ═══════════════════════════════════════════════════════
-     07 — WALLET
+     08 — WALLET
 ═══════════════════════════════════════════════════════ -->
 <section class="section" id="wallet">
-  <div class="section-tag">07 — Business Logic</div>
+  <div class="section-tag">08 — Business Logic</div>
   <h2>Wallet Circulation System</h2>
   <p class="section-lead">Points management is enforced entirely in the database via a PostgreSQL <code>BEFORE UPDATE</code> trigger. No client-side enforcement — the rule fires regardless of which page updates pts.</p>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:32px;">
@@ -627,10 +628,10 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tex
 </section>
 
 <!-- ═══════════════════════════════════════════════════════
-     08 — STACK
+     09 — STACK
 ═══════════════════════════════════════════════════════ -->
 <section class="section">
-  <div class="section-tag">08 — Stack Summary</div>
+  <div class="section-tag">09 — Stack Summary</div>
   <h2>Technology Stack</h2>
   <p class="section-lead">Every technology choice prioritizes zero monthly cost and zero infrastructure management — appropriate for a student project that must remain live for grading.</p>
   <div class="stack-grid">
